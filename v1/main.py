@@ -29,8 +29,8 @@ def main() -> None:
     # targetPlayer = [player for player in players if isDemon(player.role)][0]
     # testPrintRoleGrid(targetPlayer=targetPlayer)
 
-    targetPlayer = [player for player in players if isMinion(player.role)][0]
-    testPrintTargetGridSums(targetPlayer=targetPlayer, playerCount=playerCount, inScriptRoles=inScriptRoles)
+    # targetPlayer = [player for player in players if isMinion(player.role)][0]
+    # testPrintTargetGridSums(targetPlayer=targetPlayer, playerCount=playerCount, inScriptRoles=inScriptRoles)
 
     # targetPlayer = [player for player in players if isDemon(player.role)][0]
     # testPrintTargetGridSums(
