@@ -60,6 +60,14 @@ def startGame(playerCount: int, script: list[Role]):
             player.isEvil = False
 
     ## Start of game info
+    learnFirstNightInfo(players=players, script=script, playerCount=playerCount)
+
+    for player in players:
+        print(f"{player.seat} {player.role.name}:")
+        for info in player.infoBank:
+            print(f"\t{info}")
+
+def learnFirstNightInfo(players: list[Player], script: list[Role], playerCount: int):
     townsfolk = [player for player in players if isTownsfolk(player.role)]
     outsiders = [player for player in players if isOutsider(player.role)]
     minions = [player for player in players if isMinion(player.role)]
@@ -267,11 +275,6 @@ def startGame(playerCount: int, script: list[Role]):
         
     # Fortune Teller acts
     # Butler acts
-
-    for player in players:
-        print(f"{player.seat} {player.role.name}:")
-        for info in player.infoBank:
-            print(f"\t{info}")
 
 
 if __name__ == "__main__":
