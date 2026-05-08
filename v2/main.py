@@ -9,20 +9,36 @@ from helpers.isCategory import *
 
 
 def main() -> None:
+    r.seed(a=None)
     # TODO: Assuming constant player count
     playerCount = 7
     # TODO: Assuming limited script
     script = [
         Role.WASHERWOMAN,
-        Role.CHEF,
         Role.LIBRARIAN,
         Role.INVESTIGATOR,
+        Role.CHEF,
         Role.EMPATH,
-        Role.VIRGIN,
-        Role.RAVENKEEPER,
+        # Role.FORTUNE_TELLER,
+        # Role.UNDERTAKER,
+        # Role.MONK,
+        # Role.RAVENKEEPER,
+        # Role.VIRGIN,
         Role.SLAYER,
-        Role.SCARLET_WOMAN,
+        Role.SOLDIER,
+        Role.MAYOR,
+        # Outsiders
+        # Role.BUTLER,
+        # Role.SAINT,
+        # Role.RECLUSE,
+        # Role.DRUNK,
+        ## Evil
+        # Minions
+        # Role.POISONER,
         Role.SPY,
+        # Role.BARON,
+        Role.SCARLET_WOMAN,
+        # Demons
         Role.IMP,
     ]
 
@@ -60,12 +76,20 @@ def startGame(playerCount: int, script: list[Role]):
             player.isEvil = False
 
     ## Start of game info
+    day = 1
     learnFirstNightInfo(players=players, script=script, playerCount=playerCount)
 
+    ## Day + Night Loop
+    while True:
+        day += 1
+        break
+
+    ## Debug Printing
     for player in players:
         print(f"{player.seat} {player.role.name}:")
         for info in player.infoBank:
             print(f"\t{info}")
+
 
 def learnFirstNightInfo(players: list[Player], script: list[Role], playerCount: int):
     townsfolk = [player for player in players if isTownsfolk(player.role)]
@@ -151,7 +175,7 @@ def learnFirstNightInfo(players: list[Player], script: list[Role], playerCount: 
             [
                 player.seat
                 for player in players
-                if player.seat not in correctTarget or player.seat != washerwoman.seat
+                if player.seat not in correctTarget and player.seat != washerwoman.seat
             ],
             1,
         )
@@ -272,7 +296,7 @@ def learnFirstNightInfo(players: list[Player], script: list[Role], playerCount: 
 
         learnedInfo = Info(InfoType.NUMBER_EMPATH, [empath.seat], [], count)
         empath.learn(learnedInfo)
-        
+
     # Fortune Teller acts
     # Butler acts
 
