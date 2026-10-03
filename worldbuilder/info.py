@@ -19,7 +19,7 @@ class Info:
     is_good: bool | None
     target_players: list[int] | None
 
-    info_trust = 0.75
+    info_trust = 1.0
 
     def __init__(
         self,

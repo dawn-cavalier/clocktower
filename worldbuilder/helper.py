@@ -1,6 +1,14 @@
+from info import Info, InfoType
+from transformers import (
+    transform_chef_number,
+    transform_player_evil,
+    transform_player_good,
+    transform_at_least_one_good,
+)
+
 PLAYER_COUNT = 12
 EVIL_COUNT = 3
-from info import Info, InfoType
+
 
 def build_world(info_indices: list[int], learned_info: list[Info]) -> list[float]:
     possible_teams: list[list[int]] = []
@@ -48,9 +56,23 @@ def build_world(info_indices: list[int], learned_info: list[Info]) -> list[float
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
 
+                # Ignore the information
+                if is_inverted:
+                    continue
+
                 possible_teams = transform_chef_number(possible_teams, info.number)
+            case InfoType.AT_LEAST_ONE_GOOD:
+                if info.target_players is None:
+                    raise ValueError(f"{info.info_type.name} has no target players!")
+
+                # Ignore the information
+                if is_inverted:
+                    continue
+
+                possible_teams = transform_at_least_one_good(possible_teams, info.target_players)
+
             case _:
-                raise ValueError(f"Unhandles InfoType: {info.info_type.name}")
+                raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
     player_scores: list[float] = [
         score
@@ -58,90 +80,31 @@ def build_world(info_indices: list[int], learned_info: list[Info]) -> list[float
         for player_id in range(PLAYER_COUNT)
     ]
 
-    # print(f"{info_indices} ({score}): {len(possible_teams)}/220")
+    print(f"{info_indices} ({score}): {len(possible_teams)}/220")
     return player_scores
 
 
-def get_player_appearances(possible_teams: list[list[int]], target_player: int) -> int:
+def get_player_appearances(
+    possible_teams: list[list[int]], target_player: int
+) -> float:
     total = 0
     for team in possible_teams:
         if target_player in team:
             total += 1
-    return total
+    return total / len(possible_teams)
 
 
-def transform_player_good(
-    evil_teams: list[list[int]], target_player: int
-) -> list[list[int]]:
-    return [key for key in evil_teams if target_player not in key]
+def get_all_posibilities(num_of_info: int):
+    num_possibilities = 2**num_of_info
+    possibilities: list[list[int]] = []
 
+    for possibility_i in range(num_possibilities):
+        new_possibility: list[int] = []
+        for bit in range(num_of_info):
+            if possibility_i >> bit & 1:
+                new_possibility.append(bit + 1)
+            else:
+                new_possibility.append(-(bit + 1))
+        possibilities.append(new_possibility)
 
-def transform_player_evil(
-    evil_teams: list[list[int]], target_player: int
-) -> list[list[int]]:
-    return [key for key in evil_teams if target_player in key]
-
-
-def transform_chef_number(
-    evil_teams: list[list[int]], chef_number: int
-) -> list[list[int]]:
-    return_value: list[list[int]] = []
-
-    match chef_number:
-        case 0:
-            for key in evil_teams:
-                if (
-                    key[0] + 1 == key[1]
-                    or key[1] + 1 == key[2]
-                    or key[2] + 1 - PLAYER_COUNT == key[0]
-                ):
-                    continue
-
-                return_value += [
-                    (key),
-                ]
-        case 1:
-            for key in evil_teams:
-                # Right/ no overflow
-                if key[0] + 2 == key[1] + 1 == key[2]:
-                    continue
-
-                # Center / overflow
-                if key[0] + 1 == key[1] == key[2] + 1 - PLAYER_COUNT:
-                    continue
-
-                # Left / overflow
-                if key[0] == key[1] + 2 - PLAYER_COUNT == key[2] + 1 - PLAYER_COUNT:
-                    continue
-
-                if (
-                    key[0] + 1 == key[1]
-                    or key[1] + 1 == key[2]
-                    or key[2] + 1 - PLAYER_COUNT == key[0]
-                ):
-                    return_value += [
-                        (key),
-                    ]
-        case 2:
-            for key in evil_teams:
-                # Right/ no overflow
-                if key[0] + 2 == key[1] + 1 == key[2]:
-                    return_value += [
-                        (key),
-                    ]
-
-                # Center / overflow
-                if key[0] + 1 == key[1] == key[2] + 2 - PLAYER_COUNT:
-                    return_value += [
-                        (key),
-                    ]
-
-                # Left / overflow
-                if key[0] == key[1] + 2 - PLAYER_COUNT == key[2] + 1 - PLAYER_COUNT:
-                    return_value += [
-                        (key),
-                    ]
-        case _:
-            raise ValueError("Invalid Chef Number")
-
-    return return_value
+    return possibilities
