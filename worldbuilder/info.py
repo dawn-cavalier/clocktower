@@ -15,10 +15,11 @@ class Info:
     source: int
     invert: bool
     day: int
-
     number: int | None
     is_good: bool | None
     target_players: list[int] | None
+
+    info_trust = 0.75
 
     def __init__(
         self,
