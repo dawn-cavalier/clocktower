@@ -30,6 +30,31 @@ def transform_at_least_one_good(evil_teams: list[list[int]], target_players: lis
     return new_evil_teams
 
 
+def transform_at_least_one_evil(evil_teams: list[list[int]], target_players: list[int]):
+    new_evil_teams: list[list[int]] = []
+    # TODO: Review this for 1 demon 1 minion games
+    for team in evil_teams:
+        for player in target_players:
+            if player in team:
+                new_evil_teams.append(team)
+                break
+
+    return new_evil_teams
+
+def transform_exactly_one_evil(evil_teams: list[list[int]], target_players: list[int]):
+    new_evil_teams: list[list[int]] = []
+    for team in evil_teams:
+        count = 0
+        for player in target_players:
+            if player in team:
+                count += 1
+
+        if count == 1:
+            new_evil_teams.append(team)
+
+    return new_evil_teams
+
+
 def transform_chef_number(
     evil_teams: list[list[int]], chef_number: int
 ) -> list[list[int]]:

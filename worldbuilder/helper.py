@@ -4,6 +4,8 @@ from transformers import (
     transform_player_evil,
     transform_player_good,
     transform_at_least_one_good,
+    transform_at_least_one_evil,
+    transform_exactly_one_evil
 )
 
 PLAYER_COUNT = 12
@@ -33,17 +35,18 @@ def build_world(info_indices: list[int], learned_info: list[Info]) -> list[float
         info_index = max(info_index, 0)
         info = learned_info[info_index]
 
+        # Ignore the information
+        if is_inverted:
+            continue
+
+ 
         match info.info_type:
             case InfoType.NONE:
                 continue
             case InfoType.ALIGNMENT_KNOWN:
                 if info.target_players is None:
                     raise ValueError(f"{info.info_type.name} has no target players!")
-
-                # Ignore the information
-                if is_inverted:
-                    continue
-
+ 
                 if info.is_good:
                     possible_teams = transform_player_good(
                         possible_teams, info.target_players[0]
@@ -56,20 +59,22 @@ def build_world(info_indices: list[int], learned_info: list[Info]) -> list[float
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
 
-                # Ignore the information
-                if is_inverted:
-                    continue
-
                 possible_teams = transform_chef_number(possible_teams, info.number)
             case InfoType.AT_LEAST_ONE_GOOD:
                 if info.target_players is None:
                     raise ValueError(f"{info.info_type.name} has no target players!")
 
-                # Ignore the information
-                if is_inverted:
-                    continue
-
                 possible_teams = transform_at_least_one_good(possible_teams, info.target_players)
+            case InfoType.AT_LEAST_ONE_EVIL:
+                if info.target_players is None:
+                    raise ValueError(f"{info.info_type.name} has no target players!")
+
+                possible_teams = transform_at_least_one_evil(possible_teams, info.target_players)
+            case InfoType.EXACTLY_ONE_EVIL:
+                if info.target_players is None:
+                    raise ValueError(f"{info.info_type.name} has no target players!")
+
+                possible_teams = transform_exactly_one_evil(possible_teams, info.target_players)
 
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")

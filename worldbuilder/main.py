@@ -24,21 +24,42 @@ def main() -> None:
     learned_info.append(new_info)
 
     # CHEF
-    # new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=2)
-    # new_info.info_trust = 0.5
+    new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=1)
+    new_info.info_trust = 0.5
+    learned_info.append(new_info)
+
+    # # WASHERWOMAN AND LIBRARIAN
+    # new_info = Info(
+    #     info_type=InfoType.AT_LEAST_ONE_GOOD,
+    #     source=0,
+    #     day=0,
+    #     is_good=True,
+    #     target_players=[7, 8],
+    # )
+    # new_info.info_trust = 1.0
     # learned_info.append(new_info)
 
-    # WASHERWOMAN AND LIBRARIAN
+    # # INVESTIGATOR
+    # new_info = Info(
+    #     info_type=InfoType.AT_LEAST_ONE_EVIL,
+    #     source=0,
+    #     day=0,
+    #     is_good=True,
+    #     target_players=[7, 8],
+    # )
+    # new_info.info_trust = 1.0
+    # learned_info.append(new_info)
+
+    # NOBLE
     new_info = Info(
-        info_type=InfoType.AT_LEAST_ONE_GOOD,
+        info_type=InfoType.EXACTLY_ONE_EVIL,
         source=0,
         day=0,
         is_good=True,
-        target_players=[7, 8],
+        target_players=[6, 7, 8],
     )
     new_info.info_trust = 1.0
     learned_info.append(new_info)
-
 
     # new_info = Info(
     #     info_type=InfoType.ALIGNMENT_KNOWN,
@@ -49,7 +70,6 @@ def main() -> None:
     # )
     # new_info.info_trust = 0.25
     # learned_info.append(new_info)
-
 
     # new_info = Info(
     #     info_type=InfoType.ALIGNMENT_KNOWN,
@@ -70,7 +90,7 @@ def main() -> None:
         for i, player_score in enumerate(possibility_player_scores):
             player_scores[i] += player_score
 
-    print(player_scores)
+    print([f"{(score * 100):.2f}%" for score in player_scores])
 
 
 if __name__ == "__main__":

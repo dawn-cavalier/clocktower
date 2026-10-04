@@ -6,8 +6,9 @@ class InfoType(IntEnum):
     ALIGNMENT_KNOWN = 0
     AT_LEAST_ONE_GOOD = 1
     AT_LEAST_ONE_EVIL = 2
-    NUMBER_CHEF = 3
-    NUMBER_EMPATH = 4
+    EXACTLY_ONE_EVIL = 3
+    NUMBER_CHEF = 4
+    NUMBER_EMPATH = 5
 
 
 class Info:
