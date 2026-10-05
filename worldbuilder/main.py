@@ -24,10 +24,14 @@ def main() -> None:
     new_info.info_trust = 1.0
     learned_info.append(new_info)
 
-    # # EMPATH
-    # new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=0, number=2)
-    # new_info.info_trust = 1.0
-    # learned_info.append(new_info)
+    # EMPATH
+    new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=0, number=1, target_players=[1,11])
+    new_info.info_trust = 1.0
+    learned_info.append(new_info)
+
+    new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=1, number=0, target_players=[2,11])
+    new_info.info_trust = 1.0
+    learned_info.append(new_info)
 
     # # CHEF
     # new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=2)
@@ -43,20 +47,20 @@ def main() -> None:
 
     player_scores = [0.0 for _ in range(PLAYER_COUNT)]
     for possibility in possibilities:
-        possible_teams, trust_score = build_world(possibility, learned_info, EVIL_COUNT)
+        possible_teams, info_trust = build_world(possibility, learned_info, EVIL_COUNT)
 
         possibility_player_scores: list[float] =[0.0 for _ in range(PLAYER_COUNT)]
 
-        if trust_score > 0.0:
+        if info_trust > 0.0:
             possibility_player_scores = [
-                trust_score
+                info_trust
                 * get_player_appearances(
                     possible_teams=possible_teams, target_player=player_id
                 )
                 for player_id in range(PLAYER_COUNT)
             ]
 
-        print(f"{possibility} ({trust_score}): {len(possible_teams)}")
+        print(f"{possibility} ({info_trust}): {len(possible_teams)}")
 
         for i, player_score in enumerate(possibility_player_scores):
             player_scores[i] += player_score

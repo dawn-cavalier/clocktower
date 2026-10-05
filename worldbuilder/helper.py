@@ -92,9 +92,12 @@ def build_world(
             case InfoType.NUMBER_EMPATH:
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
+                if info.target_players is None:
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_empath_number(
-                    evil_teams=possible_teams, empath_number=info.number, source=info.source, player_count=PLAYER_COUNT
+                    evil_teams=possible_teams, empath_number=info.number, neighbors=info.target_players
                 )
 
             case _:

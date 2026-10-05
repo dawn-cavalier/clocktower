@@ -1,10 +1,12 @@
 """Module providing the various possible world transformations."""
 
+
 # VIRGIN, UNDERTAKER, RAVENKEEPER
 def transform_player_good(
     evil_teams: list[list[int]], target_player: int
 ) -> list[list[int]]:
     return [key for key in evil_teams if target_player not in key]
+
 
 # UNDERTAKER, RAVENKEEPER, SLAYER
 def transform_player_evil(
@@ -12,14 +14,15 @@ def transform_player_evil(
 ) -> list[list[int]]:
     return [key for key in evil_teams if target_player in key]
 
-# LIBRARIAN, WASHERWOMAN 
+
+# LIBRARIAN, WASHERWOMAN
 def transform_at_least_one_good(evil_teams: list[list[int]], target_players: list[int]):
     new_evil_teams: list[list[int]] = []
     for team in evil_teams:
         valid = True
         # TODO: Error checking
         for index in range(len(team) - len(target_players) + 1):
-            if team[index: index + len(target_players)] == target_players:
+            if team[index : index + len(target_players)] == target_players:
                 valid = False
                 break
 
@@ -27,6 +30,7 @@ def transform_at_least_one_good(evil_teams: list[list[int]], target_players: lis
             new_evil_teams.append(team)
 
     return new_evil_teams
+
 
 # INVESTIGATOR
 def transform_at_least_one_evil(evil_teams: list[list[int]], target_players: list[int]):
@@ -39,6 +43,7 @@ def transform_at_least_one_evil(evil_teams: list[list[int]], target_players: lis
                 break
 
     return new_evil_teams
+
 
 # NOBLE
 def transform_exactly_one_evil(evil_teams: list[list[int]], target_players: list[int]):
@@ -53,6 +58,7 @@ def transform_exactly_one_evil(evil_teams: list[list[int]], target_players: list
             new_evil_teams.append(team)
 
     return new_evil_teams
+
 
 # CHEF
 def transform_chef_number(
@@ -71,33 +77,25 @@ def transform_chef_number(
 
             if team[current] + adjustment == team[right_neighbor]:
                 pair_count += 1
-        
+
         if pair_count == chef_number:
             return_value.append(team)
 
     return return_value
 
+
 # EMPATH
 def transform_empath_number(
-    evil_teams: list[list[int]], empath_number: int, source: int, player_count: int
+    evil_teams: list[list[int]], empath_number: int, neighbors: list[int]
 ) -> list[list[int]]:
     return_value: list[list[int]] = []
-    left_neighbor =  source - 1
-    if left_neighbor < 0:
-        left_neighbor = player_count - 1
-
-    right_neighbor = source + 1
-    if right_neighbor == player_count:
-        right_neighbor = 0
-
     for team in evil_teams:
         evil_neighbors = 0
         for possible_neighbor in team:
-            if possible_neighbor in [left_neighbor, right_neighbor]:
-                evil_neighbors += 1            
-        
+            if possible_neighbor in neighbors:
+                evil_neighbors += 1
+
         if evil_neighbors == empath_number:
             return_value.append(team)
 
     return return_value
-
