@@ -141,7 +141,9 @@ def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
                         for m in range(l + 1, PLAYER_COUNT):
                             possible_teams.append([i, j, k, l, m])
 
-
+# TODO: Review for making sure that each type of game is weighted correctly
+# Currently weights the spy/recluse/both + niether as if they are equal (1, 1, 1)
+# Should be (1/8, 3/8, 4/8)
 def get_player_appearances(
     possible_teams: list[list[int]], target_player: int
 ) -> float:
@@ -154,7 +156,6 @@ def get_player_appearances(
             total += 1
 
     return total / len(possible_teams)
-
 
 def get_all_posibilities(num_of_info: int):
     num_possibilities = 2**num_of_info
