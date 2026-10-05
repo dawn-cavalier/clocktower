@@ -15,7 +15,7 @@ PLAYER_COUNT = 12
 # TODO: Is this the right name?
 def build_world(
     info_indices: list[int], learned_info: list[Info], evil_count: int
-) -> list[float]:
+):
     possible_teams: list[list[int]] = []
     # Spy Worlds
     add_all_possible_teams(possible_teams, evil_count-1)
@@ -100,14 +100,7 @@ def build_world(
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
-    player_scores: list[float] = [
-        trust_score
-        * get_player_appearances(possible_teams=possible_teams, target_player=player_id)
-        for player_id in range(PLAYER_COUNT)
-    ]
-
-    print(f"{info_indices} ({trust_score}): {len(possible_teams)}")
-    return player_scores
+    return (possible_teams, trust_score)
 
 
 def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):

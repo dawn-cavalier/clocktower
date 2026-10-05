@@ -1,5 +1,5 @@
 from info import Info, InfoType
-from helper import build_world, get_all_posibilities
+from helper import build_world, get_all_posibilities, get_player_appearances
 
 PLAYER_COUNT = 12
 EVIL_COUNT = 3
@@ -29,10 +29,10 @@ def main() -> None:
     # new_info.info_trust = 1.0
     # learned_info.append(new_info)
 
-    # CHEF
-    new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=2)
-    new_info.info_trust = 1.0
-    learned_info.append(new_info)
+    # # CHEF
+    # new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=2)
+    # new_info.info_trust = 1.0
+    # learned_info.append(new_info)
 
     # # NOBLE
     # new_info = Info(info_type=InfoType.EXACTLY_ONE_EVIL, source=0, day=0, target_players=[2, 5, 7])
@@ -43,7 +43,20 @@ def main() -> None:
 
     player_scores = [0.0 for _ in range(PLAYER_COUNT)]
     for possibility in possibilities:
-        possibility_player_scores = build_world(possibility, learned_info, EVIL_COUNT)
+        possible_teams, trust_score = build_world(possibility, learned_info, EVIL_COUNT)
+
+        possibility_player_scores: list[float] =[0.0 for _ in range(PLAYER_COUNT)]
+
+        if trust_score > 0.0:
+            possibility_player_scores = [
+                trust_score
+                * get_player_appearances(
+                    possible_teams=possible_teams, target_player=player_id
+                )
+                for player_id in range(PLAYER_COUNT)
+            ]
+
+        print(f"{possibility} ({trust_score}): {len(possible_teams)}")
 
         for i, player_score in enumerate(possibility_player_scores):
             player_scores[i] += player_score
