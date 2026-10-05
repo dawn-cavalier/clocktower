@@ -106,7 +106,7 @@ def build_world(
         for player_id in range(PLAYER_COUNT)
     ]
 
-    # print(f"{info_indices} ({trust_score}): {len(possible_teams)}")
+    print(f"{info_indices} ({trust_score}): {len(possible_teams)}")
     return player_scores
 
 
@@ -141,9 +141,6 @@ def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
                         for m in range(l + 1, PLAYER_COUNT):
                             possible_teams.append([i, j, k, l, m])
 
-# TODO: Review for making sure that each type of game is weighted correctly
-# Currently weights the spy/recluse/both + niether as if they are equal (1, 1, 1)
-# Should be (1/8, 3/8, 4/8)
 def get_player_appearances(
     possible_teams: list[list[int]], target_player: int
 ) -> float:
@@ -151,11 +148,38 @@ def get_player_appearances(
         return 0
 
     total = 0
+    present_worlds: list[int] = []
+    for team in possible_teams:
+        if len(team) not in present_worlds:
+            present_worlds.append(len(team))
+
+    # TODO: Remove magic numbers
     for team in possible_teams:
         if target_player in team:
-            total += 1
+            world_type_count = len(
+                [t for t in possible_teams if len(t) == len(team)])
 
-    return total / len(possible_teams)
+            if 2 in present_worlds and 3 in present_worlds and 4 in present_worlds:
+                if len(team) == 2:
+                    total += (1 / 8) / world_type_count
+                if len(team) == 3:
+                    total += (4 / 8) / world_type_count
+                if len(team) == 4:
+                    total += (3 / 8) / world_type_count
+
+            # TODO: double check this
+            elif 2 not in present_worlds and 3 in present_worlds and 4 in present_worlds:
+                if len(team) == 3:
+                    total += (4 / 7) / world_type_count
+                if len(team) == 4:
+                    total += (3 / 7) / world_type_count
+
+            elif 2 not in present_worlds and 3 not in present_worlds and 4 in present_worlds:
+                if len(team) == 4:
+                    total += 1.0 / world_type_count
+
+    return total
+
 
 def get_all_posibilities(num_of_info: int):
     num_possibilities = 2**num_of_info

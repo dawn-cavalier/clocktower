@@ -24,15 +24,15 @@ def main() -> None:
     new_info.info_trust = 1.0
     learned_info.append(new_info)
 
-    # EMPATH
-    new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=0, number=2)
-    new_info.info_trust = 1.0
-    learned_info.append(new_info)
-
-    # # CHEF
-    # new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=0)
+    # # EMPATH
+    # new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=0, number=2)
     # new_info.info_trust = 1.0
     # learned_info.append(new_info)
+
+    # CHEF
+    new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=2)
+    new_info.info_trust = 1.0
+    learned_info.append(new_info)
 
     # # NOBLE
     # new_info = Info(info_type=InfoType.EXACTLY_ONE_EVIL, source=0, day=0, target_players=[2, 5, 7])
