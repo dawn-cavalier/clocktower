@@ -1,11 +1,12 @@
 from info import Info, InfoType
 from transformers import (
     transform_chef_number,
-    transform_player_evil,
     transform_player_good,
+    transform_player_evil,
     transform_at_least_one_good,
     transform_at_least_one_evil,
     transform_exactly_one_evil,
+    transform_empath_number,
 )
 
 PLAYER_COUNT = 12
@@ -16,7 +17,12 @@ def build_world(
     info_indices: list[int], learned_info: list[Info], evil_count: int
 ) -> list[float]:
     possible_teams: list[list[int]] = []
-    get_all_possible_teams(possible_teams, evil_count)
+    # Spy Worlds
+    add_all_possible_teams(possible_teams, evil_count-1)
+    # Spy + Recluse / Normal Worlds
+    add_all_possible_teams(possible_teams, evil_count)
+    # Recluse Worlds
+    add_all_possible_teams(possible_teams, evil_count+1)
 
     trust_score = 1.0
 
@@ -41,43 +47,54 @@ def build_world(
                 continue
             case InfoType.ALIGNMENT_KNOWN:
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
 
                 if info.is_good:
                     possible_teams = transform_player_good(
-                        possible_teams, info.target_players[0]
+                        evil_teams=possible_teams, target_player=info.target_players[0]
                     )
                 else:
                     possible_teams = transform_player_evil(
-                        possible_teams, info.target_players[0]
+                        evil_teams=possible_teams, target_player=info.target_players[0]
                     )
+            case InfoType.AT_LEAST_ONE_GOOD:
+                if info.target_players is None:
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
+
+                possible_teams = transform_at_least_one_good(
+                    evil_teams=possible_teams, target_players=info.target_players
+                )
+            case InfoType.AT_LEAST_ONE_EVIL:
+                if info.target_players is None:
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
+
+                possible_teams = transform_at_least_one_evil(
+                    evil_teams=possible_teams, target_players=info.target_players
+                )
+            case InfoType.EXACTLY_ONE_EVIL:
+                if info.target_players is None:
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
+
+                possible_teams = transform_exactly_one_evil(
+                    evil_teams=possible_teams, target_players=info.target_players
+                )
             case InfoType.NUMBER_CHEF:
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
 
                 possible_teams = transform_chef_number(
-                    possible_teams, info.number, PLAYER_COUNT
+                    evil_teams=possible_teams, chef_number=info.number, player_count=PLAYER_COUNT
                 )
-            case InfoType.AT_LEAST_ONE_GOOD:
-                if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+            case InfoType.NUMBER_EMPATH:
+                if info.number is None:
+                    raise ValueError(f"{info.info_type.name} has no number!")
 
-                possible_teams = transform_at_least_one_good(
-                    possible_teams, info.target_players
-                )
-            case InfoType.AT_LEAST_ONE_EVIL:
-                if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
-
-                possible_teams = transform_at_least_one_evil(
-                    possible_teams, info.target_players
-                )
-            case InfoType.EXACTLY_ONE_EVIL:
-                if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
-
-                possible_teams = transform_exactly_one_evil(
-                    possible_teams, info.target_players
+                possible_teams = transform_empath_number(
+                    evil_teams=possible_teams, empath_number=info.number, source=info.source, player_count=PLAYER_COUNT
                 )
 
             case _:
@@ -93,7 +110,11 @@ def build_world(
     return player_scores
 
 
-def get_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
+def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
+    if evil_count == 1:
+        for i in range(PLAYER_COUNT):
+            possible_teams.append([i])
+
     if evil_count == 2:
         for i in range(PLAYER_COUNT):
             for j in range(i + 1, PLAYER_COUNT):
@@ -131,7 +152,7 @@ def get_player_appearances(
     for team in possible_teams:
         if target_player in team:
             total += 1
-    
+
     return total / len(possible_teams)
 
 

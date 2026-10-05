@@ -6,7 +6,7 @@ def transform_player_good(
 ) -> list[list[int]]:
     return [key for key in evil_teams if target_player not in key]
 
-# UNDERTAKER, RAVENKEEPER
+# UNDERTAKER, RAVENKEEPER, SLAYER
 def transform_player_evil(
     evil_teams: list[list[int]], target_player: int
 ) -> list[list[int]]:
@@ -55,7 +55,6 @@ def transform_exactly_one_evil(evil_teams: list[list[int]], target_players: list
     return new_evil_teams
 
 # CHEF
-# TODO: Handle evil teams of different sizes
 def transform_chef_number(
     evil_teams: list[list[int]], chef_number: int, player_count: int
 ) -> list[list[int]]:
@@ -77,3 +76,28 @@ def transform_chef_number(
             return_value.append(team)
 
     return return_value
+
+# EMPATH
+def transform_empath_number(
+    evil_teams: list[list[int]], empath_number: int, source: int, player_count: int
+) -> list[list[int]]:
+    return_value: list[list[int]] = []
+    left_neighbor =  source - 1
+    if left_neighbor < 0:
+        left_neighbor = player_count - 1
+
+    right_neighbor = source + 1
+    if right_neighbor == player_count:
+        right_neighbor = 0
+
+    for team in evil_teams:
+        evil_neighbors = 0
+        for possible_neighbor in team:
+            if possible_neighbor in [left_neighbor, right_neighbor]:
+                evil_neighbors += 1            
+        
+        if evil_neighbors == empath_number:
+            return_value.append(team)
+
+    return return_value
+
