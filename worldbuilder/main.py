@@ -1,12 +1,18 @@
 from worldbuilder.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
-from worldbuilder.evilTeamHelper import get_possible_evil_teams, get_all_posibilities, get_player_appearances
+from worldbuilder.evilTeamHelper import (
+    get_possible_evil_teams,
+    get_all_posibilities,
+    get_player_appearances,
+)
+from worldbuilder.helper import get_info_trust
 
 PLAYER_COUNT = 12
 EVIL_COUNT = 3
 
 
 def main() -> None:
-    test1()
+    return
+
 
 def test1():
     # Append only list!
@@ -27,32 +33,14 @@ def test1():
     new_info.info_trust = 1.0
     learned_info.append(new_info)
 
-    # # EMPATH
-    # new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=0, number=1, target_players=[1,11])
-    # new_info.info_trust = 1.0
-    # learned_info.append(new_info)
-
-    # new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=1, number=0, target_players=[2,11])
-    # new_info.info_trust = 1.0
-    # learned_info.append(new_info)
-
-    # # CHEF
-    # new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=2)
-    # new_info.info_trust = 1.0
-    # learned_info.append(new_info)
-
-    # # NOBLE
-    # new_info = Info(info_type=InfoType.EXACTLY_ONE_EVIL, source=0, day=0, target_players=[2, 5, 7])
-    # new_info.info_trust = 1.0
-    # learned_info.append(new_info)
-
     possibilities = get_all_posibilities(len(learned_info[1:]))
 
     player_scores = [0.0 for _ in range(PLAYER_COUNT)]
     for possibility in possibilities:
-        possible_teams, info_trust = get_possible_evil_teams(possibility, learned_info, EVIL_COUNT)
+        info_trust = get_info_trust(possibility, learned_info)
+        possible_teams = get_possible_evil_teams(possibility, learned_info, EVIL_COUNT)
 
-        possibility_player_scores: list[float] =[0.0 for _ in range(PLAYER_COUNT)]
+        possibility_player_scores: list[float] = [0.0 for _ in range(PLAYER_COUNT)]
 
         if info_trust > 0.0:
             possibility_player_scores = [
