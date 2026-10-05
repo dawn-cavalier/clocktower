@@ -1,10 +1,9 @@
+from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
 from worldbuilder.evilTeamHelper import (
     get_possible_evil_teams,
-    get_all_posibilities,
     get_player_appearances,
 )
-from worldbuilder.helper import get_info_trust
 
 PLAYER_COUNT = 12
 EVIL_COUNT = 3

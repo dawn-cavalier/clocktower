@@ -12,7 +12,9 @@ from worldbuilder.evilTeamTransformers import (
 PLAYER_COUNT = 12
 
 
-def get_possible_evil_teams(info_indices: list[int], learned_info: list[EvilTeamInfo], evil_count: int):
+def get_possible_evil_teams(
+    info_indices: list[int], learned_info: list[EvilTeamInfo], evil_count: int
+):
     possible_teams: list[list[int]] = []
     # Spy Worlds
     add_all_possible_teams(possible_teams, evil_count - 1)
@@ -174,19 +176,3 @@ def get_player_appearances(
                     total += 1.0 / world_type_count
 
     return total
-
-
-def get_all_posibilities(num_of_info: int):
-    num_possibilities = 2**num_of_info
-    possibilities: list[list[int]] = []
-
-    for possibility_i in range(num_possibilities):
-        new_possibility: list[int] = []
-        for bit in range(num_of_info):
-            if possibility_i >> bit & 1:
-                new_possibility.append(bit + 1)
-            else:
-                new_possibility.append(-(bit + 1))
-        possibilities.append(new_possibility)
-
-    return possibilities
