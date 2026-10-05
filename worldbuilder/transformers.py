@@ -99,3 +99,16 @@ def transform_empath_number(
             return_value.append(team)
 
     return return_value
+
+
+# FORTUNE TELLER
+def transform_fortune_teller_response(
+    evil_teams: list[list[int]], is_yes: bool, target_players: list[int]
+):
+    if is_yes:
+        return_value = transform_at_least_one_evil(
+            evil_teams=evil_teams, target_players=target_players
+        )
+        return return_value
+
+    return evil_teams

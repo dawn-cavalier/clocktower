@@ -99,6 +99,15 @@ def build_world(
                 possible_teams = transform_empath_number(
                     evil_teams=possible_teams, empath_number=info.number, neighbors=info.target_players
                 )
+            case InfoType.FORTUNE_TELLER_RESPONSE:
+                if info.is_yes is None:
+                    raise ValueError(
+                        f"{info.info_type.name} has no yes or no!")
+                if info.target_players is None:
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
+
+                
 
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")

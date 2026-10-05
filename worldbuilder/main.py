@@ -6,6 +6,9 @@ EVIL_COUNT = 3
 
 
 def main() -> None:
+    test1()
+
+def test1():
     # Append only list!
     learned_info: list[Info] = []
 
@@ -24,14 +27,14 @@ def main() -> None:
     new_info.info_trust = 1.0
     learned_info.append(new_info)
 
-    # EMPATH
-    new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=0, number=1, target_players=[1,11])
-    new_info.info_trust = 1.0
-    learned_info.append(new_info)
+    # # EMPATH
+    # new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=0, number=1, target_players=[1,11])
+    # new_info.info_trust = 1.0
+    # learned_info.append(new_info)
 
-    new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=1, number=0, target_players=[2,11])
-    new_info.info_trust = 1.0
-    learned_info.append(new_info)
+    # new_info = Info(info_type=InfoType.NUMBER_EMPATH, source=0, day=1, number=0, target_players=[2,11])
+    # new_info.info_trust = 1.0
+    # learned_info.append(new_info)
 
     # # CHEF
     # new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=2)

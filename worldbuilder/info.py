@@ -9,6 +9,7 @@ class InfoType(IntEnum):
     EXACTLY_ONE_EVIL = 3
     NUMBER_CHEF = 4
     NUMBER_EMPATH = 5
+    FORTUNE_TELLER_RESPONSE = 6
 
 
 class Info:
@@ -18,6 +19,7 @@ class Info:
     day: int
     number: int | None
     is_good: bool | None
+    is_yes: bool | None
     target_players: list[int] | None
 
     info_trust = 1.0
@@ -30,6 +32,7 @@ class Info:
         *,
         number: int | None = None,
         is_good: bool | None = None,
+        is_yes: bool | None = None,
         target_players: list[int] | None = None,
     ) -> None:
         self.info_type = info_type
@@ -38,4 +41,5 @@ class Info:
 
         self.number = number
         self.is_good = is_good
+        self.is_yes = is_yes
         self.target_players = target_players
