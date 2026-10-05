@@ -5,32 +5,29 @@ from transformers import (
     transform_player_good,
     transform_at_least_one_good,
     transform_at_least_one_evil,
-    transform_exactly_one_evil
+    transform_exactly_one_evil,
 )
 
 PLAYER_COUNT = 12
-EVIL_COUNT = 3
 
 
-def build_world(info_indices: list[int], learned_info: list[Info]) -> list[float]:
+# TODO: Is this the right name?
+def build_world(
+    info_indices: list[int], learned_info: list[Info], evil_count: int
+) -> list[float]:
     possible_teams: list[list[int]] = []
+    get_all_possible_teams(possible_teams, evil_count)
 
-    # TODO: Handle different evil counts
-    for i in range(PLAYER_COUNT):
-        for j in range(i + 1, PLAYER_COUNT):
-            for k in range(j + 1, PLAYER_COUNT):
-                possible_teams.append([i, j, k])
-
-    score = 1.0
+    trust_score = 1.0
 
     for info_index in info_indices:
         is_inverted = info_index < 0
 
         info = learned_info[abs(info_index)]
         if is_inverted:
-            score = score * (1.0 - info.info_trust)
+            trust_score = trust_score * (1.0 - info.info_trust)
         else:
-            score = score * info.info_trust
+            trust_score = trust_score * info.info_trust
 
         info_index = max(info_index, 0)
         info = learned_info[info_index]
@@ -39,14 +36,13 @@ def build_world(info_indices: list[int], learned_info: list[Info]) -> list[float
         if is_inverted:
             continue
 
- 
         match info.info_type:
             case InfoType.NONE:
                 continue
             case InfoType.ALIGNMENT_KNOWN:
                 if info.target_players is None:
                     raise ValueError(f"{info.info_type.name} has no target players!")
- 
+
                 if info.is_good:
                     possible_teams = transform_player_good(
                         possible_teams, info.target_players[0]
@@ -59,34 +55,70 @@ def build_world(info_indices: list[int], learned_info: list[Info]) -> list[float
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
 
-                possible_teams = transform_chef_number(possible_teams, info.number)
+                possible_teams = transform_chef_number(
+                    possible_teams, info.number, PLAYER_COUNT
+                )
             case InfoType.AT_LEAST_ONE_GOOD:
                 if info.target_players is None:
                     raise ValueError(f"{info.info_type.name} has no target players!")
 
-                possible_teams = transform_at_least_one_good(possible_teams, info.target_players)
+                possible_teams = transform_at_least_one_good(
+                    possible_teams, info.target_players
+                )
             case InfoType.AT_LEAST_ONE_EVIL:
                 if info.target_players is None:
                     raise ValueError(f"{info.info_type.name} has no target players!")
 
-                possible_teams = transform_at_least_one_evil(possible_teams, info.target_players)
+                possible_teams = transform_at_least_one_evil(
+                    possible_teams, info.target_players
+                )
             case InfoType.EXACTLY_ONE_EVIL:
                 if info.target_players is None:
                     raise ValueError(f"{info.info_type.name} has no target players!")
 
-                possible_teams = transform_exactly_one_evil(possible_teams, info.target_players)
+                possible_teams = transform_exactly_one_evil(
+                    possible_teams, info.target_players
+                )
 
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
     player_scores: list[float] = [
-        score
+        trust_score
         * get_player_appearances(possible_teams=possible_teams, target_player=player_id)
         for player_id in range(PLAYER_COUNT)
     ]
 
-    print(f"{info_indices} ({score}): {len(possible_teams)}/220")
+    # print(f"{info_indices} ({trust_score}): {len(possible_teams)}")
     return player_scores
+
+
+def get_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
+    if evil_count == 2:
+        for i in range(PLAYER_COUNT):
+            for j in range(i + 1, PLAYER_COUNT):
+                possible_teams.append([i, j])
+
+    if evil_count == 3:
+        for i in range(PLAYER_COUNT):
+            for j in range(i + 1, PLAYER_COUNT):
+                for k in range(j + 1, PLAYER_COUNT):
+                    possible_teams.append([i, j, k])
+
+    if evil_count == 4:
+        for i in range(PLAYER_COUNT):
+            for j in range(i + 1, PLAYER_COUNT):
+                for k in range(j + 1, PLAYER_COUNT):
+                    for l in range(k + 1, PLAYER_COUNT):
+                        possible_teams.append([i, j, k, l])
+
+    if evil_count == 5:
+        for i in range(PLAYER_COUNT):
+            for j in range(i + 1, PLAYER_COUNT):
+                for k in range(j + 1, PLAYER_COUNT):
+                    for l in range(k + 1, PLAYER_COUNT):
+                        for m in range(l + 1, PLAYER_COUNT):
+                            possible_teams.append([i, j, k, l, m])
 
 
 def get_player_appearances(
@@ -96,6 +128,7 @@ def get_player_appearances(
     for team in possible_teams:
         if target_player in team:
             total += 1
+
     return total / len(possible_teams)
 
 

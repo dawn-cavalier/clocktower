@@ -1,19 +1,18 @@
-PLAYER_COUNT = 12
-EVIL_COUNT = 3
+"""Module providing the various possible world transformations."""
 
-
+# VIRGIN, UNDERTAKER, RAVENKEEPER
 def transform_player_good(
     evil_teams: list[list[int]], target_player: int
 ) -> list[list[int]]:
     return [key for key in evil_teams if target_player not in key]
 
-
+# UNDERTAKER, RAVENKEEPER
 def transform_player_evil(
     evil_teams: list[list[int]], target_player: int
 ) -> list[list[int]]:
     return [key for key in evil_teams if target_player in key]
 
-
+# LIBRARIAN, WASHERWOMAN 
 def transform_at_least_one_good(evil_teams: list[list[int]], target_players: list[int]):
     new_evil_teams: list[list[int]] = []
     for team in evil_teams:
@@ -29,7 +28,7 @@ def transform_at_least_one_good(evil_teams: list[list[int]], target_players: lis
 
     return new_evil_teams
 
-
+# INVESTIGATOR
 def transform_at_least_one_evil(evil_teams: list[list[int]], target_players: list[int]):
     new_evil_teams: list[list[int]] = []
     # TODO: Review this for 1 demon 1 minion games
@@ -41,6 +40,7 @@ def transform_at_least_one_evil(evil_teams: list[list[int]], target_players: lis
 
     return new_evil_teams
 
+# NOBLE
 def transform_exactly_one_evil(evil_teams: list[list[int]], target_players: list[int]):
     new_evil_teams: list[list[int]] = []
     for team in evil_teams:
@@ -54,65 +54,74 @@ def transform_exactly_one_evil(evil_teams: list[list[int]], target_players: list
 
     return new_evil_teams
 
-
+# CHEF
+# TODO: Handle evil teams of different sizes
 def transform_chef_number(
-    evil_teams: list[list[int]], chef_number: int
+    evil_teams: list[list[int]], chef_number: int, player_count: int
 ) -> list[list[int]]:
     return_value: list[list[int]] = []
 
     match chef_number:
         case 0:
-            for key in evil_teams:
-                if (
-                    key[0] + 1 == key[1]
-                    or key[1] + 1 == key[2]
-                    or key[2] + 1 - PLAYER_COUNT == key[0]
-                ):
+            for team in evil_teams:
+                valid = True
+                for current, _ in enumerate(team):
+                    right_neighbor = current + 1
+                    adjustment = 1
+                    if right_neighbor == len(team):
+                        right_neighbor = 0
+                        adjustment -= player_count
+
+                    if team[current] + adjustment == team[right_neighbor]:
+                        valid = False
+                        break
+
+                if not valid:
                     continue
 
                 return_value += [
-                    (key),
+                    (team),
                 ]
         case 1:
-            for key in evil_teams:
+            for team in evil_teams:
                 # Right/ no overflow
-                if key[0] + 2 == key[1] + 1 == key[2]:
+                if team[0] + 2 == team[1] + 1 == team[2]:
                     continue
 
                 # Center / overflow
-                if key[0] + 1 == key[1] == key[2] + 1 - PLAYER_COUNT:
+                if team[0] + 1 == team[1] == team[2] + 1 - player_count:
                     continue
 
                 # Left / overflow
-                if key[0] == key[1] + 2 - PLAYER_COUNT == key[2] + 1 - PLAYER_COUNT:
+                if team[0] == team[1] + 2 - player_count == team[2] + 1 - player_count:
                     continue
 
                 if (
-                    key[0] + 1 == key[1]
-                    or key[1] + 1 == key[2]
-                    or key[2] + 1 - PLAYER_COUNT == key[0]
+                    team[0] + 1 == team[1]
+                    or team[1] + 1 == team[2]
+                    or team[2] + 1 - player_count == team[0]
                 ):
                     return_value += [
-                        (key),
+                        (team),
                     ]
         case 2:
-            for key in evil_teams:
+            for team in evil_teams:
                 # Right/ no overflow
-                if key[0] + 2 == key[1] + 1 == key[2]:
+                if team[0] + 2 == team[1] + 1 == team[2]:
                     return_value += [
-                        (key),
+                        (team),
                     ]
 
                 # Center / overflow
-                if key[0] + 1 == key[1] == key[2] + 2 - PLAYER_COUNT:
+                if team[0] + 1 == team[1] == team[2] + 2 - player_count:
                     return_value += [
-                        (key),
+                        (team),
                     ]
 
                 # Left / overflow
-                if key[0] == key[1] + 2 - PLAYER_COUNT == key[2] + 1 - PLAYER_COUNT:
+                if team[0] == team[1] + 2 - player_count == team[2] + 1 - player_count:
                     return_value += [
-                        (key),
+                        (team),
                     ]
         case _:
             raise ValueError("Invalid Chef Number")
