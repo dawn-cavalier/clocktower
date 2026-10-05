@@ -61,69 +61,19 @@ def transform_chef_number(
 ) -> list[list[int]]:
     return_value: list[list[int]] = []
 
-    match chef_number:
-        case 0:
-            for team in evil_teams:
-                valid = True
-                for current, _ in enumerate(team):
-                    right_neighbor = current + 1
-                    adjustment = 1
-                    if right_neighbor == len(team):
-                        right_neighbor = 0
-                        adjustment -= player_count
+    for team in evil_teams:
+        pair_count = 0
+        for current, _ in enumerate(team):
+            right_neighbor = current + 1
+            adjustment = 1
+            if right_neighbor == len(team):
+                right_neighbor = 0
+                adjustment -= player_count
 
-                    if team[current] + adjustment == team[right_neighbor]:
-                        valid = False
-                        break
-
-                if not valid:
-                    continue
-
-                return_value += [
-                    (team),
-                ]
-        case 1:
-            for team in evil_teams:
-                # Right/ no overflow
-                if team[0] + 2 == team[1] + 1 == team[2]:
-                    continue
-
-                # Center / overflow
-                if team[0] + 1 == team[1] == team[2] + 1 - player_count:
-                    continue
-
-                # Left / overflow
-                if team[0] == team[1] + 2 - player_count == team[2] + 1 - player_count:
-                    continue
-
-                if (
-                    team[0] + 1 == team[1]
-                    or team[1] + 1 == team[2]
-                    or team[2] + 1 - player_count == team[0]
-                ):
-                    return_value += [
-                        (team),
-                    ]
-        case 2:
-            for team in evil_teams:
-                # Right/ no overflow
-                if team[0] + 2 == team[1] + 1 == team[2]:
-                    return_value += [
-                        (team),
-                    ]
-
-                # Center / overflow
-                if team[0] + 1 == team[1] == team[2] + 2 - player_count:
-                    return_value += [
-                        (team),
-                    ]
-
-                # Left / overflow
-                if team[0] == team[1] + 2 - player_count == team[2] + 1 - player_count:
-                    return_value += [
-                        (team),
-                    ]
-        case _:
-            raise ValueError("Invalid Chef Number")
+            if team[current] + adjustment == team[right_neighbor]:
+                pair_count += 1
+        
+        if pair_count == chef_number:
+            return_value.append(team)
 
     return return_value

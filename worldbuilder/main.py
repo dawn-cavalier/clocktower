@@ -25,14 +25,14 @@ def main() -> None:
     learned_info.append(new_info)
 
     # CHEF
-    new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=0)
+    new_info = Info(info_type=InfoType.NUMBER_CHEF, source=0, day=0, number=3)
     new_info.info_trust = 1.0
     learned_info.append(new_info)
 
-    # NOBLE
-    new_info = Info(info_type=InfoType.EXACTLY_ONE_EVIL, source=0, day=0, target_players=[2, 5, 7])
-    new_info.info_trust = 1.0
-    learned_info.append(new_info)
+    # # NOBLE
+    # new_info = Info(info_type=InfoType.EXACTLY_ONE_EVIL, source=0, day=0, target_players=[2, 5, 7])
+    # new_info.info_trust = 1.0
+    # learned_info.append(new_info)
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
 
@@ -40,14 +40,15 @@ def main() -> None:
     for possibility in possibilities:
         possibility_player_scores = build_world(possibility, learned_info, EVIL_COUNT)
 
-        for i, player_score in enumerate(possibility_player_scores):
-            player_scores[i] += player_score*0.25
+        # for i, player_score in enumerate(possibility_player_scores):
+        #     player_scores[i] += player_score*0.25
 
         # If Recluse
         possibility_player_scores = build_world(possibility, learned_info, EVIL_COUNT+1)
 
         for i, player_score in enumerate(possibility_player_scores):
-            player_scores[i] += player_score*0.75
+            player_scores[i] += player_score
+            # player_scores[i] += player_score*0.75
 
 
     print([f"{score:.2f}" for score in player_scores])

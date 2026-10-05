@@ -124,11 +124,14 @@ def get_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
 def get_player_appearances(
     possible_teams: list[list[int]], target_player: int
 ) -> float:
+    if len(possible_teams) == 0:
+        return 0
+
     total = 0
     for team in possible_teams:
         if target_player in team:
             total += 1
-
+    
     return total / len(possible_teams)
 
 
