@@ -1,5 +1,5 @@
-from info import Info, InfoType
-from transformers import (
+from worldbuilder.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
+from worldbuilder.evilTeamTransformers import (
     transform_chef_number,
     transform_player_good,
     transform_player_evil,
@@ -12,17 +12,14 @@ from transformers import (
 PLAYER_COUNT = 12
 
 
-# TODO: Is this the right name?
-def build_world(
-    info_indices: list[int], learned_info: list[Info], evil_count: int
-):
+def get_possible_evil_teams(info_indices: list[int], learned_info: list[EvilTeamInfo], evil_count: int):
     possible_teams: list[list[int]] = []
     # Spy Worlds
-    add_all_possible_teams(possible_teams, evil_count-1)
+    add_all_possible_teams(possible_teams, evil_count - 1)
     # Spy + Recluse / Normal Worlds
     add_all_possible_teams(possible_teams, evil_count)
     # Recluse Worlds
-    add_all_possible_teams(possible_teams, evil_count+1)
+    add_all_possible_teams(possible_teams, evil_count + 1)
 
     trust_score = 1.0
 
@@ -35,6 +32,8 @@ def build_world(
         else:
             trust_score = trust_score * info.info_trust
 
+        # TODO: Account for player trust
+
         info_index = max(info_index, 0)
         info = learned_info[info_index]
 
@@ -43,12 +42,11 @@ def build_world(
             continue
 
         match info.info_type:
-            case InfoType.NONE:
+            case EvilTeamInfoType.NONE:
                 continue
-            case InfoType.ALIGNMENT_KNOWN:
+            case EvilTeamInfoType.ALIGNMENT_KNOWN:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 if info.is_good:
                     possible_teams = transform_player_good(
@@ -58,56 +56,52 @@ def build_world(
                     possible_teams = transform_player_evil(
                         evil_teams=possible_teams, target_player=info.target_players[0]
                     )
-            case InfoType.AT_LEAST_ONE_GOOD:
+            case EvilTeamInfoType.AT_LEAST_ONE_GOOD:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_at_least_one_good(
                     evil_teams=possible_teams, target_players=info.target_players
                 )
-            case InfoType.AT_LEAST_ONE_EVIL:
+            case EvilTeamInfoType.AT_LEAST_ONE_EVIL:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_at_least_one_evil(
                     evil_teams=possible_teams, target_players=info.target_players
                 )
-            case InfoType.EXACTLY_ONE_EVIL:
+            case EvilTeamInfoType.EXACTLY_ONE_EVIL:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_exactly_one_evil(
                     evil_teams=possible_teams, target_players=info.target_players
                 )
-            case InfoType.NUMBER_CHEF:
+            case EvilTeamInfoType.NUMBER_CHEF:
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
 
                 possible_teams = transform_chef_number(
-                    evil_teams=possible_teams, chef_number=info.number, player_count=PLAYER_COUNT
+                    evil_teams=possible_teams,
+                    chef_number=info.number,
+                    player_count=PLAYER_COUNT,
                 )
-            case InfoType.NUMBER_EMPATH:
+            case EvilTeamInfoType.NUMBER_EMPATH:
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_empath_number(
-                    evil_teams=possible_teams, empath_number=info.number, neighbors=info.target_players
+                    evil_teams=possible_teams,
+                    empath_number=info.number,
+                    neighbors=info.target_players,
                 )
-            case InfoType.FORTUNE_TELLER_RESPONSE:
+            case EvilTeamInfoType.FORTUNE_TELLER_RESPONSE:
                 if info.is_yes is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no yes or no!")
+                    raise ValueError(f"{info.info_type.name} has no yes or no!")
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
-
-                
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
@@ -146,6 +140,7 @@ def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
                         for m in range(l + 1, PLAYER_COUNT):
                             possible_teams.append([i, j, k, l, m])
 
+
 def get_player_appearances(
     possible_teams: list[list[int]], target_player: int
 ) -> float:
@@ -161,8 +156,7 @@ def get_player_appearances(
     # TODO: Remove magic numbers
     for team in possible_teams:
         if target_player in team:
-            world_type_count = len(
-                [t for t in possible_teams if len(t) == len(team)])
+            world_type_count = len([t for t in possible_teams if len(t) == len(team)])
 
             if 2 in present_worlds and 3 in present_worlds and 4 in present_worlds:
                 if len(team) == 2:
@@ -172,14 +166,20 @@ def get_player_appearances(
                 if len(team) == 4:
                     total += (3 / 8) / world_type_count
 
-            # TODO: double check this
-            elif 2 not in present_worlds and 3 in present_worlds and 4 in present_worlds:
+            # TODO: double check these numbers
+            elif (
+                2 not in present_worlds and 3 in present_worlds and 4 in present_worlds
+            ):
                 if len(team) == 3:
                     total += (4 / 7) / world_type_count
                 if len(team) == 4:
                     total += (3 / 7) / world_type_count
 
-            elif 2 not in present_worlds and 3 not in present_worlds and 4 in present_worlds:
+            elif (
+                2 not in present_worlds
+                and 3 not in present_worlds
+                and 4 in present_worlds
+            ):
                 if len(team) == 4:
                     total += 1.0 / world_type_count
 

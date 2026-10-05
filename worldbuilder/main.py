@@ -1,5 +1,5 @@
-from info import Info, InfoType
-from helper import build_world, get_all_posibilities, get_player_appearances
+from worldbuilder.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
+from worldbuilder.evilTeamHelper import get_possible_evil_teams, get_all_posibilities, get_player_appearances
 
 PLAYER_COUNT = 12
 EVIL_COUNT = 3
@@ -10,15 +10,15 @@ def main() -> None:
 
 def test1():
     # Append only list!
-    learned_info: list[Info] = []
+    learned_info: list[EvilTeamInfo] = []
 
     # Set index zero to be a NONE info object
-    learned_info.append(Info(info_type=InfoType.NONE, source=-1, day=0))
+    learned_info.append(EvilTeamInfo(info_type=EvilTeamInfoType.NONE, source=-1, day=0))
 
     ### Learned information
     # Self is good
-    new_info = Info(
-        info_type=InfoType.ALIGNMENT_KNOWN,
+    new_info = EvilTeamInfo(
+        info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
         source=0,
         day=0,
         is_good=True,
@@ -50,7 +50,7 @@ def test1():
 
     player_scores = [0.0 for _ in range(PLAYER_COUNT)]
     for possibility in possibilities:
-        possible_teams, info_trust = build_world(possibility, learned_info, EVIL_COUNT)
+        possible_teams, info_trust = get_possible_evil_teams(possibility, learned_info, EVIL_COUNT)
 
         possibility_player_scores: list[float] =[0.0 for _ in range(PLAYER_COUNT)]
 

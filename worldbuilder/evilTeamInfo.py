@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 
-class InfoType(IntEnum):
+class EvilTeamInfoType(IntEnum):
     NONE = -1
     ALIGNMENT_KNOWN = 0
     AT_LEAST_ONE_GOOD = 1
@@ -12,8 +12,8 @@ class InfoType(IntEnum):
     FORTUNE_TELLER_RESPONSE = 6
 
 
-class Info:
-    info_type: InfoType
+class EvilTeamInfo:
+    info_type: EvilTeamInfoType
     source: int
     invert: bool
     day: int
@@ -26,7 +26,7 @@ class Info:
 
     def __init__(
         self,
-        info_type: InfoType,
+        info_type: EvilTeamInfoType,
         source: int,
         day: int,
         *,
