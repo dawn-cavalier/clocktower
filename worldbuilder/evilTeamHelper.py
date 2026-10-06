@@ -39,6 +39,8 @@ def get_possible_evil_teams(
             case EvilTeamInfoType.ALIGNMENT_KNOWN:
                 if info.target_players is None:
                     raise ValueError(f"{info.info_type.name} has no target players!")
+                if info.is_good is None:
+                    raise ValueError(f"{info.info_type.name} has no stated alignment!")
 
                 if info.is_good:
                     possible_teams = transform_player_good(
@@ -69,7 +71,7 @@ def get_possible_evil_teams(
                 possible_teams = transform_exactly_one_evil(
                     evil_teams=possible_teams, target_players=info.target_players
                 )
-            case EvilTeamInfoType.NUMBER_CHEF:
+            case EvilTeamInfoType.CHEF_NUMBER:
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
 
@@ -78,7 +80,7 @@ def get_possible_evil_teams(
                     chef_number=info.number,
                     player_count=PLAYER_COUNT,
                 )
-            case EvilTeamInfoType.NUMBER_EMPATH:
+            case EvilTeamInfoType.EMPATH_NUMBER:
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
                 if info.target_players is None:
@@ -89,12 +91,6 @@ def get_possible_evil_teams(
                     empath_number=info.number,
                     neighbors=info.target_players,
                 )
-            case EvilTeamInfoType.FORTUNE_TELLER_RESPONSE:
-                if info.is_yes is None:
-                    raise ValueError(f"{info.info_type.name} has no yes or no!")
-                if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
-
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 

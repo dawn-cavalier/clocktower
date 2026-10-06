@@ -7,9 +7,8 @@ class EvilTeamInfoType(Enum):
     AT_LEAST_ONE_GOOD = 1
     AT_LEAST_ONE_EVIL = 2
     EXACTLY_ONE_EVIL = 3
-    NUMBER_CHEF = 4
-    NUMBER_EMPATH = 5
-    FORTUNE_TELLER_RESPONSE = 6
+    CHEF_NUMBER = 4
+    EMPATH_NUMBER = 5
 
 
 class EvilTeamInfo:

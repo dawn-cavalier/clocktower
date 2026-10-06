@@ -1,16 +1,17 @@
-from worldbuilder.evilTeamInfo import EvilTeamInfo
+from worldbuilder.info import Info
+from worldbuilder.rolesEnum import Role
 
 
-def get_info_trust(info_indices: list[int], learned_info: list[EvilTeamInfo]):
+def get_info_trust(info_indices: list[int], learned_info: list[Info]):
     trust_score = 1.0
 
     for info_index in info_indices:
         is_inverted = info_index < 0
-        info = learned_info[abs(info_index)]
+        info_trust = learned_info[abs(info_index)].info_trust
         if is_inverted:
-            trust_score = trust_score * (1.0 - info.info_trust)
+            trust_score = trust_score * (1.0 - info_trust)
         else:
-            trust_score = trust_score * info.info_trust
+            trust_score = trust_score * info_trust
 
     return trust_score
 
@@ -29,3 +30,19 @@ def get_all_posibilities(num_of_info: int):
         possibilities.append(new_possibility)
 
     return possibilities
+
+
+def is_townsfolk(role: Role) -> bool:
+    return Role.ACROBAT <= role <= Role.WASHERWOMAN
+
+
+def is_outsider(role: Role) -> bool:
+    return Role.BARBER <= role <= Role.ZEALOT
+
+
+def is_minion(role: Role) -> bool:
+    return Role.ASSASSIN <= role <= Role.XAAN
+
+
+def is_demon(role: Role) -> bool:
+    return Role.AL_HADIKHIA <= role <= Role.ZOMBUUL

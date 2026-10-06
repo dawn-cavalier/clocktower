@@ -1,6 +1,7 @@
-from enum import Enum
+from enum import IntEnum
 
-class Role(Enum):
+
+class Role(IntEnum):
     NONE = -1
     # TOWNSFOLK
     ACROBAT = 0
@@ -19,7 +20,7 @@ class Role(Enum):
     CLOCKMAKER = 13
     COURTIER = 14
     CULT_LEADER = 15
-    DREAMER  = 16
+    DREAMER = 16
     EMPATH = 17
     ENGINEER = 18
     EXORCIST = 19
@@ -72,6 +73,7 @@ class Role(Enum):
     VILLAGE_IDIOT = 66
     VIRGIN = 67
     WASHERWOMAN = 68
+
     # OUTSIDER
     BARBER = 69
     BUTLER = 70
@@ -96,6 +98,7 @@ class Role(Enum):
     SWEETHEART = 89
     TINKER = 90
     ZEALOT = 91
+
     # Minions
     ASSASSIN = 92
     BARON = 93
@@ -124,6 +127,7 @@ class Role(Enum):
     WIZARD = 116
     WRAITH = 117
     XAAN = 118
+
     # DEMONS
     AL_HADIKHIA = 119
     FANG_GU = 120
