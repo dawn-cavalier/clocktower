@@ -1,7 +1,7 @@
-from enum import IntEnum
+from enum import Enum
 
 
-class EvilTeamInfoType(IntEnum):
+class EvilTeamInfoType(Enum):
     NONE = -1
     ALIGNMENT_KNOWN = 0
     AT_LEAST_ONE_GOOD = 1

@@ -1,7 +1,8 @@
-from enum import IntEnum
+from enum import Enum
 
+from worldbuilder.rolesEnum import Role
 
-class InfoType(IntEnum):
+class InfoType(Enum):
     NONE = -1
     WASHERWOMAN_PING = 0
     LIBRARIAN_PING = 1
@@ -20,5 +21,8 @@ class InfoType(IntEnum):
     PLAYER_NIGHT_DEATH = 14
 
 class Info:
+    info_type: InfoType
+    seen_role: Role
+    target_players: list[int]
     def __init__(self) -> None:
         pass
