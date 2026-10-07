@@ -46,35 +46,37 @@ def main() -> None:
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    # testTBRoles(learned_info=learned_info)
+    testTBRoles(learned_info=learned_info)
 
-    possibilities = get_all_posibilities(
-        len([info for info in learned_info if info.source != -1])
-    )
+    possibilities = get_all_posibilities(len(learned_info[1:]))
+
     player_scores = [0.0 for _ in range(PLAYER_COUNT)]
     for possibility in possibilities:
         info_trust = get_info_trust(possibility, learned_info)
 
         # Get Evil Teams
+        evil_player_score: list[float] = [0.0 for _ in range(PLAYER_COUNT)]
+
+        # TODO: Determine how necessary this is
+        if info_trust <= 0.001:
+            continue
+
         evil_team_info = [info.get_evil_team_info() for info in learned_info]
         possible_evil_teams = get_possible_evil_teams(
             possibility, evil_team_info, EVIL_COUNT
         )
 
-        possibility_player_scores: list[float] = [0.0 for _ in range(PLAYER_COUNT)]
-
-        if info_trust > 0.0:
-            possibility_player_scores = [
-                info_trust
-                * get_player_appearances(
-                    possible_teams=possible_evil_teams, target_player=player_id
-                )
-                for player_id in range(PLAYER_COUNT)
-            ]
+        evil_player_score = [
+            info_trust
+            * get_player_appearances(
+                possible_teams=possible_evil_teams, target_player=player_id
+            )
+            for player_id in range(PLAYER_COUNT)
+        ]
 
         print(f"{possibility} ({info_trust}): {len(possible_evil_teams)}")
 
-        for i, player_score in enumerate(possibility_player_scores):
+        for i, player_score in enumerate(evil_player_score):
             player_scores[i] += player_score
 
     print([f"{score:.2f}" for score in player_scores])
@@ -97,8 +99,8 @@ def testTBRoles(learned_info: list[Info]):
     info.info_trust = 1.0
     learned_info.append(info)
 
-    info = Info(info_type=InfoType.CHEF_NUMBER, day=0, source=0, number=1)
-    info.info_trust = 1.0
+    info = Info(info_type=InfoType.CHEF_NUMBER, day=0, source=0, number=0)
+    info.info_trust = 0.8
     learned_info.append(info)
 
     info = Info(
@@ -108,7 +110,7 @@ def testTBRoles(learned_info: list[Info]):
         seen_roles=[Role.EMPATH],
         target_players=[1, 2],
     )
-    info.info_trust = 1.0
+    info.info_trust = 0.5
     learned_info.append(info)
 
     info = Info(
@@ -118,7 +120,7 @@ def testTBRoles(learned_info: list[Info]):
         target_players=[0, 2],
         number=1,
     )
-    info.info_trust = 1.0
+    info.info_trust = 0.5
     learned_info.append(info)
 
     info = Info(
@@ -127,7 +129,7 @@ def testTBRoles(learned_info: list[Info]):
         source=-1,
         target_players=[10],
     )
-    info.info_trust = 1.0
+    info.info_trust = 0.5
     learned_info.append(info)
 
     info = Info(
@@ -138,7 +140,26 @@ def testTBRoles(learned_info: list[Info]):
         seen_roles=[Role.BARON],
         is_good=False,
     )
+    info.info_trust = 0.5
+    learned_info.append(info)
+
+    info = Info(info_type=InfoType.VIRGIN_TRIGGER, day=3, source=5)
     info.info_trust = 1.0
+    learned_info.append(info)
+
+    info = Info(info_type=InfoType.VIRGIN_EXECUTE, day=3, source=-1, target_players=[3])
+    info.info_trust = 1.0
+    learned_info.append(info)
+
+    info = Info(
+        info_type=InfoType.UNDERTAKER_INFO,
+        day=3,
+        source=2,
+        target_players=[3],
+        seen_roles=[Role.INVESTIGATOR],
+        is_good=True,
+    )
+    info.info_trust = 0.5
     learned_info.append(info)
 
 

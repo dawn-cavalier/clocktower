@@ -173,8 +173,8 @@ class Info:
                     info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
                     source=-1,
                     day=self.day,
-                    target_players=self.target_players,
-                    is_good=self.is_good,
+                    target_players=[self.source],
+                    is_good=True,
                 )
                 new_info.info_trust = 1.0
                 return new_info
