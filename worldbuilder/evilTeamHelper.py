@@ -16,6 +16,7 @@ def get_possible_evil_teams(
     info_indices: list[int], learned_info: list[EvilTeamInfo], evil_count: int
 ):
     possible_teams: list[list[int]] = []
+    # TODO: Make dependent on script
     # Spy Worlds
     add_all_possible_teams(possible_teams, evil_count - 1)
     # Spy + Recluse / Normal Worlds

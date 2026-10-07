@@ -50,23 +50,37 @@ def main() -> None:
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
 
-    player_scores = [0.0 for _ in range(PLAYER_COUNT)]
+    is_evil_scores = [0.0 for _ in range(PLAYER_COUNT)]
+    total_evil_teams = 0
+    is_demon_scores = [0.0 for _ in range(PLAYER_COUNT)]
     for possibility in possibilities:
         info_trust = get_info_trust(possibility, learned_info)
-
-        # Get Evil Teams
-        evil_player_score: list[float] = [0.0 for _ in range(PLAYER_COUNT)]
+        evil_player_scores: list[float] = [0.0 for _ in range(PLAYER_COUNT)]
+        demon_player_scores: list[float] = [0.0 for _ in range(PLAYER_COUNT)]
 
         # TODO: Determine how necessary this is
-        if info_trust <= 0.001:
+        if info_trust <= 0.0:
             continue
 
+        # Get Evil Teams
         evil_team_info = [info.get_evil_team_info() for info in learned_info]
         possible_evil_teams = get_possible_evil_teams(
             possibility, evil_team_info, EVIL_COUNT
         )
 
-        evil_player_score = [
+        # Predict Demon for Evil Teams
+        for team in possible_evil_teams:
+            for player in team:
+                demon_score = 1.0 / len(team)
+
+                demon = player
+                minions = [p for p in team if p is not demon]
+
+                demon_player_scores[player] += demon_score
+
+        ## Print
+        # Evil Player Scores
+        evil_player_scores = [
             info_trust
             * get_player_appearances(
                 possible_teams=possible_evil_teams, target_player=player_id
@@ -74,13 +88,24 @@ def main() -> None:
             for player_id in range(PLAYER_COUNT)
         ]
 
-        print(f"{possibility} ({info_trust}): {len(possible_evil_teams)}")
+        # print(f"{possibility} ({info_trust:.4f}): {len(possible_evil_teams)}")
 
-        for i, player_score in enumerate(evil_player_score):
-            player_scores[i] += player_score
+        for i, player_score in enumerate(evil_player_scores):
+            is_evil_scores[i] += player_score
 
-    print([f"{score:.2f}" for score in player_scores])
-    print(sum(player_scores))
+        # Demon Score Printing
+        for i, player_score in enumerate(demon_player_scores):
+            is_demon_scores[i] += player_score
+
+        total_evil_teams += len(possible_evil_teams)
+
+    print([f"{score:.2f}" for score in is_evil_scores])
+    print(sum(is_evil_scores))
+
+    # Normalization to have it be the range [0.0 - 1.0]
+    is_demon_scores = [score / total_evil_teams for score in is_demon_scores]
+    print([f"{score:.2f}" for score in is_demon_scores])
+    print(sum(is_demon_scores))
 
     return
 
