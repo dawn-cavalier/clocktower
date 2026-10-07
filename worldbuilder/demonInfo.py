@@ -1,15 +1,11 @@
 from enum import IntEnum
 
+from worldbuilder.rolesEnum import Role
+
 
 class DemonInfoType(IntEnum):
     NONE = -1
-    ALIGNMENT_KNOWN = 0
-    AT_LEAST_ONE_GOOD = 1
-    AT_LEAST_ONE_EVIL = 2
-    EXACTLY_ONE_EVIL = 3
-    NUMBER_CHEF = 4
-    NUMBER_EMPATH = 5
-    FORTUNE_TELLER_RESPONSE = 6
+    IS_CHARACTER = 0
 
 
 class DemonInfo:
@@ -17,9 +13,28 @@ class DemonInfo:
     source: int
     invert: bool
     day: int
-    number: int | None
-    is_good: bool | None
+    info_trust: float
+
+    seen_roles: list[Role] | None
     is_yes: bool | None
     target_players: list[int] | None
 
-    info_trust = 1.0
+    def __init__(
+        self,
+        info_type: DemonInfoType,
+        source: int,
+        day: int,
+        info_trust: float = 1.0,
+        *,
+        seen_roles: list[Role] | None = None,
+        is_yes: bool | None = None,
+        target_players: list[int] | None = None,
+    ) -> None:
+        self.info_type = info_type
+        self.source = source
+        self.day = day
+        self.info_trust = info_trust
+        self.seen_roles = seen_roles
+
+        self.is_yes = is_yes
+        self.target_players = target_players

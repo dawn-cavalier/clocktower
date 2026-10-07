@@ -16,18 +16,20 @@ class EvilTeamInfo:
     source: int
     invert: bool
     day: int
+    info_trust = 1.0
+
     number: int | None
     is_good: bool | None
     is_yes: bool | None
     target_players: list[int] | None
 
-    info_trust = 1.0
 
     def __init__(
         self,
         info_type: EvilTeamInfoType,
         source: int,
         day: int,
+        info_trust: float = 1.0,
         *,
         number: int | None = None,
         is_good: bool | None = None,
@@ -37,6 +39,7 @@ class EvilTeamInfo:
         self.info_type = info_type
         self.source = source
         self.day = day
+        self.info_trust = info_trust
 
         self.number = number
         self.is_good = is_good

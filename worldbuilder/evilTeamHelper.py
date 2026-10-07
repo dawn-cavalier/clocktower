@@ -18,6 +18,7 @@ def get_possible_evil_teams(
     possible_teams: list[list[int]] = []
     # TODO: Make dependent on script
     # Spy Worlds
+    #! TODO: THIS ASSUMPTION MAKES SO IF THE IMP STARPASSES TO THE SPY, THEY ARE UNDETECTABLE
     add_all_possible_teams(possible_teams, evil_count - 1)
     # Spy + Recluse / Normal Worlds
     add_all_possible_teams(possible_teams, evil_count)
