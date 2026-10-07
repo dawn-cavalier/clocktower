@@ -2,10 +2,10 @@ from worldbuilder.demonInfo import DemonInfo, DemonInfoType
 from worldbuilder.helper import is_demon
 
 
-def get_demon_score(
-    info_indices: list[int], learned_info: list[DemonInfo], demon: int, team: list[int]
-) -> float:
-    demon_score = 0.0
+def get_demon_scores(
+    info_indices: list[int], learned_info: list[DemonInfo], team: list[int], player_count: int
+) -> list[float]:
+    demon_scores = [0.0 for _ in range(player_count)]
      
     for info_index in info_indices:
         is_inverted = info_index < 0
@@ -26,14 +26,22 @@ def get_demon_score(
                 if info.seen_roles is None:
                     raise ValueError(f"{info.info_type.name} has no stated role!")
 
-                if demon not in info.target_players:
-                    continue
+                targeted_team_members = [player for player in team if player in info.target_players]
 
                 for role in info.seen_roles:
                     if is_demon(role):
-                        demon_score = 1/len(info.seen_roles)
+                        if len(targeted_team_members) == 0:
+                            # IDK, blow up?
+                            continue
+
+
+
+
+                if len(targeted_team_members) == 0:
+                    continue
+
 
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
-    return demon_score
+    return demon_scores

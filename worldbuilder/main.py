@@ -1,4 +1,4 @@
-from worldbuilder.demonHelper import get_demon_score
+from worldbuilder.demonHelper import get_demon_scores
 from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.evilTeamHelper import (
     get_possible_evil_teams,
@@ -82,8 +82,7 @@ def main() -> None:
         # Predict Demon for Evil Teams
         demon_info = [info.get_demon_info() for info in learned_info]
         for team in possible_evil_teams:
-            for player in team:
-                demon_player_scores[player] += get_demon_score(possibility, demon_info, player, team)
+            print(get_demon_scores(possibility, demon_info, team, PLAYER_COUNT))
 
         for i, player_score in enumerate(evil_player_scores):
             is_evil_scores[i] += player_score
