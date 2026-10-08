@@ -174,22 +174,22 @@ class Info:
             case InfoType.VIRGIN_TRIGGER:
                 new_info = EvilTeamInfo(
                     info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
-                    source=-1,
+                    source=self.source,
                     day=self.day,
                     target_players=[self.source],
                     info_trust=self.info_trust,
-                    is_good=True,
+                    is_good=self.is_good,
                 )
                 return new_info
 
             case InfoType.VIRGIN_EXECUTE:
                 new_info = EvilTeamInfo(
                     info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
-                    source=-1,
+                    source=self.source,
                     day=self.day,
                     target_players=self.target_players,
                     info_trust=self.info_trust,
-                    is_good=True,
+                    is_good=self.is_good,
                 )
                 return new_info
 
@@ -209,7 +209,7 @@ class Info:
                     day=self.day,
                     info_trust=self.info_trust,
                     target_players=self.target_players,
-                    is_good=False,
+                    is_good=self.is_good,
                 )
                 return new_info
 
@@ -256,7 +256,7 @@ class Info:
 
             case InfoType.STORYTELLER_GIVEN_ROLE:
                 new_info = DemonInfo(
-                    info_type=DemonInfoType.IS_CHARACTER,
+                    info_type=DemonInfoType.PLAYER_IS_ROLE,
                     source=self.source,
                     day=self.day,
                     info_trust=self.info_trust,
@@ -336,16 +336,16 @@ class Info:
             #     new_info.info_trust = 1.0
             #     return new_info
 
-            # case InfoType.RAVENKEEPER_PING:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
-            #         source=self.source,
-            #         day=self.day,
-            #         target_players=self.target_players,
-            #         is_good=self.is_good,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.RAVENKEEPER_PING:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.PLAYER_IS_ROLE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players,
+                    seen_roles=self.seen_roles,
+                )
+                return new_info
 
             # case InfoType.VIRGIN_TRIGGER:
             #     new_info = EvilTeamInfo(
