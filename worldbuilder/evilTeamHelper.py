@@ -40,14 +40,13 @@ def get_possible_evil_teams(
                 continue
             case EvilTeamInfoType.ALIGNMENT_KNOWN:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
                 if info.is_good is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no stated alignment!")
+                    raise ValueError(f"{info.info_type.name} has no stated alignment!")
                 if len(info.target_players) != 1:
                     raise ValueError(
-                        f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!")
+                        f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!"
+                    )
 
                 if info.is_good:
                     possible_teams = transform_player_good(
@@ -59,24 +58,21 @@ def get_possible_evil_teams(
                     )
             case EvilTeamInfoType.AT_LEAST_ONE_GOOD:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_at_least_one_good(
                     evil_teams=possible_teams, target_players=info.target_players
                 )
             case EvilTeamInfoType.AT_LEAST_ONE_EVIL:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_at_least_one_evil(
                     evil_teams=possible_teams, target_players=info.target_players
                 )
             case EvilTeamInfoType.EXACTLY_ONE_EVIL:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_exactly_one_evil(
                     evil_teams=possible_teams, target_players=info.target_players
@@ -94,8 +90,7 @@ def get_possible_evil_teams(
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
+                    raise ValueError(f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_empath_number(
                     evil_teams=possible_teams,
@@ -127,13 +122,6 @@ def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
                     for l in range(k + 1, PLAYER_COUNT):
                         possible_teams.append([i, j, k, l])
 
-def get_player_appearances(
-    possible_teams: list[list[int]], target_player: int
-) -> float:
-    if len(possible_teams) == 0:
-        return 0
-
-    return len([t for t in possible_teams if target_player in t]) / len(possible_teams)
 
     # TODO: Review how we want to handle recluse and spy
     # total = 0

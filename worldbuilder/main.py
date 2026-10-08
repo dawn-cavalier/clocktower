@@ -1,9 +1,6 @@
-from worldbuilder.demonHelper import get_demon_scores
+from worldbuilder.demonHelper import check_for_demon
 from worldbuilder.helper import get_all_posibilities, get_info_trust
-from worldbuilder.evilTeamHelper import (
-    get_possible_evil_teams,
-    get_player_appearances,
-)
+from worldbuilder.evilTeamHelper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
 from worldbuilder.rolesEnum import Role
 
@@ -71,33 +68,46 @@ def main() -> None:
 
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
-        possible_demons = get_demon_scores(possibility, demon_info,
-                         possible_evil_teams, PLAYER_COUNT)
+        possible_demons = check_for_demon(possibility, demon_info, possible_evil_teams)
 
-        # TODO: Move this calcuation outside of this function to better handle different cases
-        evil_player_scores = [
-            info_trust
-            * get_player_appearances(
-                possible_teams=possible_evil_teams, target_player=player_id
-            )
-            for player_id in range(PLAYER_COUNT)
-        ]
+        if len(possible_evil_teams) > 0:
+            evil_player_scores = [
+                len([t for t in possible_evil_teams if player_id in t])
+                * info_trust
+                / len(possible_evil_teams)
+                for player_id in range(PLAYER_COUNT)
+            ]
 
-        for i, player_score in enumerate(evil_player_scores):
-            is_evil_scores[i] += player_score
+        if len(possible_demons) > 0:
+            demon_player_scores = [
+                sum(1 / len(d) for d in possible_demons if player_id in d)
+                * info_trust
+                / len(possible_demons)
+                for player_id in range(PLAYER_COUNT)
+            ]
 
-        for i, player_score in enumerate(demon_player_scores):
-            is_demon_scores[i] += player_score
+        for player, player_score in enumerate(evil_player_scores):
+            is_evil_scores[player] += player_score
+
+        for player, player_score in enumerate(demon_player_scores):
+            is_demon_scores[player] += player_score
 
         # Print
         print(f"{possibility} ({info_trust:.4f}): {len(possible_evil_teams)}")
-        print(possible_demons)
 
     # TODO: Review this bandaid
-    is_evil_scores = [EVIL_COUNT * score /
-                      sum(is_evil_scores) for score in is_evil_scores]
+    if sum(is_evil_scores) > 0:
+        is_evil_scores = [
+            EVIL_COUNT * score / sum(is_evil_scores) for score in is_evil_scores
+        ]
     print([f"{score:.2f}" for score in is_evil_scores])
     print(sum(is_evil_scores))
+
+    # TODO: Review this bandaid
+    if sum(is_demon_scores) > 0:
+        is_demon_scores = [score / sum(is_demon_scores) for score in is_demon_scores]
+    print([f"{score:.2f}" for score in is_demon_scores])
+    print(sum(is_demon_scores))
 
 
 def testTBRoles(learned_info: list[Info]):
@@ -145,20 +155,20 @@ def testTBRoles(learned_info: list[Info]):
     #     info_type=InfoType.WASHERWOMAN_PING,
     #     day=1,
     #     source=11,
+    #     info_trust = 0.8,
     #     seen_roles=[Role.EMPATH],
     #     target_players=[1, 2],
     # )
-    # info.info_trust = 0.5
     # learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.EMPATH_NUMBER,
     #     day=1,
     #     source=1,
+    #     info_trust=0.8,
     #     target_players=[0, 2],
     #     number=1,
     # )
-    # info.info_trust = 0.5
     # learned_info.append(info)
 
     # info = Info(
@@ -167,37 +177,34 @@ def testTBRoles(learned_info: list[Info]):
     #     source=-1,
     #     target_players=[10],
     # )
-    # info.info_trust = 0.5
     # learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.UNDERTAKER_INFO,
     #     day=3,
     #     source=2,
+    #     info_trust=0.8,
     #     target_players=[10],
     #     seen_roles=[Role.BARON],
     #     is_good=False,
     # )
-    # info.info_trust = 0.5
     # learned_info.append(info)
 
-    # info = Info(info_type=InfoType.VIRGIN_TRIGGER, day=3, source=5)
-    # info.info_trust = 1.0
+    # info = Info(info_type=InfoType.VIRGIN_TRIGGER, day=3, source=5, is_good=True)
     # learned_info.append(info)
 
-    # info = Info(info_type=InfoType.VIRGIN_EXECUTE, day=3, source=-1, target_players=[3])
-    # info.info_trust = 1.0
+    # info = Info(info_type=InfoType.VIRGIN_EXECUTE, day=3, source=-1, target_players=[3], is_good=True)
     # learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.UNDERTAKER_INFO,
     #     day=3,
     #     source=2,
+    #     info_trust=0.8,
     #     target_players=[3],
     #     seen_roles=[Role.INVESTIGATOR],
     #     is_good=True,
     # )
-    # info.info_trust = 0.5
     # learned_info.append(info)
 
 

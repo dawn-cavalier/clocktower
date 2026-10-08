@@ -2,12 +2,14 @@ from worldbuilder.demonInfo import DemonInfo, DemonInfoType
 from worldbuilder.helper import is_demon
 
 
-def get_demon_scores(
-    info_indices: list[int], learned_info: list[DemonInfo], possible_teams: list[list[int]], player_count: int
+def check_for_demon(
+    info_indices: list[int],
+    learned_info: list[DemonInfo],
+    possible_teams: list[list[int]],
 ):
-    demon_scores = [0.0 for _ in range(player_count)]
-    for original_team in list(possible_teams):
-        team = list(original_team)
+    possible_demons: list[list[int]] = []
+    for team in list(possible_teams):
+        demons = list(team)
 
         for info_index in info_indices:
             is_inverted = info_index < 0
@@ -25,34 +27,34 @@ def get_demon_scores(
                 case DemonInfoType.PLAYER_IS_ROLE:
                     if info.target_players is None:
                         raise ValueError(
-                            f"{info.info_type.name} has no target players!")
+                            f"{info.info_type.name} has no target players!"
+                        )
                     if info.seen_roles is None:
-                        raise ValueError(
-                            f"{info.info_type.name} has no stated role!")
+                        raise ValueError(f"{info.info_type.name} has no stated role!")
                     if len(info.target_players) != 1:
                         raise ValueError(
-                            f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!")
+                            f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!"
+                        )
                     if len(info.seen_roles) != 1:
                         raise ValueError(
-                            f"{info.info_type.name} received {len(info.seen_roles)} players when 1 was expected!")
+                            f"{info.info_type.name} received {len(info.seen_roles)} players when 1 was expected!"
+                        )
 
                     role = info.seen_roles[0]
                     player = info.target_players[0]
 
                     if is_demon(role):
-                        team = [p for p in team if p == player]
+                        demons = [d for d in demons if d == player]
                     else:
-                        team = [p for p in team if p != player]
+                        demons = [d for d in demons if d != player]
 
                 case _:
-                    raise ValueError(
-                        f"Unhandled InfoType: {info.info_type.name}")
+                    raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
         # If there's no valid demon on these assumptions, remove the team from possible teams
-        if len(team) == 0:
-            possible_teams.remove(original_team)
+        if len(demons) == 0:
+            possible_teams.remove(team)
         else:
-            for player in team:
-                demon_scores[player] += 1 / len(team)
-            
-    return demon_scores
+            possible_demons.append(demons)
+
+    return possible_demons
