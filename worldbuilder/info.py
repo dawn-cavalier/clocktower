@@ -256,7 +256,7 @@ class Info:
 
             case InfoType.STORYTELLER_GIVEN_ROLE:
                 new_info = DemonInfo(
-                    info_type=DemonInfoType.PLAYER_IS_ROLE,
+                    info_type=DemonInfoType.IS_ROLE,
                     source=self.source,
                     day=self.day,
                     info_trust=self.info_trust,
@@ -265,56 +265,57 @@ class Info:
                 )
                 return new_info
 
-            # case InfoType.WASHERWOMAN_PING:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.AT_LEAST_ONE_GOOD,
-            #         source=self.source,
-            #         day=self.day,
-            #         target_players=self.target_players,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.WASHERWOMAN_PING:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.AT_LEAST_ONE_IS_ROLE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players,
+                    seen_roles=self.seen_roles,
+                )
+                return new_info
 
-            # case InfoType.LIBRARIAN_PING:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.AT_LEAST_ONE_GOOD,
-            #         source=self.source,
-            #         day=self.day,
-            #         target_players=self.target_players,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.LIBRARIAN_PING:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.AT_LEAST_ONE_IS_ROLE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players,
+                    seen_roles=self.seen_roles,
+                )
+                return new_info
 
-            # case InfoType.INVESTIGATOR_PING:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.AT_LEAST_ONE_EVIL,
-            #         source=self.source,
-            #         day=self.day,
-            #         target_players=self.target_players,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.INVESTIGATOR_PING:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.AT_LEAST_ONE_IS_ROLE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players,
+                    seen_roles=self.seen_roles,
+                )
+                return new_info
 
-            # case InfoType.CHEF_NUMBER:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.CHEF_NUMBER,
-            #         source=self.source,
-            #         day=self.day,
-            #         number=self.number,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.CHEF_NUMBER:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.NONE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                )
+                return new_info
 
-            # case InfoType.EMPATH_NUMBER:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.EMPATH_NUMBER,
-            #         source=self.source,
-            #         day=self.day,
-            #         number=self.number,
-            #         target_players=self.target_players,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.EMPATH_NUMBER:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.NONE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                )
+                new_info.info_trust = 1.0
+                return new_info
 
             # case InfoType.FORTUNE_TELLER_PING:
             #     new_info = EvilTeamInfo(
@@ -325,20 +326,9 @@ class Info:
             #     new_info.info_trust = 1.0
             #     return new_info
 
-            # case InfoType.UNDERTAKER_INFO:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
-            #         source=self.source,
-            #         day=self.day,
-            #         target_players=self.target_players,
-            #         is_good=self.is_good,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
-
-            case InfoType.RAVENKEEPER_PING:
+            case InfoType.UNDERTAKER_INFO:
                 new_info = DemonInfo(
-                    info_type=DemonInfoType.PLAYER_IS_ROLE,
+                    info_type=DemonInfoType.IS_ROLE,
                     source=self.source,
                     day=self.day,
                     info_trust=self.info_trust,
@@ -347,27 +337,36 @@ class Info:
                 )
                 return new_info
 
-            # case InfoType.VIRGIN_TRIGGER:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
-            #         source=-1,
-            #         day=self.day,
-            #         target_players=[self.source],
-            #         is_good=True,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.RAVENKEEPER_PING:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.IS_ROLE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players,
+                    seen_roles=self.seen_roles,
+                )
+                return new_info
 
-            # case InfoType.VIRGIN_EXECUTE:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
-            #         source=-1,
-            #         day=self.day,
-            #         target_players=self.target_players,
-            #         is_good=True,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.VIRGIN_TRIGGER:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.IS_ROLE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players,
+                    seen_roles=self.seen_roles,
+                )
+                return new_info
+
+            case InfoType.VIRGIN_EXECUTE:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.NONE,
+                    source=-1,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                )
+                return new_info
 
             # case InfoType.SLAYER_SHOT:
             #     new_info = EvilTeamInfo(
@@ -398,23 +397,25 @@ class Info:
             #     new_info.info_trust = 1.0
             #     return new_info
 
-            # case InfoType.PLAYER_EXECUTED:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.NONE,
-            #         source=self.source,
-            #         day=self.day,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.PLAYER_EXECUTED:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.IS_DEAD,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players
+                )
+                return new_info
 
-            # case InfoType.PLAYER_NIGHT_DEATH:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.NONE,
-            #         source=self.source,
-            #         day=self.day,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.PLAYER_NIGHT_DEATH:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.IS_DEAD,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players
+                )
+                return new_info
 
             case _:
                 raise ValueError(f"Unhandled InfoType: {self.info_type.name}")

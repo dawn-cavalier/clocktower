@@ -72,7 +72,7 @@ def main() -> None:
 
         if len(possible_evil_teams) > 0:
             evil_player_scores = [
-                len([t for t in possible_evil_teams if player_id in t])
+                sum(1 for t in possible_evil_teams if player_id in t)
                 * info_trust
                 / len(possible_evil_teams)
                 for player_id in range(PLAYER_COUNT)
@@ -101,13 +101,13 @@ def main() -> None:
             EVIL_COUNT * score / sum(is_evil_scores) for score in is_evil_scores
         ]
     print([f"{score:.2f}" for score in is_evil_scores])
-    print(sum(is_evil_scores))
+    # print(sum(is_evil_scores))
 
     # TODO: Review this bandaid
     if sum(is_demon_scores) > 0:
         is_demon_scores = [score / sum(is_demon_scores) for score in is_demon_scores]
     print([f"{score:.2f}" for score in is_demon_scores])
-    print(sum(is_demon_scores))
+    # print(sum(is_demon_scores))
 
 
 def testTBRoles(learned_info: list[Info]):
@@ -146,16 +146,16 @@ def testTBRoles(learned_info: list[Info]):
     )
     learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.CHEF_NUMBER, day=0, source=0, info_trust=0.8, number=0
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.CHEF_NUMBER, day=0, source=0, info_trust=0.8, number=0
+    )
+    learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.WASHERWOMAN_PING,
     #     day=1,
     #     source=11,
-    #     info_trust = 0.8,
+    #     info_trust=0.8,
     #     seen_roles=[Role.EMPATH],
     #     target_players=[1, 2],
     # )
@@ -171,13 +171,13 @@ def testTBRoles(learned_info: list[Info]):
     # )
     # learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.PLAYER_EXECUTED,
-    #     day=1,
-    #     source=-1,
-    #     target_players=[10],
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.PLAYER_EXECUTED,
+        day=1,
+        source=-1,
+        target_players=[10],
+    )
+    learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.UNDERTAKER_INFO,
@@ -190,10 +190,40 @@ def testTBRoles(learned_info: list[Info]):
     # )
     # learned_info.append(info)
 
-    # info = Info(info_type=InfoType.VIRGIN_TRIGGER, day=3, source=5, is_good=True)
+    # info = Info(
+    #     info_type=InfoType.PLAYER_NIGHT_DEATH,
+    #     day=1,
+    #     source=-1,
+    #     target_players=[1],
+    # )
     # learned_info.append(info)
 
-    # info = Info(info_type=InfoType.VIRGIN_EXECUTE, day=3, source=-1, target_players=[3], is_good=True)
+
+    # info = Info(
+    #     info_type=InfoType.VIRGIN_TRIGGER,
+    #     day=3,
+    #     source=5,
+    #     seen_roles=[Role.VIRGIN],
+    #     target_players=[5],
+    #     is_good=True,
+    # )
+    # learned_info.append(info)
+
+    # info = Info(
+    #     info_type=InfoType.VIRGIN_EXECUTE,
+    #     day=3,
+    #     source=-1,
+    #     target_players=[3],
+    #     is_good=True,
+    # )
+    # learned_info.append(info)
+
+    # info = Info(
+    #     info_type=InfoType.PLAYER_EXECUTED,
+    #     day=1,
+    #     source=-1,
+    #     target_players=[3],
+    # )
     # learned_info.append(info)
 
     # info = Info(

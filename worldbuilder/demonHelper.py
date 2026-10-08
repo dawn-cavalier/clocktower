@@ -24,7 +24,7 @@ def check_for_demon(
             match info.info_type:
                 case DemonInfoType.NONE:
                     continue
-                case DemonInfoType.PLAYER_IS_ROLE:
+                case DemonInfoType.IS_ROLE:
                     if info.target_players is None:
                         raise ValueError(
                             f"{info.info_type.name} has no target players!"
@@ -47,9 +47,39 @@ def check_for_demon(
                         demons = [d for d in demons if d == player]
                     else:
                         demons = [d for d in demons if d != player]
+                case DemonInfoType.AT_LEAST_ONE_IS_ROLE:
+                    if info.target_players is None:
+                        raise ValueError(
+                            f"{info.info_type.name} has no target players!"
+                        )
+                    if info.seen_roles is None:
+                        raise ValueError(f"{info.info_type.name} has no stated role!")
+                    if len(info.seen_roles) != 1:
+                        raise ValueError(
+                            f"{info.info_type.name} received {len(info.seen_roles)} players when 1 was expected!"
+                        )
+
+                    role = info.seen_roles[0]
+                    players = info.target_players
+
+                    # Info about someone not on evil team
+                    if len([d for d in demons if d in players]) == 0:
+                        continue
+
+                    if is_demon(role):
+                        demons = [d for d in demons if d in players]
+                case DemonInfoType.IS_DEAD:
+                    if info.target_players is None:
+                        raise ValueError(
+                            f"{info.info_type.name} has no target players!"
+                        )
+
+                    players = info.target_players
+                    demons = [d for d in demons if d not in players]
 
                 case _:
                     raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
+
 
         # If there's no valid demon on these assumptions, remove the team from possible teams
         if len(demons) == 0:
