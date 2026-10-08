@@ -317,14 +317,16 @@ class Info:
                 new_info.info_trust = 1.0
                 return new_info
 
-            # case InfoType.FORTUNE_TELLER_PING:
-            #     new_info = EvilTeamInfo(
-            #         info_type=EvilTeamInfoType.NONE,
-            #         source=self.source,
-            #         day=self.day,
-            #     )
-            #     new_info.info_trust = 1.0
-            #     return new_info
+            case InfoType.FORTUNE_TELLER_PING:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.AT_LEAST_ONE_IS_DEMON,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    target_players=self.target_players,
+                    is_yes=self.is_yes,
+                )
+                return new_info
 
             case InfoType.UNDERTAKER_INFO:
                 new_info = DemonInfo(

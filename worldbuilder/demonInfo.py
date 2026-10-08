@@ -6,8 +6,9 @@ from worldbuilder.rolesEnum import Role
 class DemonInfoType(IntEnum):
     NONE = -1
     IS_ROLE = 0
-    AT_LEAST_ONE_IS_ROLE = 1
-    IS_DEAD = 2
+    IS_DEAD = 1
+    AT_LEAST_ONE_IS_ROLE = 2
+    AT_LEAST_ONE_IS_DEMON = 3
 
 
 class DemonInfo:

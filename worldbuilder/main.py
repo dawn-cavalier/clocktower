@@ -68,7 +68,8 @@ def main() -> None:
 
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
-        possible_demons = check_for_demon(possibility, demon_info, possible_evil_teams)
+        possible_demons = check_for_demon(
+            possibility, demon_info, possible_evil_teams)
 
         if len(possible_evil_teams) > 0:
             evil_player_scores = [
@@ -100,13 +101,14 @@ def main() -> None:
         is_evil_scores = [
             EVIL_COUNT * score / sum(is_evil_scores) for score in is_evil_scores
         ]
-    print([f"{score:.2f}" for score in is_evil_scores])
+    print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
     # print(sum(is_evil_scores))
 
     # TODO: Review this bandaid
     if sum(is_demon_scores) > 0:
-        is_demon_scores = [score / sum(is_demon_scores) for score in is_demon_scores]
-    print([f"{score:.2f}" for score in is_demon_scores])
+        is_demon_scores = [score / sum(is_demon_scores)
+                           for score in is_demon_scores]
+    print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
     # print(sum(is_demon_scores))
 
 
@@ -116,42 +118,72 @@ def testTBRoles(learned_info: list[Info]):
         info_type=InfoType.STORYTELLER_GIVEN_ROLE,
         day=0,
         source=0,
-        seen_roles=[Role.CHEF],
+        seen_roles=[Role.FORTUNE_TELLER],
         target_players=[0],
         is_good=True,
     )
     learned_info.append(info)
 
     info = Info(
-        info_type=InfoType.RAVENKEEPER_PING,
+        info_type=InfoType.FORTUNE_TELLER_PING,
         day=0,
         source=0,
-        info_trust=0.8,
-        seen_roles=[Role.IMP],
-        target_players=[11],
-        # TODO: Should this be included or inferred off the role?
-        is_good=False,
+        info_trust=0.5,
+        target_players=[1, 2],
+        is_yes=False
     )
     learned_info.append(info)
 
     info = Info(
-        info_type=InfoType.RAVENKEEPER_PING,
+        info_type=InfoType.FORTUNE_TELLER_PING,
         day=0,
         source=0,
-        info_trust=0.8,
-        seen_roles=[Role.IMP],
-        target_players=[10],
-        # TODO: Should this be included or inferred off the role?
-        is_good=False,
+        info_trust=0.5,
+        target_players=[2, 3],
+        is_yes=True
     )
     learned_info.append(info)
 
     info = Info(
-        info_type=InfoType.CHEF_NUMBER, day=0, source=0, info_trust=0.8, number=0
+        info_type=InfoType.FORTUNE_TELLER_PING,
+        day=0,
+        source=0,
+        info_trust=0.5,
+        target_players=[3, 4],
+        is_yes=False
     )
     learned_info.append(info)
 
     # info = Info(
+    #     info_type=InfoType.RAVENKEEPER_PING,
+    #     day=0,
+    #     source=0,
+    #     info_trust=0.8,
+    #     seen_roles=[Role.IMP],
+    #     target_players=[11],
+    #     # TODO: Should this be included or inferred off the role?
+    #     is_good=False,
+    # )
+    # learned_info.append(info)
+
+    # info = Info(
+    #     info_type=InfoType.RAVENKEEPER_PING,
+    #     day=0,
+    #     source=0,
+    #     info_trust=0.8,
+    #     seen_roles=[Role.IMP],
+    #     target_players=[10],
+    #     # TODO: Should this be included or inferred off the role?
+    #     is_good=False,
+    # )
+    # learned_info.append(info)
+
+    # info = Info(
+    #     info_type=InfoType.CHEF_NUMBER, day=0, source=0, info_trust=0.8, number=0
+    # )
+    # learned_info.append(info)
+
+    # # info = Info(
     #     info_type=InfoType.WASHERWOMAN_PING,
     #     day=1,
     #     source=11,
@@ -171,13 +203,13 @@ def testTBRoles(learned_info: list[Info]):
     # )
     # learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.PLAYER_EXECUTED,
-        day=1,
-        source=-1,
-        target_players=[10],
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.PLAYER_EXECUTED,
+    #     day=1,
+    #     source=-1,
+    #     target_players=[10],
+    # )
+    # learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.UNDERTAKER_INFO,
@@ -197,7 +229,6 @@ def testTBRoles(learned_info: list[Info]):
     #     target_players=[1],
     # )
     # learned_info.append(info)
-
 
     # info = Info(
     #     info_type=InfoType.VIRGIN_TRIGGER,
