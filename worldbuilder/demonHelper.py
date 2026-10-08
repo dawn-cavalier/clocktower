@@ -85,7 +85,7 @@ def check_for_demon(
                     if is_demon(role):
                         demons = [d for d in demons if d in players]
 
-                case DemonInfoType.AT_LEAST_ONE_IS_DEMON:
+                case DemonInfoType.FORTUNE_TELLER_PING:
                     if info.target_players is None:
                         raise ValueError(
                             f"{info.info_type.name} has no target players!"
@@ -103,6 +103,35 @@ def check_for_demon(
                     else:
                         demons = [d for d in demons if d not in players]                        
 
+                case DemonInfoType.SLAYER_SHOT:
+                    if info.target_players is None:
+                        raise ValueError(
+                            f"{info.info_type.name} has no target players!"
+                        )
+                    if len(info.target_players) != 1:
+                        raise ValueError(
+                            f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!"
+                        )
+                        
+                    players = info.target_players
+                    
+                    demons = [d for d in demons if d not in players]
+                    
+
+                case DemonInfoType.SLAYER_KILL:
+                    if info.target_players is None:
+                        raise ValueError(
+                            f"{info.info_type.name} has no target players!"
+                        )
+                    if len(info.target_players) != 1:
+                        raise ValueError(
+                            f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!"
+                        )
+                        
+                    players = info.target_players
+                    
+                    demons = [d for d in demons if d in players]
+                    
                 case _:
                     raise ValueError(
                         f"Unhandled InfoType: {info.info_type.name}")

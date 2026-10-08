@@ -118,41 +118,31 @@ def testTBRoles(learned_info: list[Info]):
         info_type=InfoType.STORYTELLER_GIVEN_ROLE,
         day=0,
         source=0,
-        seen_roles=[Role.FORTUNE_TELLER],
+        seen_roles=[Role.SLAYER],
         target_players=[0],
         is_good=True,
     )
     learned_info.append(info)
 
     info = Info(
-        info_type=InfoType.FORTUNE_TELLER_PING,
+        info_type=InfoType.SLAYER_KILL,
         day=0,
         source=0,
         info_trust=0.5,
-        target_players=[1, 2],
-        is_yes=False
+        target_players=[2],
+        is_good=False
     )
     learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.FORTUNE_TELLER_PING,
-        day=0,
-        source=0,
-        info_trust=0.5,
-        target_players=[2, 3],
-        is_yes=True
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.FORTUNE_TELLER_PING,
-        day=0,
-        source=0,
-        info_trust=0.5,
-        target_players=[3, 4],
-        is_yes=False
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.FORTUNE_TELLER_PING,
+    #     day=0,
+    #     source=0,
+    #     info_trust=0.5,
+    #     target_players=[1, 2],
+    #     is_yes=True
+    # )
+    # learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.RAVENKEEPER_PING,
