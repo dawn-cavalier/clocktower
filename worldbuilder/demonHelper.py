@@ -38,7 +38,6 @@ def get_demon_scores(
                     role = info.seen_roles[0]
                     player = info.target_players[0]
 
-                    # Only care about demons
                     if is_demon(role):
                         team = [p for p in team if p == player]
                     else:

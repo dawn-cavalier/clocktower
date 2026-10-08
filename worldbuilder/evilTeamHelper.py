@@ -19,11 +19,11 @@ def get_possible_evil_teams(
     # TODO: Make dependent on script
     # Spy Worlds
     #! TODO: THIS ASSUMPTION MAKES SO IF THE IMP STARPASSES TO THE SPY, THEY ARE UNDETECTABLE
-    add_all_possible_teams(possible_teams, evil_count - 1)
+    # add_all_possible_teams(possible_teams, evil_count - 1)
     # Spy + Recluse / Normal Worlds
     add_all_possible_teams(possible_teams, evil_count)
     # Recluse Worlds
-    add_all_possible_teams(possible_teams, evil_count + 1)
+    # add_all_possible_teams(possible_teams, evil_count + 1)
 
     for info_index in info_indices:
         is_inverted = info_index < 0
@@ -109,10 +109,6 @@ def get_possible_evil_teams(
 
 
 def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
-    if evil_count == 1:
-        for i in range(PLAYER_COUNT):
-            possible_teams.append([i])
-
     if evil_count == 2:
         for i in range(PLAYER_COUNT):
             for j in range(i + 1, PLAYER_COUNT):
@@ -131,56 +127,53 @@ def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
                     for l in range(k + 1, PLAYER_COUNT):
                         possible_teams.append([i, j, k, l])
 
-    if evil_count == 5:
-        for i in range(PLAYER_COUNT):
-            for j in range(i + 1, PLAYER_COUNT):
-                for k in range(j + 1, PLAYER_COUNT):
-                    for l in range(k + 1, PLAYER_COUNT):
-                        for m in range(l + 1, PLAYER_COUNT):
-                            possible_teams.append([i, j, k, l, m])
-
-
 def get_player_appearances(
     possible_teams: list[list[int]], target_player: int
 ) -> float:
     if len(possible_teams) == 0:
         return 0
 
-    total = 0
-    present_worlds: list[int] = []
-    for team in possible_teams:
-        if len(team) not in present_worlds:
-            present_worlds.append(len(team))
+    return len([t for t in possible_teams if target_player in t]) / len(possible_teams)
+
+    # TODO: Review how we want to handle recluse and spy
+    # total = 0
+
+    # present_worlds: list[int] = []
+    # for team in possible_teams:
+    #     if len(team) not in present_worlds:
+    #         present_worlds.append(len(team))
 
     # TODO: Remove magic numbers
-    for team in possible_teams:
-        if target_player in team:
-            world_type_count = len(
-                [t for t in possible_teams if len(t) == len(team)])
+    # for team in possible_teams:
+    #     if target_player in team:
+    #         world_type_count = len(
+    #             [t for t in possible_teams if len(t) == len(team)])
 
-            if 2 in present_worlds and 3 in present_worlds and 4 in present_worlds:
-                if len(team) == 2:
-                    total += (1 / 8) / world_type_count
-                if len(team) == 3:
-                    total += (4 / 8) / world_type_count
-                if len(team) == 4:
-                    total += (3 / 8) / world_type_count
+    #         if 2 in present_worlds and 3 in present_worlds and 4 in present_worlds:
+    #             if len(team) == 2:
+    #                 total += (1 / 8) / world_type_count
+    #             if len(team) == 3:
+    #                 total += (4 / 8) / world_type_count
+    #             if len(team) == 4:
+    #                 total += (3 / 8) / world_type_count
 
-            # TODO: double check these numbers
-            elif (
-                2 not in present_worlds and 3 in present_worlds and 4 in present_worlds
-            ):
-                if len(team) == 3:
-                    total += (4 / 7) / world_type_count
-                if len(team) == 4:
-                    total += (3 / 7) / world_type_count
+    #         # TODO: double check these numbers
+    #         elif (
+    #             2 not in present_worlds and 3 in present_worlds and 4 in present_worlds
+    #         ):
+    #             if len(team) == 3:
+    #                 total += (4 / 7) / world_type_count
+    #             if len(team) == 4:
+    #                 total += (3 / 7) / world_type_count
 
-            elif (
-                2 not in present_worlds
-                and 3 not in present_worlds
-                and 4 in present_worlds
-            ):
-                if len(team) == 4:
-                    total += 1.0 / world_type_count
+    #         elif (
+    #             2 not in present_worlds
+    #             and 3 not in present_worlds
+    #             and 4 in present_worlds
+    #         ):
+    #             if len(team) == 4:
+    #                 total += 1.0 / world_type_count
 
-    return total
+    #         else:
+    #             total += 1.0 / world_type_count
+    # return total

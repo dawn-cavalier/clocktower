@@ -71,7 +71,8 @@ def main() -> None:
 
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
-        get_demon_scores(possibility, demon_info, possible_evil_teams, PLAYER_COUNT)
+        get_demon_scores(possibility, demon_info,
+                         possible_evil_teams, PLAYER_COUNT)
 
         # TODO: Move this calcuation outside of this function to better handle different cases
         evil_player_scores = [
@@ -92,10 +93,11 @@ def main() -> None:
         # Evil Player Scores
         print(f"{possibility} ({info_trust:.4f}): {len(possible_evil_teams)}")
 
+    # TODO: Review this bandaid
+    is_evil_scores = [EVIL_COUNT * score /
+                      sum(is_evil_scores) for score in is_evil_scores]
     print([f"{score:.2f}" for score in is_evil_scores])
     print(sum(is_evil_scores))
-
-    return
 
 
 def testTBRoles(learned_info: list[Info]):
@@ -126,7 +128,7 @@ def testTBRoles(learned_info: list[Info]):
         info_type=InfoType.RAVENKEEPER_PING,
         day=0,
         source=0,
-        info_trust=0.5,
+        info_trust=0.8,
         seen_roles=[Role.IMP],
         target_players=[10],
         # TODO: Should this be included or inferred off the role?
