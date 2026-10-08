@@ -71,7 +71,7 @@ def main() -> None:
 
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
-        get_demon_scores(possibility, demon_info,
+        possible_demons = get_demon_scores(possibility, demon_info,
                          possible_evil_teams, PLAYER_COUNT)
 
         # TODO: Move this calcuation outside of this function to better handle different cases
@@ -90,8 +90,8 @@ def main() -> None:
             is_demon_scores[i] += player_score
 
         # Print
-        # Evil Player Scores
         print(f"{possibility} ({info_trust:.4f}): {len(possible_evil_teams)}")
+        print(possible_demons)
 
     # TODO: Review this bandaid
     is_evil_scores = [EVIL_COUNT * score /

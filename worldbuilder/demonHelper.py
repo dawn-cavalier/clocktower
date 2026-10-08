@@ -5,6 +5,7 @@ from worldbuilder.helper import is_demon
 def get_demon_scores(
     info_indices: list[int], learned_info: list[DemonInfo], possible_teams: list[list[int]], player_count: int
 ):
+    demon_scores = [0.0 for _ in range(player_count)]
     for original_team in list(possible_teams):
         team = list(original_team)
 
@@ -50,3 +51,8 @@ def get_demon_scores(
         # If there's no valid demon on these assumptions, remove the team from possible teams
         if len(team) == 0:
             possible_teams.remove(original_team)
+        else:
+            for player in team:
+                demon_scores[player] += 1 / len(team)
+            
+    return demon_scores
