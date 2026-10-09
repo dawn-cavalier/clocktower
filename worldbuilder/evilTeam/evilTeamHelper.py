@@ -1,3 +1,4 @@
+from worldbuilder.GameInfo import GameInfo
 from worldbuilder.EvilTeam.EvilTeamInfo import EvilTeamInfo, EvilTeamInfoType
 from worldbuilder.EvilTeam.evilTeamTransformers import (
     transform_chef_number,
@@ -13,9 +14,11 @@ from worldbuilder.EvilTeam.evilTeamTransformers import (
 def get_possible_evil_teams(
     info_indices: list[int],
     learned_info: list[EvilTeamInfo],
-    evil_count: int,
-    player_count: int,
+    game_info: GameInfo,
 ):
+    evil_count = game_info.minion_count_base + game_info.demon_count_base
+    player_count = game_info.player_count
+
     possible_teams: list[list[int]] = []
     # TODO: Make dependent on script
     # Spy Worlds
@@ -104,7 +107,9 @@ def get_possible_evil_teams(
     return possible_teams
 
 
-def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int, player_count: int):
+def add_all_possible_teams(
+    possible_teams: list[list[int]], evil_count: int, player_count: int
+):
     if evil_count == 2:
         for i in range(player_count):
             for j in range(i + 1, player_count):

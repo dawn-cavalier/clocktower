@@ -1,44 +1,43 @@
+from worldbuilder.GameInfo import GameInfo
 from worldbuilder.Demon.demonHelper import check_for_demon
+from worldbuilder.RoleEnum import Role
 from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.EvilTeam.evilTeamHelper import get_possible_evil_teams
 from worldbuilder.Info import Info, InfoType
 from worldbuilder.test import testTBGame1
 
-PLAYER_COUNT = 12
-BASE_OUTSIDER_COUNT = 2
-BASE_MINION_COUNT = 2
-BASE_DEMON_COUNT = 1
-
 
 def main() -> None:
-    # script = [
-    #     # Townsfolk
-    #     Role.WASHERWOMAN,
-    #     Role.LIBRARIAN,
-    #     Role.INVESTIGATOR,
-    #     Role.CHEF,
-    #     Role.EMPATH,
-    #     Role.FORTUNE_TELLER,
-    #     Role.UNDERTAKER,
-    #     Role.MONK,
-    #     Role.RAVENKEEPER,
-    #     Role.VIRGIN,
-    #     Role.SLAYER,
-    #     Role.SOLDIER,
-    #     Role.MAYOR,
-    #     # Outsiders
-    #     Role.BUTLER,
-    #     Role.DRUNK,
-    #     Role.RECLUSE,
-    #     Role.SAINT,
-    #     # Minions
-    #     Role.POISONER,
-    #     Role.SPY,
-    #     Role.SCARLET_WOMAN,
-    #     Role.BARON,
-    #     # Demons
-    #     Role.IMP,
-    # ]
+    script = [
+        # Townsfolk
+        Role.WASHERWOMAN,
+        Role.LIBRARIAN,
+        Role.INVESTIGATOR,
+        Role.CHEF,
+        Role.EMPATH,
+        Role.FORTUNE_TELLER,
+        Role.UNDERTAKER,
+        Role.MONK,
+        Role.RAVENKEEPER,
+        Role.VIRGIN,
+        Role.SLAYER,
+        Role.SOLDIER,
+        Role.MAYOR,
+        # Outsiders
+        Role.BUTLER,
+        Role.DRUNK,
+        Role.RECLUSE,
+        Role.SAINT,
+        # Minions
+        Role.POISONER,
+        Role.SPY,
+        Role.SCARLET_WOMAN,
+        Role.BARON,
+        # Demons
+        Role.IMP,
+    ]
+
+    game_info = GameInfo(player_count=12, script=script)
 
     # Append only list!
     learned_info: list[Info] = []
@@ -50,13 +49,13 @@ def main() -> None:
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
 
-    is_evil_scores = [0.0 for _ in range(PLAYER_COUNT)]
-    is_demon_scores = [0.0 for _ in range(PLAYER_COUNT)]
+    is_evil_scores = [0.0 for _ in range(game_info.player_count)]
+    is_demon_scores = [0.0 for _ in range(game_info.player_count)]
 
     for possibility in possibilities:
         info_trust = get_info_trust(possibility, learned_info)
-        evil_player_scores: list[float] = [0.0 for _ in range(PLAYER_COUNT)]
-        demon_player_scores: list[float] = [0.0 for _ in range(PLAYER_COUNT)]
+        evil_player_scores: list[float] = [0.0 for _ in range(game_info.player_count)]
+        demon_player_scores: list[float] = [0.0 for _ in range(game_info.player_count)]
 
         # TODO: Determine how necessary this is
         if info_trust <= 0.0:
@@ -66,10 +65,7 @@ def main() -> None:
         # Get Evil Teams
         evil_team_info = [info.get_evil_team_info() for info in learned_info]
         possible_evil_teams = get_possible_evil_teams(
-            possibility,
-            evil_team_info,
-            BASE_MINION_COUNT + BASE_DEMON_COUNT,
-            PLAYER_COUNT,
+            possibility, evil_team_info, game_info
         )
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
@@ -80,7 +76,7 @@ def main() -> None:
                 sum(1 for t in possible_evil_teams if player_id in t)
                 * info_trust
                 / len(possible_evil_teams)
-                for player_id in range(PLAYER_COUNT)
+                for player_id in range(game_info.player_count)
             ]
 
         if len(possible_demons) > 0:
@@ -89,7 +85,7 @@ def main() -> None:
                 sum(1 / len(d) for d in possible_demons if player_id in d)
                 * info_trust
                 / len(possible_demons)
-                for player_id in range(PLAYER_COUNT)
+                for player_id in range(game_info.player_count)
             ]
 
         for player, player_score in enumerate(evil_player_scores):
@@ -103,7 +99,9 @@ def main() -> None:
             f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}"
         )
 
-    print(f"Player Seat:\t{[f"{player:<4}" for player in range(1, PLAYER_COUNT + 1)]}")
+    print(
+        f"Player Seat:\t{[f"{player:<4}" for player in range(1, game_info.player_count + 1)]}"
+    )
 
     # TODO: Review this bandaid
     # This normalizes it so that the sum of the array always equals the evil count.
@@ -111,7 +109,9 @@ def main() -> None:
     # Ideally, none of the score is lost or if it is it doesn't matter
     if sum(is_evil_scores) > 0:
         is_evil_scores = [
-            (BASE_MINION_COUNT + BASE_DEMON_COUNT) * score / sum(is_evil_scores)
+            (game_info.minion_count_base + game_info.demon_count_base)
+            * score
+            / sum(is_evil_scores)
             for score in is_evil_scores
         ]
     print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
@@ -123,7 +123,8 @@ def main() -> None:
     # Ideally, none of the score is lost or if it is it doesn't matter
     if sum(is_demon_scores) > 0:
         is_demon_scores = [
-            BASE_DEMON_COUNT * score / sum(is_demon_scores) for score in is_demon_scores
+            game_info.demon_count_base * score / sum(is_demon_scores)
+            for score in is_demon_scores
         ]
     print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
     print(sum(is_demon_scores))
