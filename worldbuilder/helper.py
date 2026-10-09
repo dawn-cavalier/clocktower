@@ -1,5 +1,5 @@
 from worldbuilder.Info import Info
-from worldbuilder.RoleEnum import Role
+from worldbuilder.role_enum import Role
 
 
 def get_info_trust(info_indices: list[int], learned_info: list[Info]):

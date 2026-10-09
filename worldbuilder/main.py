@@ -1,8 +1,8 @@
-from worldbuilder.GameInfo import GameInfo
-from worldbuilder.Demon.demonHelper import check_for_demon
-from worldbuilder.RoleEnum import Role
+from worldbuilder.game_info import GameInfo
+from worldbuilder.demon.demon_helper import check_for_demon
+from worldbuilder.role_enum import Role
 from worldbuilder.helper import get_all_posibilities, get_info_trust
-from worldbuilder.EvilTeam.evilTeamHelper import get_possible_evil_teams
+from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
 from worldbuilder.Info import Info, InfoType
 from worldbuilder.test import testTBGame1
 
@@ -71,6 +71,8 @@ def main() -> None:
         demon_info = [info.get_demon_info() for info in learned_info]
         possible_demons = check_for_demon(possibility, demon_info, possible_evil_teams)
 
+        # TODO: So the thing is possible evil teams and possible demons should be the same length
+        # This currently doesn't show that relationship
         if len(possible_evil_teams) > 0:
             evil_player_scores = [
                 sum(1 for t in possible_evil_teams if player_id in t)

@@ -1,4 +1,4 @@
-from worldbuilder.RoleEnum import Role
+from worldbuilder.role_enum import Role
 
 
 class GameInfo:
