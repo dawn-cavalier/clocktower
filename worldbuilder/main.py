@@ -44,7 +44,7 @@ def main() -> None:
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    testTBRoles(learned_info=learned_info)
+    testTBGame1(learned_info=learned_info)
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
 
@@ -65,7 +65,6 @@ def main() -> None:
         possible_evil_teams = get_possible_evil_teams(
             possibility, evil_team_info, EVIL_COUNT
         )
-
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
         possible_demons = check_for_demon(
@@ -94,8 +93,10 @@ def main() -> None:
             is_demon_scores[player] += player_score
 
         # Print
-        print(f"{possibility} ({info_trust:.4f}): {len(possible_evil_teams)}")
+        print(
+            f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}")
 
+    print(f"Player Number\t{[f"{player:<4}" for player in range(PLAYER_COUNT)]}")
     # TODO: Review this bandaid
     if sum(is_evil_scores) > 0:
         is_evil_scores = [
@@ -112,151 +113,95 @@ def main() -> None:
     # print(sum(is_demon_scores))
 
 
-def testTBRoles(learned_info: list[Info]):
+def testTBGame1(learned_info: list[Info]):
     # TODO: Should Info Source have it's own enum?
+    
     info = Info(
-        info_type=InfoType.STORYTELLER_GIVEN_ROLE,
+        info_type=InfoType.PLAYER_IS_ROLE,
         day=0,
         source=0,
-        seen_roles=[Role.SLAYER],
+        info_trust=1.0,
+        seen_roles=[Role.MAYOR],
         target_players=[0],
         is_good=True,
     )
     learned_info.append(info)
 
     info = Info(
-        info_type=InfoType.SLAYER_KILL,
-        day=0,
-        source=0,
+        info_type=InfoType.PLAYER_IS_ROLE,
+        day=1,
+        source=1,
         info_trust=0.5,
-        target_players=[2],
-        is_good=False
+        seen_roles=[Role.CHEF],
+        target_players=[1],
+        is_good=True,
     )
     learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.FORTUNE_TELLER_PING,
-    #     day=0,
-    #     source=0,
-    #     info_trust=0.5,
-    #     target_players=[1, 2],
-    #     is_yes=True
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.CHEF_NUMBER, day=1, source=1, info_trust=0.5, number=0
+    )
+    learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.RAVENKEEPER_PING,
-    #     day=0,
-    #     source=0,
-    #     info_trust=0.8,
-    #     seen_roles=[Role.IMP],
-    #     target_players=[11],
-    #     # TODO: Should this be included or inferred off the role?
-    #     is_good=False,
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.PLAYER_IS_ROLE,
+        day=1,
+        source=11,
+        info_trust=0.5,
+        seen_roles=[Role.UNDERTAKER],
+        target_players=[11],
+        is_good=True,
+    )
+    learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.RAVENKEEPER_PING,
-    #     day=0,
-    #     source=0,
-    #     info_trust=0.8,
-    #     seen_roles=[Role.IMP],
-    #     target_players=[10],
-    #     # TODO: Should this be included or inferred off the role?
-    #     is_good=False,
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.PLAYER_IS_ROLE,
+        day=1,
+        source=8,
+        info_trust=0.5,
+        seen_roles=[Role.FORTUNE_TELLER],
+        target_players=[8],
+        is_good=True,
+    )
+    learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.CHEF_NUMBER, day=0, source=0, info_trust=0.8, number=0
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.FORTUNE_TELLER_PING,
+        day=1,
+        source=8,
+        info_trust=0.5,
+        target_players=[1, 4],
+        is_yes=True
+    )
+    learned_info.append(info)
 
-    # # info = Info(
-    #     info_type=InfoType.WASHERWOMAN_PING,
-    #     day=1,
-    #     source=11,
-    #     info_trust=0.8,
-    #     seen_roles=[Role.EMPATH],
-    #     target_players=[1, 2],
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.PLAYER_IS_ROLE,
+        day=1,
+        source=6,
+        info_trust=0.5,
+        seen_roles=[Role.INVESTIGATOR],
+        target_players=[6],
+        is_good=True,
+    )
+    learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.EMPATH_NUMBER,
-    #     day=1,
-    #     source=1,
-    #     info_trust=0.8,
-    #     target_players=[0, 2],
-    #     number=1,
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.INVESTIGATOR_PING,
+        day=1,
+        source=6,
+        info_trust=0.5,
+        seen_roles=[Role.BARON],
+        target_players=[8, 10],
+        is_good=True,
+    )
+    learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.PLAYER_EXECUTED,
-    #     day=1,
-    #     source=-1,
-    #     target_players=[10],
-    # )
-    # learned_info.append(info)
+    info = Info(
+        info_type=InfoType.PLAYER_EXECUTED, day=1, source=-1, target_players=[1],
+    )
 
-    # info = Info(
-    #     info_type=InfoType.UNDERTAKER_INFO,
-    #     day=3,
-    #     source=2,
-    #     info_trust=0.8,
-    #     target_players=[10],
-    #     seen_roles=[Role.BARON],
-    #     is_good=False,
-    # )
-    # learned_info.append(info)
-
-    # info = Info(
-    #     info_type=InfoType.PLAYER_NIGHT_DEATH,
-    #     day=1,
-    #     source=-1,
-    #     target_players=[1],
-    # )
-    # learned_info.append(info)
-
-    # info = Info(
-    #     info_type=InfoType.VIRGIN_TRIGGER,
-    #     day=3,
-    #     source=5,
-    #     seen_roles=[Role.VIRGIN],
-    #     target_players=[5],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
-
-    # info = Info(
-    #     info_type=InfoType.VIRGIN_EXECUTE,
-    #     day=3,
-    #     source=-1,
-    #     target_players=[3],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
-
-    # info = Info(
-    #     info_type=InfoType.PLAYER_EXECUTED,
-    #     day=1,
-    #     source=-1,
-    #     target_players=[3],
-    # )
-    # learned_info.append(info)
-
-    # info = Info(
-    #     info_type=InfoType.UNDERTAKER_INFO,
-    #     day=3,
-    #     source=2,
-    #     info_trust=0.8,
-    #     target_players=[3],
-    #     seen_roles=[Role.INVESTIGATOR],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
+    pass
 
 
 if __name__ == "__main__":

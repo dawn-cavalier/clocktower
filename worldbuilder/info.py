@@ -23,7 +23,8 @@ class InfoType(Enum):
     NO_NIGHT_DEATH = 12
     PLAYER_EXECUTED = 13
     PLAYER_NIGHT_DEATH = 14
-    STORYTELLER_GIVEN_ROLE = 15
+    PLAYER_IS_ROLE = 15
+    PLAYER_IS_ALIGNMENT = 16
 
 
 class Info:
@@ -78,7 +79,18 @@ class Info:
                 )
                 return new_info
 
-            case InfoType.STORYTELLER_GIVEN_ROLE:
+            case InfoType.PLAYER_IS_ALIGNMENT:
+                new_info = EvilTeamInfo(
+                    info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                    is_good=self.is_good,
+                    target_players=self.target_players,
+                )
+                return new_info                
+            
+            case InfoType.PLAYER_IS_ROLE:
                 new_info = EvilTeamInfo(
                     info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
                     source=self.source,
@@ -254,7 +266,16 @@ class Info:
                 )
                 return new_info
 
-            case InfoType.STORYTELLER_GIVEN_ROLE:
+            case InfoType.PLAYER_IS_ALIGNMENT:
+                new_info = DemonInfo(
+                    info_type=DemonInfoType.NONE,
+                    source=self.source,
+                    day=self.day,
+                    info_trust=self.info_trust,
+                )
+                return new_info
+
+            case InfoType.PLAYER_IS_ROLE:
                 new_info = DemonInfo(
                     info_type=DemonInfoType.IS_ROLE,
                     source=self.source,
