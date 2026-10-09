@@ -9,11 +9,12 @@ from worldbuilder.evilTeam.evilTeamTransformers import (
     transform_empath_number,
 )
 
-PLAYER_COUNT = 12
-
 
 def get_possible_evil_teams(
-    info_indices: list[int], learned_info: list[EvilTeamInfo], evil_count: int
+    info_indices: list[int],
+    learned_info: list[EvilTeamInfo],
+    evil_count: int,
+    player_count: int,
 ):
     possible_teams: list[list[int]] = []
     # TODO: Make dependent on script
@@ -21,7 +22,7 @@ def get_possible_evil_teams(
     #! TODO: THIS ASSUMPTION MAKES SO IF THE IMP STARPASSES TO THE SPY, THEY ARE UNDETECTABLE
     # add_all_possible_teams(possible_teams, evil_count - 1)
     # Spy + Recluse / Normal Worlds
-    add_all_possible_teams(possible_teams, evil_count)
+    add_all_possible_teams(possible_teams, evil_count, player_count)
     # Recluse Worlds
     # add_all_possible_teams(possible_teams, evil_count + 1)
 
@@ -84,7 +85,7 @@ def get_possible_evil_teams(
                 possible_teams = transform_chef_number(
                     evil_teams=possible_teams,
                     chef_number=info.number,
-                    player_count=PLAYER_COUNT,
+                    player_count=player_count,
                 )
             case EvilTeamInfoType.EMPATH_NUMBER:
                 if info.number is None:
@@ -103,25 +104,24 @@ def get_possible_evil_teams(
     return possible_teams
 
 
-def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int):
+def add_all_possible_teams(possible_teams: list[list[int]], evil_count: int, player_count: int):
     if evil_count == 2:
-        for i in range(PLAYER_COUNT):
-            for j in range(i + 1, PLAYER_COUNT):
+        for i in range(player_count):
+            for j in range(i + 1, player_count):
                 possible_teams.append([i, j])
 
     if evil_count == 3:
-        for i in range(PLAYER_COUNT):
-            for j in range(i + 1, PLAYER_COUNT):
-                for k in range(j + 1, PLAYER_COUNT):
+        for i in range(player_count):
+            for j in range(i + 1, player_count):
+                for k in range(j + 1, player_count):
                     possible_teams.append([i, j, k])
 
     if evil_count == 4:
-        for i in range(PLAYER_COUNT):
-            for j in range(i + 1, PLAYER_COUNT):
-                for k in range(j + 1, PLAYER_COUNT):
-                    for l in range(k + 1, PLAYER_COUNT):
+        for i in range(player_count):
+            for j in range(i + 1, player_count):
+                for k in range(j + 1, player_count):
+                    for l in range(k + 1, player_count):
                         possible_teams.append([i, j, k, l])
-
 
     # TODO: Review how we want to handle recluse and spy
     # total = 0
