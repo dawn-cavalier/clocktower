@@ -97,6 +97,7 @@ def main() -> None:
             f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}")
 
     print(f"Player Number\t{[f"{player:<4}" for player in range(PLAYER_COUNT)]}")
+ 
     # TODO: Review this bandaid
     if sum(is_evil_scores) > 0:
         is_evil_scores = [

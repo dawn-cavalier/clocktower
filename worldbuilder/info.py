@@ -88,8 +88,8 @@ class Info:
                     is_good=self.is_good,
                     target_players=self.target_players,
                 )
-                return new_info                
-            
+                return new_info
+
             case InfoType.PLAYER_IS_ROLE:
                 new_info = EvilTeamInfo(
                     info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
@@ -397,7 +397,7 @@ class Info:
                     source=self.source,
                     day=self.day,
                     info_trust=self.info_trust,
-                    target_players=self.target_players
+                    target_players=self.target_players,
                 )
                 return new_info
 
@@ -407,7 +407,7 @@ class Info:
                     source=self.source,
                     day=self.day,
                     info_trust=self.info_trust,
-                    target_players=self.target_players
+                    target_players=self.target_players,
                 )
                 return new_info
 
@@ -426,7 +426,7 @@ class Info:
                     source=self.source,
                     day=self.day,
                     info_trust=self.info_trust,
-                    target_players=self.target_players
+                    target_players=self.target_players,
                 )
                 return new_info
 
@@ -436,7 +436,7 @@ class Info:
                     source=self.source,
                     day=self.day,
                     info_trust=self.info_trust,
-                    target_players=self.target_players
+                    target_players=self.target_players,
                 )
                 return new_info
 
