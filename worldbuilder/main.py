@@ -5,7 +5,7 @@ from worldbuilder.info import Info, InfoType
 from worldbuilder.test import testTBGame1
 
 PLAYER_COUNT = 12
-MINION_COUNT = 3
+MINION_COUNT = 2
 DEMON_COUNT = 1
 
 
@@ -102,18 +102,24 @@ def main() -> None:
     print(f"Player Seat:\t{[f"{player:<4}" for player in range(1, PLAYER_COUNT + 1)]}")
 
     # TODO: Review this bandaid
-    # if sum(is_evil_scores) > 0:
-    #     is_evil_scores = [
-    #         EVIL_COUNT * score / sum(is_evil_scores) for score in is_evil_scores
-    #     ]
+    # This normalizes it so that the sum of the array always equals the evil count.
+    # It is primarly for handling impossible worlds, where part of the score is lost.
+    # Ideally, none of the score is lost or if it is it doesn't matter
+    if sum(is_evil_scores) > 0:
+        is_evil_scores = [
+            (MINION_COUNT + DEMON_COUNT) * score / sum(is_evil_scores) for score in is_evil_scores
+        ]
     print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
     print(sum(is_evil_scores))
 
     # TODO: Review this bandaid
-    # if sum(is_demon_scores) > 0:
-    #     is_demon_scores = [
-    #         DEMON_COUNT * score / sum(is_demon_scores) for score in is_demon_scores
-    #     ]
+    # This normalizes it so that the sum of the array always equals the demon count.
+    # It is primarly for handling impossible worlds, where part of the score is lost.
+    # Ideally, none of the score is lost or if it is it doesn't matter
+    if sum(is_demon_scores) > 0:
+        is_demon_scores = [
+            DEMON_COUNT * score / sum(is_demon_scores) for score in is_demon_scores
+        ]
     print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
     print(sum(is_demon_scores))
 
