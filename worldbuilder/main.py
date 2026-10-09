@@ -2,10 +2,11 @@ from worldbuilder.demonHelper import check_for_demon
 from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.evilTeamHelper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
-from worldbuilder.rolesEnum import Role
+from worldbuilder.test import testTBGame1
 
 PLAYER_COUNT = 12
 EVIL_COUNT = 3
+DEMON_COUNT = 1
 
 
 def main() -> None:
@@ -67,8 +68,7 @@ def main() -> None:
         )
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
-        possible_demons = check_for_demon(
-            possibility, demon_info, possible_evil_teams)
+        possible_demons = check_for_demon(possibility, demon_info, possible_evil_teams)
 
         if len(possible_evil_teams) > 0:
             evil_player_scores = [
@@ -79,6 +79,7 @@ def main() -> None:
             ]
 
         if len(possible_demons) > 0:
+            # TODO: What if there is more than one demon?
             demon_player_scores = [
                 sum(1 / len(d) for d in possible_demons if player_id in d)
                 * info_trust
@@ -94,115 +95,27 @@ def main() -> None:
 
         # Print
         print(
-            f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}")
+            f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}"
+        )
 
-    print(f"Player Number\t{[f"{player:<4}" for player in range(PLAYER_COUNT)]}")
- 
+    print(f"Player Seat:\t{[f"{player:<4}" for player in range(1, PLAYER_COUNT + 1)]}")
+
     # TODO: Review this bandaid
-    if sum(is_evil_scores) > 0:
-        is_evil_scores = [
-            EVIL_COUNT * score / sum(is_evil_scores) for score in is_evil_scores
-        ]
+    # if sum(is_evil_scores) > 0:
+    #     is_evil_scores = [
+    #         EVIL_COUNT * score / sum(is_evil_scores) for score in is_evil_scores
+    #     ]
     print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
-    # print(sum(is_evil_scores))
+    print(sum(is_evil_scores))
 
     # TODO: Review this bandaid
-    if sum(is_demon_scores) > 0:
-        is_demon_scores = [score / sum(is_demon_scores)
-                           for score in is_demon_scores]
+    # if sum(is_demon_scores) > 0:
+    #     is_demon_scores = [
+    #         DEMON_COUNT * score / sum(is_demon_scores) for score in is_demon_scores
+    #     ]
     print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
-    # print(sum(is_demon_scores))
+    print(sum(is_demon_scores))
 
-
-def testTBGame1(learned_info: list[Info]):
-    # TODO: Should Info Source have it's own enum?
-    
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=0,
-        source=0,
-        info_trust=1.0,
-        seen_roles=[Role.MAYOR],
-        target_players=[0],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=1,
-        source=1,
-        info_trust=0.5,
-        seen_roles=[Role.CHEF],
-        target_players=[1],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.CHEF_NUMBER, day=1, source=1, info_trust=0.5, number=0
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=1,
-        source=11,
-        info_trust=0.5,
-        seen_roles=[Role.UNDERTAKER],
-        target_players=[11],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=1,
-        source=8,
-        info_trust=0.5,
-        seen_roles=[Role.FORTUNE_TELLER],
-        target_players=[8],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.FORTUNE_TELLER_PING,
-        day=1,
-        source=8,
-        info_trust=0.5,
-        target_players=[1, 4],
-        is_yes=True
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=1,
-        source=6,
-        info_trust=0.5,
-        seen_roles=[Role.INVESTIGATOR],
-        target_players=[6],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.INVESTIGATOR_PING,
-        day=1,
-        source=6,
-        info_trust=0.5,
-        seen_roles=[Role.BARON],
-        target_players=[8, 10],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.PLAYER_EXECUTED, day=1, source=-1, target_players=[1],
-    )
-
-    pass
 
 
 if __name__ == "__main__":

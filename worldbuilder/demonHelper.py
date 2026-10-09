@@ -1,7 +1,7 @@
 from worldbuilder.demonInfo import DemonInfo, DemonInfoType
 from worldbuilder.helper import is_demon
 
-
+# TODO: Does this handle different demon counts. Please check.
 def check_for_demon(
     info_indices: list[int],
     learned_info: list[DemonInfo],
@@ -14,12 +14,12 @@ def check_for_demon(
         for info_index in info_indices:
             is_inverted = info_index < 0
 
-            info_index = max(info_index, 0)
-            info = learned_info[info_index]
-
             # Ignore the information
             if is_inverted:
                 continue
+
+            info_index = max(info_index, 0)
+            info = learned_info[info_index]
             
             # No longer possible to have a demon, stop looking
             if len(demons) == 0:
