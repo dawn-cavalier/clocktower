@@ -1,7 +1,7 @@
 from enum import Enum
 
-from worldbuilder.demonInfo import DemonInfo, DemonInfoType
-from worldbuilder.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
+from worldbuilder.demon.demonInfo import DemonInfo, DemonInfoType
+from worldbuilder.evilTeam.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
 from worldbuilder.rolesEnum import Role
 
 

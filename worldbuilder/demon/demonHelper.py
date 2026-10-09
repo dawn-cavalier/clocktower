@@ -1,4 +1,4 @@
-from worldbuilder.demonInfo import DemonInfo, DemonInfoType
+from worldbuilder.demon.demonInfo import DemonInfo, DemonInfoType
 from worldbuilder.helper import is_demon
 
 # TODO: Does this handle different demon counts. Please check.

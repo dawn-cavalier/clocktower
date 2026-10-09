@@ -1,6 +1,6 @@
-from worldbuilder.demonHelper import check_for_demon
+from worldbuilder.demon.demonHelper import check_for_demon
 from worldbuilder.helper import get_all_posibilities, get_info_trust
-from worldbuilder.evilTeamHelper import get_possible_evil_teams
+from worldbuilder.evilTeam.evilTeamHelper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
 from worldbuilder.test import testTBGame1
 

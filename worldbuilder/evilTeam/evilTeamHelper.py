@@ -1,5 +1,5 @@
-from worldbuilder.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
-from worldbuilder.evilTeamTransformers import (
+from worldbuilder.evilTeam.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
+from worldbuilder.evilTeam.evilTeamTransformers import (
     transform_chef_number,
     transform_player_good,
     transform_player_evil,
