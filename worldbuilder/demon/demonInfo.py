@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-from worldbuilder.rolesEnum import Role
+from worldbuilder.RoleEnum import Role
 
 
 class DemonInfoType(IntEnum):

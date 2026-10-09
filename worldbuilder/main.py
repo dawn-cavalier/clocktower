@@ -1,12 +1,13 @@
-from worldbuilder.demon.demonHelper import check_for_demon
+from worldbuilder.Demon.demonHelper import check_for_demon
 from worldbuilder.helper import get_all_posibilities, get_info_trust
-from worldbuilder.evilTeam.evilTeamHelper import get_possible_evil_teams
-from worldbuilder.info import Info, InfoType
+from worldbuilder.EvilTeam.evilTeamHelper import get_possible_evil_teams
+from worldbuilder.Info import Info, InfoType
 from worldbuilder.test import testTBGame1
 
 PLAYER_COUNT = 12
-MINION_COUNT = 2
-DEMON_COUNT = 1
+BASE_OUTSIDER_COUNT = 2
+BASE_MINION_COUNT = 2
+BASE_DEMON_COUNT = 1
 
 
 def main() -> None:
@@ -65,7 +66,10 @@ def main() -> None:
         # Get Evil Teams
         evil_team_info = [info.get_evil_team_info() for info in learned_info]
         possible_evil_teams = get_possible_evil_teams(
-            possibility, evil_team_info, MINION_COUNT + DEMON_COUNT, PLAYER_COUNT
+            possibility,
+            evil_team_info,
+            BASE_MINION_COUNT + BASE_DEMON_COUNT,
+            PLAYER_COUNT,
         )
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
@@ -107,7 +111,8 @@ def main() -> None:
     # Ideally, none of the score is lost or if it is it doesn't matter
     if sum(is_evil_scores) > 0:
         is_evil_scores = [
-            (MINION_COUNT + DEMON_COUNT) * score / sum(is_evil_scores) for score in is_evil_scores
+            (BASE_MINION_COUNT + BASE_DEMON_COUNT) * score / sum(is_evil_scores)
+            for score in is_evil_scores
         ]
     print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
     print(sum(is_evil_scores))
@@ -118,7 +123,7 @@ def main() -> None:
     # Ideally, none of the score is lost or if it is it doesn't matter
     if sum(is_demon_scores) > 0:
         is_demon_scores = [
-            DEMON_COUNT * score / sum(is_demon_scores) for score in is_demon_scores
+            BASE_DEMON_COUNT * score / sum(is_demon_scores) for score in is_demon_scores
         ]
     print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
     print(sum(is_demon_scores))

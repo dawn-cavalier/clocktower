@@ -1,8 +1,8 @@
 from enum import Enum
 
-from worldbuilder.demon.demonInfo import DemonInfo, DemonInfoType
-from worldbuilder.evilTeam.evilTeamInfo import EvilTeamInfo, EvilTeamInfoType
-from worldbuilder.rolesEnum import Role
+from worldbuilder.Demon.DemonInfo import DemonInfo, DemonInfoType
+from worldbuilder.EvilTeam.EvilTeamInfo import EvilTeamInfo, EvilTeamInfoType
+from worldbuilder.RoleEnum import Role
 
 
 # TODO: Sort this so that role information is underneath game information

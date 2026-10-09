@@ -1,5 +1,5 @@
-from worldbuilder.info import Info, InfoType
-from worldbuilder.rolesEnum import Role
+from worldbuilder.Info import Info, InfoType
+from worldbuilder.RoleEnum import Role
 
 
 def testTBGame1(learned_info: list[Info]):
