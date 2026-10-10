@@ -20,14 +20,7 @@ def get_possible_evil_teams(
     player_count = game_info.player_count
 
     possible_teams: list[list[int]] = []
-    # TODO: Make dependent on script
-    # Spy Worlds
-    #! TODO: THIS ASSUMPTION MAKES SO IF THE IMP STARPASSES TO THE SPY, THEY ARE UNDETECTABLE
-    # add_all_possible_teams(possible_teams, evil_count - 1)
-    # Spy + Recluse / Normal Worlds
     add_all_possible_teams(possible_teams, evil_count, player_count)
-    # Recluse Worlds
-    # add_all_possible_teams(possible_teams, evil_count + 1)
 
     for info_index in info_indices:
         is_inverted = info_index < 0

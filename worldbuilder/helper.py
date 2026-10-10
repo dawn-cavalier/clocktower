@@ -1,4 +1,4 @@
-from worldbuilder.Info import Info
+from worldbuilder.info import Info
 from worldbuilder.role_enum import Role
 
 

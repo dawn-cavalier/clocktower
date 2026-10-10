@@ -3,7 +3,7 @@ from worldbuilder.demon.demon_helper import check_for_demon
 from worldbuilder.role_enum import Role
 from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
-from worldbuilder.Info import Info, InfoType
+from worldbuilder.info import Info, InfoType
 from worldbuilder.test import testTBGame1
 
 
