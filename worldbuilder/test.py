@@ -2,7 +2,7 @@ from worldbuilder.info import Info, InfoType
 from worldbuilder.role_enum import Role
 
 
-def testTBGame1(learned_info: list[Info]):
+def test_tb_game1(learned_info: list[Info]):
     # TODO: Should info be bundled together to reduce checking impossible worlds?
     # TODO: Should Info Source have it's own enum? How would you do this?
     info = Info(

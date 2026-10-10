@@ -4,7 +4,7 @@ from worldbuilder.role_enum import Role
 from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
-from worldbuilder.test import testTBGame1
+from worldbuilder.test import test_tb_game1
 
 
 def main() -> None:
@@ -37,7 +37,10 @@ def main() -> None:
         Role.IMP,
     ]
 
-    game_info = GameInfo(player_count=12, script=script)
+    game_info = GameInfo(player_count=7, script=script)
+
+    print(game_info.get_possible_outsider_counts())
+    return
 
     # Append only list!
     learned_info: list[Info] = []
@@ -45,7 +48,7 @@ def main() -> None:
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    testTBGame1(learned_info=learned_info)
+    test_tb_game1(learned_info=learned_info)
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
 

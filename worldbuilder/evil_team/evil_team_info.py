@@ -16,7 +16,7 @@ class EvilTeamInfo:
     source: int
     invert: bool
     day: int
-    info_trust = 1.0
+    info_trust: float
 
     number: int | None
     is_good: bool | None

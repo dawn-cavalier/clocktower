@@ -31,18 +31,35 @@ def get_all_posibilities(num_of_info: int):
 
     return possibilities
 
-
 def is_townsfolk(role: Role) -> bool:
     return Role.ACROBAT <= role <= Role.WASHERWOMAN
-
 
 def is_outsider(role: Role) -> bool:
     return Role.BARBER <= role <= Role.ZEALOT
 
-
 def is_minion(role: Role) -> bool:
     return Role.ASSASSIN <= role <= Role.XAAN
 
-
 def is_demon(role: Role) -> bool:
     return Role.AL_HADIKHIA <= role <= Role.ZOMBUUL
+
+# TODO: Review this for all outsider mods
+# TODO: How do we handle in game character changes?
+def get_outsider_mod(role: Role) -> list[int]:
+    match role:
+        case Role.DRUNK | Role.VIGORMORTIS:
+            return [-1]
+        case Role.FANG_GU:
+            return [1]
+        case Role.BARON:
+            return [2]
+        case Role.HERMIT:
+            return [-1, 0]
+        case Role.GODFATHER:
+            return [-1, 1]
+        case Role.BALLOONIST | Role.HUNTSMAN:
+            return [0, 1]
+        case Role.KAZALI | Role.LORD_OF_TYPHON | Role.XAAN:
+            return [-3, -2, -1, 0, 1, 2, 3]
+        case _:
+            return [0]
