@@ -1,6 +1,41 @@
 from worldbuilder.info import Info, InfoType
 from worldbuilder.role_enum import Role
 
+def test_role(learned_info: list[Info]):
+    pass
+    info = Info(
+        info_type=InfoType.PLAYER_IS_ROLE,
+        day=0,
+        source=0,
+        info_trust=1.0,
+        seen_roles=[Role.LIBRARIAN],
+        target_players=[0],
+        is_good=True,
+    )
+    learned_info.append(info)
+
+    info = Info(
+        info_type=InfoType.LIBRARIAN_PING,
+        day=0,
+        source=0,
+        info_trust=1.0,
+        seen_roles=[Role.BUTLER],
+        target_players=[1,2],
+        is_good=True,
+    )
+    learned_info.append(info)
+
+    info = Info(
+        info_type=InfoType.RAVENKEEPER_PING,
+        day=0,
+        source=0,
+        info_trust=1.0,
+        seen_roles=[Role.BUTLER],
+        target_players=[2],
+        is_good=True,
+    )
+    learned_info.append(info)
+
 
 def test_12p_tb_game(learned_info: list[Info]):
     # TODO: Should info be bundled together to reduce checking impossible worlds?

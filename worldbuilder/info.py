@@ -234,7 +234,7 @@ class Info:
             case (
                 InfoType.NONE
                 | InfoType.WASHERWOMAN_PING
-                | InfoType.LIBRARIAN_PING
+                | InfoType.INVESTIGATOR_PING
                 | InfoType.CHEF_NUMBER
                 | InfoType.EMPATH_NUMBER
                 | InfoType.FORTUNE_TELLER_PING
@@ -263,7 +263,7 @@ class Info:
                     target_players=self.target_players,
                 )
                 return new_info
-            case InfoType.INVESTIGATOR_PING:
+            case InfoType.LIBRARIAN_PING:
                 new_info = OutsiderInfo(
                     info_type=OutsiderInfoType.AT_LEAST_ONE_ROLE,
                     source=self.source,
