@@ -56,19 +56,16 @@ class GameInfo:
                 self.minion_count_base = 3
             case _:
                 raise ValueError(f"Player Count {player_count} is invalid.")
-    
+
     def get_possible_outsider_counts(self):
-        possible_outsider_counts: list[int] = []
+        possible_outsider_counts: list[int] = [self.outsider_count_base]
         role_modifications = [get_outsider_mod(role) for role in self.script]
 
         # TODO: is this the fastest way to do this?
         for mods in role_modifications:
             for mod in mods:
-                if len(possible_outsider_counts) > 0:
-                    for count in list(possible_outsider_counts):
-                        if count + mod not in possible_outsider_counts:
-                            possible_outsider_counts.append(count + mod)
-                else:
-                    possible_outsider_counts.append(self.outsider_count_base + mod)
+                for count in list(possible_outsider_counts):
+                    if count + mod not in possible_outsider_counts:
+                        possible_outsider_counts.append(count + mod)
 
-        return possible_outsider_counts 
+        return possible_outsider_counts
