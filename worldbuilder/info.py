@@ -1,30 +1,8 @@
-from enum import Enum
-
 from worldbuilder.demon.demon_info import DemonInfo, DemonInfoType
 from worldbuilder.evil_team.evil_team_info import EvilTeamInfo, EvilTeamInfoType
+from worldbuilder.info_type import InfoType
+from worldbuilder.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
 from worldbuilder.role_enum import Role
-
-
-# TODO: Sort this so that role information is underneath game information
-class InfoType(Enum):
-    NONE = -1
-    WASHERWOMAN_PING = 0
-    LIBRARIAN_PING = 1
-    INVESTIGATOR_PING = 2
-    CHEF_NUMBER = 3
-    EMPATH_NUMBER = 4
-    FORTUNE_TELLER_PING = 5
-    UNDERTAKER_INFO = 6
-    RAVENKEEPER_PING = 7
-    VIRGIN_TRIGGER = 8
-    VIRGIN_EXECUTE = 9
-    SLAYER_SHOT = 10
-    SLAYER_KILL = 11
-    NO_NIGHT_DEATH = 12
-    PLAYER_EXECUTED = 13
-    PLAYER_NIGHT_DEATH = 14
-    PLAYER_IS_ROLE = 15
-    PLAYER_IS_ALIGNMENT = 16
 
 
 class Info:
@@ -248,5 +226,51 @@ class Info:
                 )
                 return new_info
 
+            case _:
+                raise ValueError(f"Unhandled InfoType: {self.info_type.name}")
+
+    def get_outsider_info(self) -> OutsiderInfo:
+        match self.info_type:
+            case (
+                InfoType.NONE
+                | InfoType.WASHERWOMAN_PING
+                | InfoType.LIBRARIAN_PING
+                | InfoType.CHEF_NUMBER
+                | InfoType.EMPATH_NUMBER
+                | InfoType.FORTUNE_TELLER_PING
+                | InfoType.SLAYER_SHOT
+                | InfoType.NO_NIGHT_DEATH
+                | InfoType.PLAYER_NIGHT_DEATH
+            ):
+                new_info = OutsiderInfo(
+                    info_type=OutsiderInfoType.NONE,
+                    source=self.source,
+                    day=self.day,
+                )
+                return new_info
+            case (
+                InfoType.PLAYER_IS_ROLE
+                | InfoType.UNDERTAKER_INFO
+                | InfoType.RAVENKEEPER_PING
+                | InfoType.VIRGIN_TRIGGER
+                | InfoType.SLAYER_KILL
+            ):
+                new_info = OutsiderInfo(
+                    info_type=OutsiderInfoType.PLAYER_IS_ROLE,
+                    source=self.source,
+                    day=self.day,
+                    seen_roles=self.seen_roles,
+                    target_players=self.target_players,
+                )
+                return new_info
+            case InfoType.INVESTIGATOR_PING:
+                new_info = OutsiderInfo(
+                    info_type=OutsiderInfoType.AT_LEAST_ONE_ROLE,
+                    source=self.source,
+                    day=self.day,
+                    seen_roles=self.seen_roles,
+                    target_players=self.target_players,
+                )
+                return new_info
             case _:
                 raise ValueError(f"Unhandled InfoType: {self.info_type.name}")

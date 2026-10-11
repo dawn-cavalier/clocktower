@@ -31,6 +31,41 @@ def get_all_posibilities(num_of_info: int):
 
     return possibilities
 
+
+def add_all_possible_combinations(
+    possible_teams: list[list[int]], evil_count: int, player_count: int
+):
+    if evil_count == 1:
+        for i in range(player_count):
+            possible_teams.append([i])
+
+    if evil_count == 2:
+        for i in range(player_count):
+            for j in range(i + 1, player_count):
+                possible_teams.append([i, j])
+
+    if evil_count == 3:
+        for i in range(player_count):
+            for j in range(i + 1, player_count):
+                for k in range(j + 1, player_count):
+                    possible_teams.append([i, j, k])
+
+    if evil_count == 4:
+        for i in range(player_count):
+            for j in range(i + 1, player_count):
+                for k in range(j + 1, player_count):
+                    for l in range(k + 1, player_count):
+                        possible_teams.append([i, j, k, l])
+
+    if evil_count == 5:
+        for i in range(player_count):
+            for j in range(i + 1, player_count):
+                for k in range(j + 1, player_count):
+                    for l in range(k + 1, player_count):
+                        for m in range(l + 1, player_count):
+                            possible_teams.append([i, j, k, l, m])
+
+
 def is_townsfolk(role: Role) -> bool:
     return Role.ACROBAT <= role <= Role.WASHERWOMAN
 
@@ -63,3 +98,4 @@ def get_outsider_mod(role: Role) -> list[int]:
             return [-3, -2, -1, 0, 1, 2, 3]
         case _:
             return [0]
+

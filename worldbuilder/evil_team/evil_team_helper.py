@@ -9,6 +9,7 @@ from worldbuilder.evil_team.evil_team_transformers import (
     transform_exactly_one_evil,
     transform_empath_number,
 )
+from worldbuilder.helper import add_all_possible_combinations
 
 
 def get_possible_evil_teams(
@@ -20,7 +21,7 @@ def get_possible_evil_teams(
     player_count = game_info.player_count
 
     possible_teams: list[list[int]] = []
-    add_all_possible_teams(possible_teams, evil_count, player_count)
+    add_all_possible_combinations(possible_teams, evil_count, player_count)
 
     for info_index in info_indices:
         is_inverted = info_index < 0
@@ -99,27 +100,6 @@ def get_possible_evil_teams(
 
     return possible_teams
 
-
-def add_all_possible_teams(
-    possible_teams: list[list[int]], evil_count: int, player_count: int
-):
-    if evil_count == 2:
-        for i in range(player_count):
-            for j in range(i + 1, player_count):
-                possible_teams.append([i, j])
-
-    if evil_count == 3:
-        for i in range(player_count):
-            for j in range(i + 1, player_count):
-                for k in range(j + 1, player_count):
-                    possible_teams.append([i, j, k])
-
-    if evil_count == 4:
-        for i in range(player_count):
-            for j in range(i + 1, player_count):
-                for k in range(j + 1, player_count):
-                    for l in range(k + 1, player_count):
-                        possible_teams.append([i, j, k, l])
 
     # TODO: Review how we want to handle recluse and spy
     # total = 0

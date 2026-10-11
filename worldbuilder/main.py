@@ -1,5 +1,6 @@
 from worldbuilder.game_info import GameInfo
 from worldbuilder.demon.demon_helper import check_for_demon
+from worldbuilder.outsiders.outsider_helper import get_possible_outsiders
 from worldbuilder.role_enum import Role
 from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
@@ -72,10 +73,18 @@ def main() -> None:
         possible_evil_teams = get_possible_evil_teams(
             possibility, evil_team_info, game_info
         )
+
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
         possible_demons = check_for_demon(
             possibility, demon_info, possible_evil_teams)
+
+        outsider_info = [info.get_outsider_info() for info in learned_info]
+        possible_outsiders = get_possible_outsiders(
+            possibility, outsider_info, possible_evil_teams, game_info
+        )
+
+        print(possible_outsiders)
 
         # TODO: So the thing is possible evil teams and possible demons should be the same length
         # This currently doesn't show that relationship
