@@ -57,8 +57,10 @@ def main() -> None:
 
     for possibility in possibilities:
         info_trust = get_info_trust(possibility, learned_info)
-        evil_player_scores: list[float] = [0.0 for _ in range(game_info.player_count)]
-        demon_player_scores: list[float] = [0.0 for _ in range(game_info.player_count)]
+        evil_player_scores: list[float] = [
+            0.0 for _ in range(game_info.player_count)]
+        demon_player_scores: list[float] = [
+            0.0 for _ in range(game_info.player_count)]
 
         # TODO: Determine how necessary this is
         if info_trust <= 0.0:
@@ -72,7 +74,8 @@ def main() -> None:
         )
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
-        possible_demons = check_for_demon(possibility, demon_info, possible_evil_teams)
+        possible_demons = check_for_demon(
+            possibility, demon_info, possible_evil_teams)
 
         # TODO: So the thing is possible evil teams and possible demons should be the same length
         # This currently doesn't show that relationship
@@ -105,7 +108,8 @@ def main() -> None:
         )
 
     print(
-        f"Player Seat:\t{[f"{player:<4}" for player in range(1, game_info.player_count + 1)]}"
+        f"Player Seat:\t{[f"{player:<4}" for player in range(
+            1, game_info.player_count + 1)]}"
     )
 
     # TODO: Review this bandaid

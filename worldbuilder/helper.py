@@ -47,7 +47,7 @@ def is_demon(role: Role) -> bool:
 # TODO: How do we handle in game character changes?
 def get_outsider_mod(role: Role) -> list[int]:
     match role:
-        case Role.DRUNK | Role.VIGORMORTIS:
+        case Role.VIGORMORTIS:
             return [-1]
         case Role.FANG_GU:
             return [1]
