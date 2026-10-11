@@ -45,8 +45,20 @@ def get_possible_outsiders(
                     )
 
                 player = info.target_players[0]
-                role = info.seen_roles[0]                    
-                    
+                role = info.seen_roles[0]
+
+                if is_outsider(role):
+                    possible_outsiders = [
+                        outsiders
+                        for outsiders in possible_outsiders
+                        if player in outsiders
+                    ]
+                else:
+                    possible_outsiders = [
+                        outsiders
+                        for outsiders in possible_outsiders
+                        if player not in outsiders
+                    ]
 
             case OutsiderInfoType.AT_LEAST_ONE_ROLE:
                 if info.target_players is None:
