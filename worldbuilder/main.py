@@ -138,9 +138,9 @@ def main() -> None:
         for player, player_score in enumerate(outsider_player_scores):
             is_outsider_scores[player] += player_score
 
-        # print(
-        #     f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}"
-        # )
+        print(
+            f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}"
+        )
 
     print(f"Player Seat:\t{[f"{player:<4}" for player in range(
         1, game_info.player_count + 1)]}")

@@ -233,8 +233,6 @@ class Info:
         match self.info_type:
             case (
                 InfoType.NONE
-                | InfoType.WASHERWOMAN_PING
-                | InfoType.INVESTIGATOR_PING
                 | InfoType.CHEF_NUMBER
                 | InfoType.EMPATH_NUMBER
                 | InfoType.FORTUNE_TELLER_PING
@@ -274,5 +272,14 @@ class Info:
                     target_players=self.target_players,
                 )
                 return new_info
+            case InfoType.WASHERWOMAN_PING | InfoType.INVESTIGATOR_PING:
+                new_info = OutsiderInfo(
+                    info_type=OutsiderInfoType.AT_LEAST_ONE_NOT_OUTSIDER,
+                    source=self.source,
+                    day=self.day,
+                    target_players=self.target_players,
+                )
+                return new_info
+
             case _:
                 raise ValueError(f"Unhandled InfoType: {self.info_type.name}")

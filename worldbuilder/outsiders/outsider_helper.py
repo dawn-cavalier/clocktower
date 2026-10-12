@@ -13,7 +13,7 @@ def get_possible_outsiders(
     player_count = game_info.player_count
 
     possible_outsiders: list[list[list[int]]] = []
- 
+
     base_outsider_combinations: list[list[int]] = []
     for outsider_count in outsider_counts:
         add_all_possible_combinations(
@@ -36,9 +36,7 @@ def get_possible_outsiders(
 
             case OutsiderInfoType.PLAYER_IS_ROLE:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!"
-                    )
+                    raise ValueError(f"{info.info_type.name} has no target players!")
                 if len(info.target_players) != 1:
                     raise ValueError(
                         f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!"
@@ -68,9 +66,7 @@ def get_possible_outsiders(
 
             case OutsiderInfoType.AT_LEAST_ONE_ROLE:
                 if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!"
-                    )
+                    raise ValueError(f"{info.info_type.name} has no target players!")
                 if info.seen_roles is None:
                     raise ValueError(f"{info.info_type.name} has no stated role!")
                 if len(info.seen_roles) != 1:
@@ -98,6 +94,24 @@ def get_possible_outsiders(
 
                 base_outsider_combinations = new_possible_outsiders
 
+            case OutsiderInfoType.AT_LEAST_ONE_NOT_OUTSIDER:
+                if info.target_players is None:
+                    raise ValueError(f"{info.info_type.name} has no target players!")
+
+                players = info.target_players
+
+                new_possible_outsiders: list[list[int]] = []
+                for outsider_combination in base_outsider_combinations:
+                    is_one_missing = False
+                    for player in players:
+                        if player not in outsider_combination:
+                            is_one_missing = True
+                            break
+
+                    if is_one_missing:
+                        new_possible_outsiders.append(outsider_combination)
+
+                base_outsider_combinations = new_possible_outsiders
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
@@ -110,6 +124,8 @@ def get_possible_outsiders(
                 if evil not in outsiders
             ]
 
-        outsider_combinations = [outsiders for outsiders in outsider_combinations if len(outsiders) > 0]
+        outsider_combinations = [
+            outsiders for outsiders in outsider_combinations if len(outsiders) > 0
+        ]
         possible_outsiders.append(outsider_combinations)
     return possible_outsiders

@@ -7,7 +7,7 @@ class OutsiderInfoType(Enum):
     NONE = -1
     PLAYER_IS_ROLE = 0
     AT_LEAST_ONE_ROLE = 1
-
+    AT_LEAST_ONE_NOT_OUTSIDER = 2
 
 class OutsiderInfo:
     info_type: OutsiderInfoType
