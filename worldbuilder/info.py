@@ -241,6 +241,8 @@ class Info:
                 | InfoType.SLAYER_SHOT
                 | InfoType.NO_NIGHT_DEATH
                 | InfoType.PLAYER_NIGHT_DEATH
+                | InfoType.PLAYER_EXECUTED
+                | InfoType.PLAYER_IS_ALIGNMENT
             ):
                 new_info = OutsiderInfo(
                     info_type=OutsiderInfoType.NONE,

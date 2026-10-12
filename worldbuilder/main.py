@@ -5,7 +5,9 @@ from worldbuilder.role_enum import Role
 from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
-from worldbuilder.test import test_12p_tb_game, test_role
+from worldbuilder.test import test_12p_tb_game, test_role # type: ignore
+
+import cProfile # type: ignore
 
 
 def main() -> None:
@@ -40,17 +42,14 @@ def main() -> None:
 
     game_info = GameInfo(player_count=12, script=script)
 
-    # print(game_info.get_possible_outsider_counts())
-    # return
-
     # Append only list!
     learned_info: list[Info] = []
 
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    # test_12p_tb_game(learned_info=learned_info)
-    test_role(learned_info=learned_info)
+    test_12p_tb_game(learned_info=learned_info)
+    # test_role(learned_info=learned_info)
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
 
@@ -60,8 +59,10 @@ def main() -> None:
 
     for possibility in possibilities:
         info_trust = get_info_trust(possibility, learned_info)
-        evil_player_scores: list[float] = [0.0 for _ in range(game_info.player_count)]
-        demon_player_scores: list[float] = [0.0 for _ in range(game_info.player_count)]
+        evil_player_scores: list[float] = [
+            0.0 for _ in range(game_info.player_count)]
+        demon_player_scores: list[float] = [
+            0.0 for _ in range(game_info.player_count)]
         outsider_player_scores: list[float] = [
             0.0 for _ in range(game_info.player_count)
         ]
@@ -79,7 +80,8 @@ def main() -> None:
 
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
-        possible_demons = check_for_demon(possibility, demon_info, possible_evil_teams)
+        possible_demons = check_for_demon(
+            possibility, demon_info, possible_evil_teams)
 
         # Get possible Outsiders combinations
         outsider_info = [info.get_outsider_info() for info in learned_info]
@@ -107,19 +109,25 @@ def main() -> None:
             ]
 
         if len(possible_outsiders_groups) > 0:
-            # TODO: THIS IS A MESS
             # TODO: This assumes all possible outsider counts are the same likelyhood,
             #       which isn't true.
+            group_count = len(possible_outsiders_groups)
             for outsider_group in possible_outsiders_groups:
+                outsider_guess_size: dict[int, int] = {}
+                for count in game_info.get_possible_outsider_counts():
+                    outsider_guess_size[count] = len(
+                        [o for o in outsider_group if len(o) == count])
+                    
                 for outsiders in outsider_group:
+                    size = len(outsiders)
+                    group_size_population = outsider_guess_size.get(size)
+                    if group_size_population is None:
+                        raise ValueError(
+                            f"Getting count for unknown size: {size} for {outsider_guess_size}")
+
                     for outsider in outsiders:
-                        outsider_player_scores[outsider] += info_trust / (
-                            len(possible_outsiders_groups)
-                            * len(
-                                [o for o in outsider_group if len(o) == len(outsiders)]
-                            )
-                            * len(game_info.get_possible_outsider_counts())
-                        )
+                        outsider_player_scores[outsider] += info_trust / \
+                            (group_size_population * group_count)
 
         for player, player_score in enumerate(evil_player_scores):
             is_evil_scores[player] += player_score
@@ -130,13 +138,12 @@ def main() -> None:
         for player, player_score in enumerate(outsider_player_scores):
             is_outsider_scores[player] += player_score
 
-        # Print
-        print(
-            f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}"
-        )
+        # print(
+        #     f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}"
+        # )
 
     print(f"Player Seat:\t{[f"{player:<4}" for player in range(
-            1, game_info.player_count + 1)]}")
+        1, game_info.player_count + 1)]}")
 
     # TODO: Review this bandaid
     # This normalizes it so that the sum of the array always equals the evil count.
@@ -164,9 +171,11 @@ def main() -> None:
     print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
     print(sum(is_demon_scores))
 
-    print(f"Out Scores:\t{[f"{score:.2f}" for score in is_outsider_scores]}")
+    print(
+        f"Outside Scores:\t{[f"{score:.2f}" for score in is_outsider_scores]}")
     print(sum(is_outsider_scores))
 
 
 if __name__ == "__main__":
     main()
+    # cProfile.run('main()', sort="cumtime")
