@@ -3,7 +3,6 @@ from worldbuilder.role_enum import Role
 
 
 def test_role(learned_info: list[Info]):
-    pass
     info = Info(
         info_type=InfoType.PLAYER_IS_ROLE,
         day=0,
@@ -36,6 +35,30 @@ def test_role(learned_info: list[Info]):
         is_good=True,
     )
     learned_info.append(info)
+    
+    info = Info(
+        info_type=InfoType.RAVENKEEPER_PING,
+        day=0,
+        source=0,
+        info_trust=1.0,
+        seen_roles=[Role.BUTLER],
+        target_players=[3],
+        is_good=True,
+    )
+    learned_info.append(info)
+
+
+    info = Info(
+        info_type=InfoType.RAVENKEEPER_PING,
+        day=0,
+        source=0,
+        info_trust=1.0,
+        seen_roles=[Role.BUTLER],
+        target_players=[4],
+        is_good=True,
+    )
+    learned_info.append(info)
+
 
 
 def test_12p_tb_game(learned_info: list[Info]):
@@ -52,43 +75,43 @@ def test_12p_tb_game(learned_info: list[Info]):
     )
     learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=1,
-        source=1,
-        info_trust=0.5,
-        seen_roles=[Role.CHEF],
-        target_players=[1],
-        is_good=True,
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.PLAYER_IS_ROLE,
+    #     day=1,
+    #     source=1,
+    #     info_trust=0.5,
+    #     seen_roles=[Role.CHEF],
+    #     target_players=[1],
+    #     is_good=True,
+    # )
+    # learned_info.append(info)
 
     info = Info(
         info_type=InfoType.CHEF_NUMBER, day=1, source=1, info_trust=0.5, number=0
     )
     learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=1,
-        source=11,
-        info_trust=0.5,
-        seen_roles=[Role.UNDERTAKER],
-        target_players=[11],
-        is_good=True,
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.PLAYER_IS_ROLE,
+    #     day=1,
+    #     source=11,
+    #     info_trust=0.5,
+    #     seen_roles=[Role.UNDERTAKER],
+    #     target_players=[11],
+    #     is_good=True,
+    # )
+    # learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=1,
-        source=8,
-        info_trust=0.5,
-        seen_roles=[Role.FORTUNE_TELLER],
-        target_players=[8],
-        is_good=True,
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.PLAYER_IS_ROLE,
+    #     day=1,
+    #     source=8,
+    #     info_trust=0.5,
+    #     seen_roles=[Role.FORTUNE_TELLER],
+    #     target_players=[8],
+    #     is_good=True,
+    # )
+    # learned_info.append(info)
 
     info = Info(
         info_type=InfoType.FORTUNE_TELLER_PING,
@@ -100,15 +123,15 @@ def test_12p_tb_game(learned_info: list[Info]):
     )
     learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=1,
-        source=6,
-        info_trust=0.5,
-        seen_roles=[Role.INVESTIGATOR],
-        target_players=[6],
-        is_good=True,
-    )
+    # info = Info(
+    #     info_type=InfoType.PLAYER_IS_ROLE,
+    #     day=1,
+    #     source=6,
+    #     info_trust=0.5,
+    #     seen_roles=[Role.INVESTIGATOR],
+    #     target_players=[6],
+    #     is_good=True,
+    # )
     learned_info.append(info)
 
     info = Info(

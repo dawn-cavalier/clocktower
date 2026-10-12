@@ -5,9 +5,9 @@ from worldbuilder.role_enum import Role
 from worldbuilder.helper import get_all_posibilities, get_info_trust
 from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
-from worldbuilder.test import test_12p_tb_game, test_role # type: ignore
+from worldbuilder.test import test_12p_tb_game, test_role  # type: ignore
 
-import cProfile # type: ignore
+import cProfile  # type: ignore
 
 
 def main() -> None:
@@ -57,6 +57,7 @@ def main() -> None:
     is_demon_scores = [0.0 for _ in range(game_info.player_count)]
     is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
 
+    lost_trust = 0.0
     for possibility in possibilities:
         info_trust = get_info_trust(possibility, learned_info)
         evil_player_scores: list[float] = [
@@ -78,10 +79,19 @@ def main() -> None:
             possibility, evil_team_info, game_info
         )
 
+        if len(possible_evil_teams) == 0:
+            continue
+
         # Filter Evil Teams based on Demon info
         demon_info = [info.get_demon_info() for info in learned_info]
         possible_demons = check_for_demon(
-            possibility, demon_info, possible_evil_teams)
+            possibility, demon_info, possible_evil_teams, game_info)
+
+        if len(possible_demons) == 0:
+            lost_trust += info_trust
+
+        if len(possible_evil_teams) == 0 or len(possible_demons) == 0:
+            continue
 
         # Get possible Outsiders combinations
         outsider_info = [info.get_outsider_info() for info in learned_info]
@@ -117,7 +127,7 @@ def main() -> None:
                 for count in game_info.get_possible_outsider_counts():
                     outsider_guess_size[count] = len(
                         [o for o in outsider_group if len(o) == count])
-                    
+
                 for outsiders in outsider_group:
                     size = len(outsiders)
                     group_size_population = outsider_guess_size.get(size)
@@ -138,36 +148,21 @@ def main() -> None:
         for player, player_score in enumerate(outsider_player_scores):
             is_outsider_scores[player] += player_score
 
-        print(
-            f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}"
-        )
+        # print(
+        #     f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\tEvil Teams: {len(possible_evil_teams)}"
+        # )
+
+    # Account for trust lost during removal
+    is_evil_scores = [score / (1-lost_trust) for score in is_evil_scores]
+    is_demon_scores = [score / (1-lost_trust) for score in is_demon_scores]
+    is_outsider_scores = [score / (1-lost_trust) for score in is_outsider_scores]
 
     print(f"Player Seat:\t{[f"{player:<4}" for player in range(
         1, game_info.player_count + 1)]}")
 
-    # TODO: Review this bandaid
-    # This normalizes it so that the sum of the array always equals the evil count.
-    # It is primarly for handling impossible worlds, where part of the score is lost.
-    # Ideally, none of the score is lost or if it is it doesn't matter
-    if sum(is_evil_scores) > 0:
-        is_evil_scores = [
-            (game_info.minion_count_base + game_info.demon_count_base)
-            * score
-            / sum(is_evil_scores)
-            for score in is_evil_scores
-        ]
     print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
     print(sum(is_evil_scores))
 
-    # TODO: Review this bandaid
-    # This normalizes it so that the sum of the array always equals the demon count.
-    # It is primarly for handling impossible worlds, where part of the score is lost.
-    # Ideally, none of the score is lost or if it is it doesn't matter
-    if sum(is_demon_scores) > 0:
-        is_demon_scores = [
-            game_info.demon_count_base * score / sum(is_demon_scores)
-            for score in is_demon_scores
-        ]
     print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
     print(sum(is_demon_scores))
 
