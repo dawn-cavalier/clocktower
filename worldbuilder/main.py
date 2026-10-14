@@ -32,11 +32,10 @@ def main() -> None:
         Role.RECLUSE,
         Role.SAINT,
         # Minions
-        # Role.POISONER,
+        Role.POISONER,
         Role.SPY,
         Role.SCARLET_WOMAN,
         Role.BARON,
-        Role.GODFATHER,
         # Demons
         Role.IMP,
     ]
@@ -157,7 +156,8 @@ def main() -> None:
     # Account for trust lost during removal
     is_evil_scores = [score / (1-lost_trust) for score in is_evil_scores]
     is_demon_scores = [score / (1-lost_trust) for score in is_demon_scores]
-    is_outsider_scores = [score / (1-lost_trust) for score in is_outsider_scores]
+    is_outsider_scores = [score / (1-lost_trust)
+                          for score in is_outsider_scores]
 
     print(f"Player Seat:\t{[f"{player:<4}" for player in range(
         1, game_info.player_count + 1)]}")
