@@ -14,8 +14,6 @@ class GameInfo:
 
     script: list[Role]
 
-    __possible_outsider_counts__: list[int] | None = None
-
     def __init__(self, player_count: int, script: list[Role]) -> None:
         self.player_count = player_count
         self.script = script
@@ -62,10 +60,6 @@ class GameInfo:
                 raise ValueError(f"Player Count {player_count} is invalid.")
 
     def get_possible_outsider_counts(self):
-        if self.__possible_outsider_counts__ is not None:
-            return self.__possible_outsider_counts__
-
-        possible_outsider_counts: list[int] = [self.outsider_count_base]
         possible_outsider_dict: dict[int, float] = {
             self.outsider_count_base: 0
         }
@@ -76,20 +70,28 @@ class GameInfo:
             role for role in roles_with_mods if is_minion(role)]
         if len(minion_roles_with_mods) > 0:
             new_outsider_dict = dict(possible_outsider_dict)
-            minions = [get_outsider_mod(role)
+            minion_mods_list = [get_outsider_mod(role)
                        for role in self.script if is_minion(role)]
 
-            for combo in combinations(minions, self.minion_count_base):
-                sum_dic: dict[int, float] = {0: 0}
+            for combo in combinations(minion_mods_list, self.minion_count_base):
+                sum_dic: dict[int, float] = {}
                 for minion_mods in combo:
-                    new_sum_dic: dict[int, float] = {0: 0}
+                    new_sum_dic: dict[int, float] = {}
                     for mod in minion_mods:
-                        for mod_sum in sum_dic:
-                            if mod_sum + mod in new_sum_dic:
-                                new_sum_dic[mod_sum + mod] += 1 / \
+                        if len(sum_dic) > 0:
+                            for mod_sum in sum_dic:
+                                if mod_sum + mod in new_sum_dic:
+                                    new_sum_dic[mod_sum + mod] += 1 / \
+                                        len(minion_mods)
+                                else:
+                                    new_sum_dic[mod_sum + mod] = 1 / \
+                                        len(minion_mods)
+                        else:
+                            if mod in new_sum_dic:
+                                new_sum_dic[mod] += 1 / \
                                     len(minion_mods)
                             else:
-                                new_sum_dic[mod_sum + mod] = 1 / \
+                                new_sum_dic[mod] = 1 / \
                                     len(minion_mods)
 
                     sum_dic = new_sum_dic
@@ -104,4 +106,4 @@ class GameInfo:
             possible_outsider_dict = new_outsider_dict
 
         print(possible_outsider_dict)
-        return possible_outsider_counts
+        return possible_outsider_dict
