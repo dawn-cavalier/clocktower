@@ -32,23 +32,25 @@ def main() -> None:
         Role.RECLUSE,
         Role.SAINT,
         # Minions
-        Role.POISONER,
+        # Role.POISONER,
         Role.SPY,
         Role.SCARLET_WOMAN,
         Role.BARON,
+        Role.GODFATHER,
         # Demons
         Role.IMP,
     ]
 
     game_info = GameInfo(player_count=12, script=script)
-
+    game_info.get_possible_outsider_counts()
+    return
     # Append only list!
     learned_info: list[Info] = []
 
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    test_12p_tb_game(learned_info=learned_info)
+    # test_12p_tb_game(learned_info=learned_info)
     # test_role(learned_info=learned_info)
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
