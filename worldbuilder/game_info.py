@@ -1,6 +1,6 @@
 from itertools import combinations
 
-from worldbuilder.helper import get_outsider_mod, is_demon, is_minion
+from worldbuilder.helper import get_outsider_mod, is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.role_enum import Role
 
 
@@ -61,7 +61,7 @@ class GameInfo:
 
     def get_possible_outsider_counts(self):
         possible_outsider_dict: dict[int, float] = {
-            self.outsider_count_base: 0
+            self.outsider_count_base: 1
         }
         roles_with_mods = [role for role in self.script if len(
             get_outsider_mod(role)) > 1 or get_outsider_mod(role)[0] != 0]
@@ -92,6 +92,50 @@ class GameInfo:
                     combo, possible_outsider_dict, new_outsider_dict)
 
             possible_outsider_dict = new_outsider_dict
+
+            original_sum = sum(possible_outsider_dict.values())
+            for index, value in possible_outsider_dict.items():
+                value = value / original_sum
+                possible_outsider_dict[index] = value
+
+        # TODO: Does this  need to handle the different counts?
+        townsfolk_roles_with_mods = [
+            role for role in roles_with_mods if is_townsfolk(role)]
+        if len(townsfolk_roles_with_mods) > 0:
+            new_outsider_dict: dict[int, float] = {}
+            townsfolk_mods_list = [get_outsider_mod(role)
+                                for role in self.script if is_townsfolk(role)]
+
+            for combo in combinations(townsfolk_mods_list, self.townsfolk_count_base):
+                self.__process_combo__(
+                    combo, possible_outsider_dict, new_outsider_dict)
+
+            possible_outsider_dict = new_outsider_dict
+
+            original_sum = sum(possible_outsider_dict.values())
+            for index, value in possible_outsider_dict.items():
+                value = value / original_sum
+                possible_outsider_dict[index] = value
+
+        # TODO: Does this  need to handle the different counts?
+        outsider_roles_with_mods = [
+            role for role in roles_with_mods if is_outsider(role)]
+        if len(outsider_roles_with_mods) > 0:
+            new_outsider_dict: dict[int, float] = {}
+            outsider_mods_list = [get_outsider_mod(role)
+                                for role in self.script if is_outsider(role)]
+
+            for combo in combinations(outsider_mods_list, self.outsider_count_base):
+                self.__process_combo__(
+                    combo, possible_outsider_dict, new_outsider_dict)
+
+            possible_outsider_dict = new_outsider_dict
+
+            original_sum = sum(possible_outsider_dict.values())
+            for index, value in possible_outsider_dict.items():
+                value = value / original_sum
+                possible_outsider_dict[index] = value
+
 
         print(possible_outsider_dict)
         return possible_outsider_dict
@@ -125,8 +169,8 @@ class GameInfo:
             sum_dic = new_sum_dic
 
         for mod_sum, mod_occurance in sum_dic.items():
-            for count in possible_outsider_dict:
+            for count, occurance in possible_outsider_dict.items():
                 if mod_sum + count in new_outsider_dict:
-                    new_outsider_dict[mod_sum + count] += mod_occurance
+                    new_outsider_dict[mod_sum + count] += mod_occurance * occurance
                 else:
-                    new_outsider_dict[mod_sum + count] = mod_occurance
+                    new_outsider_dict[mod_sum + count] = mod_occurance * occurance

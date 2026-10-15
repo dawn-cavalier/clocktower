@@ -69,17 +69,22 @@ def add_all_possible_combinations(
 def is_townsfolk(role: Role) -> bool:
     return Role.ACROBAT <= role <= Role.WASHERWOMAN
 
+
 def is_outsider(role: Role) -> bool:
     return Role.BARBER <= role <= Role.ZEALOT
 
+
 def is_minion(role: Role) -> bool:
     return Role.ASSASSIN <= role <= Role.XAAN
+
 
 def is_demon(role: Role) -> bool:
     return Role.AL_HADIKHIA <= role <= Role.ZOMBUUL
 
 # TODO: Review this for all outsider mods
 # TODO: How do we handle in game character changes?
+
+
 def get_outsider_mod(role: Role) -> list[int]:
     match role:
         case Role.VIGORMORTIS:
@@ -98,4 +103,3 @@ def get_outsider_mod(role: Role) -> list[int]:
             return [-3, -2, -1, 0, 1, 2, 3]
         case _:
             return [0]
-
