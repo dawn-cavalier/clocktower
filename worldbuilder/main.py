@@ -41,15 +41,13 @@ def main() -> None:
     ]
 
     game_info = GameInfo(player_count=12, script=script)
-    game_info.get_possible_outsider_counts()
-    return
     # Append only list!
     learned_info: list[Info] = []
 
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    # test_12p_tb_game(learned_info=learned_info)
+    test_12p_tb_game(learned_info=learned_info)
     # test_role(learned_info=learned_info)
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
@@ -120,24 +118,48 @@ def main() -> None:
             ]
 
         if len(possible_outsiders_groups) > 0:
-            # TODO: This assumes all possible outsider counts are the same likelyhood,
-            #       which isn't true.
             group_count = len(possible_outsiders_groups)
             for outsider_group in possible_outsiders_groups:
                 outsider_guess_size: dict[int, int] = {}
                 for count in game_info.get_possible_outsider_counts():
-                    outsider_guess_size[count] = len(
+                    guess_size = len(
                         [o for o in outsider_group if len(o) == count])
+                    if guess_size > 0:
+                        outsider_guess_size[count] = guess_size
 
                 for outsiders in outsider_group:
                     size = len(outsiders)
+                    weight: float
+                    if len(outsider_guess_size) == 1:
+                        weight = 1.0
+                    elif len(outsider_guess_size) < len(game_info.get_possible_outsider_counts()):
+                        total = 0.0
+                        for guess_size in outsider_guess_size:
+                            result = game_info.get_possible_outsider_counts().get(guess_size)
+                            if result is None:
+                                raise ValueError(
+                                    f"Attempting to access invalid outsider count: {guess_size}")
+                            total += result
+                        result = game_info.get_possible_outsider_counts().get(size)
+                        if result is None:
+                            raise ValueError(
+                                f"Attempting to access invalid outsider count: {size}")
+                        weight = result / total
+                    else:
+                        result = game_info.get_possible_outsider_counts().get(size)
+                        if result is None:
+                            raise ValueError(
+                                f"Attempting to access invalid outsider count: {size}")
+                        weight = result
+
                     group_size_population = outsider_guess_size.get(size)
+
                     if group_size_population is None:
                         raise ValueError(
                             f"Getting count for unknown size: {size} for {outsider_guess_size}")
 
                     for outsider in outsiders:
-                        outsider_player_scores[outsider] += info_trust / \
+                        outsider_player_scores[outsider] += info_trust * weight / \
                             (group_size_population * group_count)
 
         for player, player_score in enumerate(evil_player_scores):
