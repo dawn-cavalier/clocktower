@@ -133,6 +133,9 @@ def main() -> None:
                     if len(outsider_guess_size) == 1:
                         weight = 1.0
                     elif len(outsider_guess_size) < len(game_info.get_possible_outsider_counts()):
+                        # TODO: For characters with two mods, like Godfather,
+                        #       this does not correctly redistrute the -1 into
+                        #       the +1 when the -1 is eliminated.
                         total = 0.0
                         for guess_size in outsider_guess_size:
                             result = game_info.get_possible_outsider_counts().get(guess_size)

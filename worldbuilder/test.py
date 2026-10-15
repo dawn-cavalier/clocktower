@@ -35,18 +35,17 @@ def test_role(learned_info: list[Info]):
         is_good=True,
     )
     learned_info.append(info)
-    
-    info = Info(
-        info_type=InfoType.RAVENKEEPER_PING,
-        day=0,
-        source=0,
-        info_trust=1.0,
-        seen_roles=[Role.BUTLER],
-        target_players=[3],
-        is_good=True,
-    )
-    learned_info.append(info)
 
+    # info = Info(
+    #     info_type=InfoType.RAVENKEEPER_PING,
+    #     day=0,
+    #     source=0,
+    #     info_trust=1.0,
+    #     seen_roles=[Role.BUTLER],
+    #     target_players=[3],
+    #     is_good=True,
+    # )
+    # learned_info.append(info)
 
     info = Info(
         info_type=InfoType.RAVENKEEPER_PING,
@@ -58,7 +57,6 @@ def test_role(learned_info: list[Info]):
         is_good=True,
     )
     learned_info.append(info)
-
 
 
 def test_12p_tb_game(learned_info: list[Info]):
