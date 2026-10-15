@@ -13,6 +13,8 @@ class GameInfo:
     townsfolk_count_base: int
 
     script: list[Role]
+    
+    __possible_outsider_dict__: dict[int, float] | None = None
 
     def __init__(self, player_count: int, script: list[Role]) -> None:
         self.player_count = player_count
@@ -60,8 +62,11 @@ class GameInfo:
                 raise ValueError(f"Player Count {player_count} is invalid.")
 
     def get_possible_outsider_counts(self):
+        if self.__possible_outsider_dict__ is not None:
+            return self.__possible_outsider_dict__
+        
         possible_outsider_dict: dict[int, float] = {
-            self.outsider_count_base: 1
+            self.outsider_count_base: 1.0
         }
         roles_with_mods = [role for role in self.script if len(
             get_outsider_mod(role)) > 1 or get_outsider_mod(role)[0] != 0]
@@ -136,8 +141,7 @@ class GameInfo:
                 value = value / original_sum
                 possible_outsider_dict[index] = value
 
-
-        print(possible_outsider_dict)
+        self.__possible_outsider_dict__ = possible_outsider_dict
         return possible_outsider_dict
 
     def __process_combo__(
