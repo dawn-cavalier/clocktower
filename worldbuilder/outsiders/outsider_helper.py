@@ -6,13 +6,12 @@ from worldbuilder.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
 def get_possible_outsiders(
     info_indices: list[int],
     learned_info: list[OutsiderInfo],
-    possible_evil_teams: list[list[int]],
     game_info: GameInfo,
 ):
     outsider_counts = game_info.get_possible_outsider_counts()
     player_count = game_info.player_count
 
-    possible_outsiders: list[list[list[int]]] = []
+    # possible_outsiders: list[list[list[int]]] = []
 
     base_outsider_combinations: list[list[int]] = []
     for outsider_count in outsider_counts:
@@ -36,13 +35,15 @@ def get_possible_outsiders(
 
             case OutsiderInfoType.PLAYER_IS_ROLE:
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
                 if len(info.target_players) != 1:
                     raise ValueError(
                         f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!"
                     )
                 if info.seen_roles is None:
-                    raise ValueError(f"{info.info_type.name} has no stated role!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no stated role!")
                 if len(info.seen_roles) != 1:
                     raise ValueError(
                         f"{info.info_type.name} received {len(info.seen_roles)} roles when 1 was expected!"
@@ -66,9 +67,11 @@ def get_possible_outsiders(
 
             case OutsiderInfoType.AT_LEAST_ONE_ROLE:
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
                 if info.seen_roles is None:
-                    raise ValueError(f"{info.info_type.name} has no stated role!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no stated role!")
                 if len(info.seen_roles) != 1:
                     raise ValueError(
                         f"{info.info_type.name} received {len(info.seen_roles)} roles when 1 was expected!"
@@ -96,7 +99,8 @@ def get_possible_outsiders(
 
             case OutsiderInfoType.AT_LEAST_ONE_NOT_OUTSIDER:
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
 
                 players = info.target_players
 
@@ -115,17 +119,18 @@ def get_possible_outsiders(
             case _:
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
-    for evil_team in possible_evil_teams:
-        outsider_combinations: list[list[int]] = list(base_outsider_combinations)
-        for evil in evil_team:
-            outsider_combinations = [
-                outsiders
-                for outsiders in outsider_combinations
-                if evil not in outsiders
-            ]
+    return base_outsider_combinations
+    # for evil_team in possible_evil_teams:
+    #     outsider_combinations: list[list[int]] = list(base_outsider_combinations)
+    #     for evil in evil_team:
+    #         outsider_combinations = [
+    #             outsiders
+    #             for outsiders in outsider_combinations
+    #             if evil not in outsiders
+    #         ]
 
-        outsider_combinations = [
-            outsiders for outsiders in outsider_combinations if len(outsiders) > 0
-        ]
-        possible_outsiders.append(outsider_combinations)
-    return possible_outsiders
+    #     outsider_combinations = [
+    #         outsiders for outsiders in outsider_combinations if len(outsiders) > 0
+    #     ]
+    #     possible_outsiders.append(outsider_combinations)
+    # return possible_outsiders

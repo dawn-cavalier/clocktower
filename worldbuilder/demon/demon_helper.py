@@ -8,10 +8,9 @@ from worldbuilder.helper import is_demon
 def check_for_demon(
     info_indices: list[int],
     learned_info: list[DemonInfo],
-    possible_teams: list[list[int]],
     game_info: GameInfo,
 ):
-    possible_demons: list[list[int]] = []
+    # possible_demons: list[list[int]] = []
 
     base_demons: list[int] = [_ for _ in range(game_info.player_count)]
 
@@ -32,15 +31,6 @@ def check_for_demon(
         match info.info_type:
             case DemonInfoType.NONE:
                 continue
-            case DemonInfoType.IS_DEAD:
-                if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!"
-                    )
-
-                players = info.target_players
-                base_demons = [d for d in base_demons if d not in players]
-
             case DemonInfoType.IS_ROLE:
                 if info.target_players is None:
                     raise ValueError(
@@ -139,13 +129,15 @@ def check_for_demon(
                 raise ValueError(
                     f"Unhandled InfoType: {info.info_type.name}")
 
-    for team in list(possible_teams):
-        demons = [demon for demon in base_demons if demon in team]    
 
-        # If there's no valid demon on these assumptions, remove the team from possible teams
-        if len(demons) == 0:
-            possible_teams.remove(team)
-        else:
-            possible_demons.append(demons)
+    return base_demons
+    # for team in list(possible_teams):
+    #     demons = [demon for demon in base_demons if demon in team]    
 
-    return possible_demons
+    #     # If there's no valid demon on these assumptions, remove the team from possible teams
+    #     if len(demons) == 0:
+    #         possible_teams.remove(team)
+    #     else:
+    #         possible_demons.append(demons)
+
+    # return possible_demons

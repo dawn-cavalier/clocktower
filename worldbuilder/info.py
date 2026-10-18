@@ -145,6 +145,8 @@ class Info:
                 | InfoType.EMPATH_NUMBER
                 | InfoType.VIRGIN_EXECUTE
                 | InfoType.NO_NIGHT_DEATH
+                | InfoType.PLAYER_EXECUTED
+                | InfoType.PLAYER_NIGHT_DEATH
             ):
                 new_info = DemonInfo(
                     info_type=DemonInfoType.NONE,
@@ -215,17 +217,6 @@ class Info:
                     target_players=self.target_players,
                 )
                 return new_info
-
-            case InfoType.PLAYER_EXECUTED | InfoType.PLAYER_NIGHT_DEATH:
-                new_info = DemonInfo(
-                    info_type=DemonInfoType.IS_DEAD,
-                    source=self.source,
-                    day=self.day,
-                    info_trust=self.info_trust,
-                    target_players=self.target_players,
-                )
-                return new_info
-
             case _:
                 raise ValueError(f"Unhandled InfoType: {self.info_type.name}")
 

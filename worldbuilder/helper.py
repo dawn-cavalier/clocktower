@@ -33,31 +33,31 @@ def get_all_posibilities(num_of_info: int):
 
 
 def add_all_possible_combinations(
-    possible_teams: list[list[int]], evil_count: int, player_count: int
+    possible_teams: list[list[int]], count: int, player_count: int
 ):
-    if evil_count == 1:
+    if count == 1:
         for i in range(player_count):
             possible_teams.append([i])
 
-    if evil_count == 2:
+    if count == 2:
         for i in range(player_count):
             for j in range(i + 1, player_count):
                 possible_teams.append([i, j])
 
-    if evil_count == 3:
+    if count == 3:
         for i in range(player_count):
             for j in range(i + 1, player_count):
                 for k in range(j + 1, player_count):
                     possible_teams.append([i, j, k])
 
-    if evil_count == 4:
+    if count == 4:
         for i in range(player_count):
             for j in range(i + 1, player_count):
                 for k in range(j + 1, player_count):
                     for l in range(k + 1, player_count):
                         possible_teams.append([i, j, k, l])
 
-    if evil_count == 5:
+    if count == 5:
         for i in range(player_count):
             for j in range(i + 1, player_count):
                 for k in range(j + 1, player_count):

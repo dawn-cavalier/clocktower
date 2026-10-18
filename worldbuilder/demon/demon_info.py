@@ -6,11 +6,10 @@ from worldbuilder.role_enum import Role
 class DemonInfoType(IntEnum):
     NONE = -1
     IS_ROLE = 0
-    IS_DEAD = 1
-    AT_LEAST_ONE_IS_ROLE = 2
-    FORTUNE_TELLER_PING = 3
-    SLAYER_SHOT = 4
-    SLAYER_KILL = 5
+    AT_LEAST_ONE_IS_ROLE = 1
+    FORTUNE_TELLER_PING = 2
+    SLAYER_SHOT = 3
+    SLAYER_KILL = 4
 
 class DemonInfo:
     info_type: DemonInfoType
