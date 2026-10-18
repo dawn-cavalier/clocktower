@@ -98,7 +98,8 @@ def main() -> None:
         )
 
         game_state.outsiders = possible_outsiders
-        print("BEFORE")
+
+        game_state.process(game_info, info_trust)
         print(
             f"{possibility}:\n\t" +
             f"Trust Score: {info_trust:.4f}\n\t" +
@@ -108,112 +109,33 @@ def main() -> None:
             f"Dead Players: {len(game_state.dead_players)}\n\t"
         )
 
-
-        game_state.process()
-        print("AFTER")
-        print(
-            f"{possibility}:\n\t" +
-            f"Trust Score: {info_trust:.4f}\n\t" +
-            f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
-            f"Outsiders: {len(game_state.outsiders)}\n\t" +
-            f"Demons: {len(game_state.demons)}\n\t" +
-            f"Dead Players: {len(game_state.dead_players)}\n\t"
-        )
-
-        # # TODO: So the thing is possible evil teams and possible demons should be the same length
-        # # This currently doesn't show that relationship
-        # if len(possible_evil_teams) > 0:
-        #     evil_player_scores = [
-        #         sum(1 for t in possible_evil_teams if player_id in t)
-        #         * info_trust
-        #         / len(possible_evil_teams)
-        #         for player_id in range(game_info.player_count)
-        #     ]
-
-        # if len(possible_demons) > 0:
-        #     # TODO: What if there is more than one demon?
-        #     demon_player_scores = [
-        #         sum(1 / len(d) for d in possible_demons if player_id in d)
-        #         * info_trust
-        #         / len(possible_demons)
-        #         for player_id in range(game_info.player_count)
-        #     ]
-
-        # if len(possible_outsiders_groups) > 0:
-        #     group_count = len(possible_outsiders_groups)
-        #     for outsider_group in possible_outsiders_groups:
-        #         outsider_guess_size: dict[int, int] = {}
-        #         for count in game_info.get_possible_outsider_counts():
-        #             guess_size = len(
-        #                 [o for o in outsider_group if len(o) == count])
-        #             if guess_size > 0:
-        #                 outsider_guess_size[count] = guess_size
-
-        #         for outsiders in outsider_group:
-        #             size = len(outsiders)
-        #             weight: float
-        #             if len(outsider_guess_size) == 1:
-        #                 weight = 1.0
-        #             elif len(outsider_guess_size) < len(game_info.get_possible_outsider_counts()):
-        #                 # TODO: For characters with two mods, like Godfather,
-        #                 #       this does not correctly redistrute the -1 into
-        #                 #       the +1 when the -1 is eliminated.
-        #                 total = 0.0
-        #                 for guess_size in outsider_guess_size:
-        #                     result = game_info.get_possible_outsider_counts().get(guess_size)
-        #                     if result is None:
-        #                         raise ValueError(
-        #                             f"Attempting to access invalid outsider count: {guess_size}")
-        #                     total += result
-        #                 result = game_info.get_possible_outsider_counts().get(size)
-        #                 if result is None:
-        #                     raise ValueError(
-        #                         f"Attempting to access invalid outsider count: {size}")
-        #                 weight = result / total
-        #             else:
-        #                 result = game_info.get_possible_outsider_counts().get(size)
-        #                 if result is None:
-        #                     raise ValueError(
-        #                         f"Attempting to access invalid outsider count: {size}")
-        #                 weight = result
-
-        #             group_size_population = outsider_guess_size.get(size)
-
-        #             if group_size_population is None:
-        #                 raise ValueError(
-        #                     f"Getting count for unknown size: {size} for {outsider_guess_size}")
-
-        #             for outsider in outsiders:
-        #                 outsider_player_scores[outsider] += info_trust * weight / \
-        #                     (group_size_population * group_count)
-
-        for player, player_score in enumerate(evil_player_scores):
+        for player, player_score in enumerate(game_state.evil_player_scores):
             is_evil_scores[player] += player_score
 
-        for player, player_score in enumerate(demon_player_scores):
+        for player, player_score in enumerate(game_state.demon_player_scores):
             is_demon_scores[player] += player_score
 
-        for player, player_score in enumerate(outsider_player_scores):
+        for player, player_score in enumerate(game_state.outsider_player_scores):
             is_outsider_scores[player] += player_score
 
     # Account for trust lost during removal
-    # is_evil_scores = [score / (1-lost_trust) for score in is_evil_scores]
-    # is_demon_scores = [score / (1-lost_trust) for score in is_demon_scores]
-    # is_outsider_scores = [score / (1-lost_trust)
-    #                       for score in is_outsider_scores]
+    is_evil_scores = [score / (1-lost_trust) for score in is_evil_scores]
+    is_demon_scores = [score / (1-lost_trust) for score in is_demon_scores]
+    is_outsider_scores = [score / (1-lost_trust)
+                          for score in is_outsider_scores]
 
-    # print(f"Player Seat:\t{[f"{player:<4}" for player in range(
-    #     1, game_info.player_count + 1)]}")
+    print(f"Player Seat:\t{[f"{player:<4}" for player in range(
+        1, game_info.player_count + 1)]}")
 
-    # print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
-    # print(sum(is_evil_scores))
+    print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
+    print(sum(is_evil_scores))
 
-    # print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
-    # print(sum(is_demon_scores))
+    print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
+    print(sum(is_demon_scores))
 
-    # print(
-    #     f"Outside Scores:\t{[f"{score:.2f}" for score in is_outsider_scores]}")
-    # print(sum(is_outsider_scores))
+    print(
+        f"Outside Scores:\t{[f"{score:.2f}" for score in is_outsider_scores]}")
+    print(sum(is_outsider_scores))
 
 
 if __name__ == "__main__":
