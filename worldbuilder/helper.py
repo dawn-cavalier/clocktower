@@ -2,7 +2,6 @@ from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
 from worldbuilder.role_enum import Role
 
-
 def get_dead_players(learned_info: list[Info]):
     dead_players: list[int] = []
     for info in learned_info:

@@ -53,15 +53,16 @@ def main() -> None:
 
     possibilities = get_all_posibilities(len(learned_info[1:]))
 
-    # is_evil_scores = [0.0 for _ in range(game_info.player_count)]
-    # is_demon_scores = [0.0 for _ in range(game_info.player_count)]
-    # is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
+    is_evil_scores = [0.0 for _ in range(game_info.player_count)]
+    is_demon_scores = [0.0 for _ in range(game_info.player_count)]
+    is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
 
     # Since all player death are 100% certain
     dead_players = get_dead_players(learned_info)
+
     lost_trust = 0.0
     for possibility in possibilities:
-        game_state: GameState = GameState()
+        game_state: GameState = GameState(game_info)
         game_state.dead_players = dead_players
 
         info_trust = get_info_trust(possibility, learned_info)
@@ -97,7 +98,7 @@ def main() -> None:
         )
 
         game_state.outsiders = possible_outsiders
-
+        print("BEFORE")
         print(
             f"{possibility}:\n\t" +
             f"Trust Score: {info_trust:.4f}\n\t" +
@@ -107,13 +108,17 @@ def main() -> None:
             f"Dead Players: {len(game_state.dead_players)}\n\t"
         )
 
-        # evil_player_scores: list[float] = [
-        #     0.0 for _ in range(game_info.player_count)]
-        # demon_player_scores: list[float] = [
-        #     0.0 for _ in range(game_info.player_count)]
-        # outsider_player_scores: list[float] = [
-        #     0.0 for _ in range(game_info.player_count)
-        # ]
+
+        game_state.process()
+        print("AFTER")
+        print(
+            f"{possibility}:\n\t" +
+            f"Trust Score: {info_trust:.4f}\n\t" +
+            f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
+            f"Outsiders: {len(game_state.outsiders)}\n\t" +
+            f"Demons: {len(game_state.demons)}\n\t" +
+            f"Dead Players: {len(game_state.dead_players)}\n\t"
+        )
 
         # # TODO: So the thing is possible evil teams and possible demons should be the same length
         # # This currently doesn't show that relationship
@@ -182,14 +187,14 @@ def main() -> None:
         #                 outsider_player_scores[outsider] += info_trust * weight / \
         #                     (group_size_population * group_count)
 
-        # for player, player_score in enumerate(evil_player_scores):
-        #     is_evil_scores[player] += player_score
+        for player, player_score in enumerate(evil_player_scores):
+            is_evil_scores[player] += player_score
 
-        # for player, player_score in enumerate(demon_player_scores):
-        #     is_demon_scores[player] += player_score
+        for player, player_score in enumerate(demon_player_scores):
+            is_demon_scores[player] += player_score
 
-        # for player, player_score in enumerate(outsider_player_scores):
-        #     is_outsider_scores[player] += player_score
+        for player, player_score in enumerate(outsider_player_scores):
+            is_outsider_scores[player] += player_score
 
     # Account for trust lost during removal
     # is_evil_scores = [score / (1-lost_trust) for score in is_evil_scores]

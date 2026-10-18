@@ -114,12 +114,3 @@ def check_for_demon(
                     f"Unhandled InfoType: {info.info_type.name}")
 
     return base_demons
-    # possible_demons: list[list[int]] = []
-    # for team in list(possible_teams):
-    #     demons = [demon for demon in base_demons if demon in team]
-    #     # If there's no valid demon on these assumptions, remove the team from possible teams
-    #     if len(demons) == 0:
-    #         possible_teams.remove(team)
-    #     else:
-    #         possible_demons.append(demons)
-    # return possible_demons
