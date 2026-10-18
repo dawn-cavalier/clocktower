@@ -55,6 +55,7 @@ class Info:
                 | InfoType.NO_NIGHT_DEATH
                 | InfoType.PLAYER_EXECUTED
                 | InfoType.PLAYER_NIGHT_DEATH
+                | InfoType.PLAYER_DAY_DEATH
             ):
                 new_info = EvilTeamInfo(
                     info_type=EvilTeamInfoType.NONE,
@@ -121,7 +122,6 @@ class Info:
                 | InfoType.RAVENKEEPER_PING
                 | InfoType.VIRGIN_TRIGGER
                 | InfoType.VIRGIN_EXECUTE
-                | InfoType.SLAYER_KILL
             ):
                 new_info = EvilTeamInfo(
                     info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
@@ -147,6 +147,7 @@ class Info:
                 | InfoType.NO_NIGHT_DEATH
                 | InfoType.PLAYER_EXECUTED
                 | InfoType.PLAYER_NIGHT_DEATH
+                | InfoType.PLAYER_DAY_DEATH
             ):
                 new_info = DemonInfo(
                     info_type=DemonInfoType.NONE,
@@ -208,15 +209,6 @@ class Info:
                 )
                 return new_info
 
-            case InfoType.SLAYER_KILL:
-                new_info = DemonInfo(
-                    info_type=DemonInfoType.SLAYER_KILL,
-                    source=self.source,
-                    day=self.day,
-                    info_trust=self.info_trust,
-                    target_players=self.target_players,
-                )
-                return new_info
             case _:
                 raise ValueError(f"Unhandled InfoType: {self.info_type.name}")
 
@@ -232,6 +224,7 @@ class Info:
                 | InfoType.PLAYER_NIGHT_DEATH
                 | InfoType.PLAYER_EXECUTED
                 | InfoType.PLAYER_IS_ALIGNMENT
+                | InfoType.PLAYER_DAY_DEATH
             ):
                 new_info = OutsiderInfo(
                     info_type=OutsiderInfoType.NONE,
@@ -244,7 +237,6 @@ class Info:
                 | InfoType.UNDERTAKER_INFO
                 | InfoType.RAVENKEEPER_PING
                 | InfoType.VIRGIN_TRIGGER
-                | InfoType.SLAYER_KILL
             ):
                 new_info = OutsiderInfo(
                     info_type=OutsiderInfoType.PLAYER_IS_ROLE,
@@ -256,7 +248,7 @@ class Info:
                 return new_info
             case InfoType.LIBRARIAN_PING:
                 new_info = OutsiderInfo(
-                    info_type=OutsiderInfoType.AT_LEAST_ONE_ROLE,
+                    info_type=OutsiderInfoType.AT_LEAST_ONE_IS_OUTSIDER,
                     source=self.source,
                     day=self.day,
                     seen_roles=self.seen_roles,

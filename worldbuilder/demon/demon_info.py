@@ -9,7 +9,6 @@ class DemonInfoType(IntEnum):
     AT_LEAST_ONE_IS_ROLE = 1
     FORTUNE_TELLER_PING = 2
     SLAYER_SHOT = 3
-    SLAYER_KILL = 4
 
 class DemonInfo:
     info_type: DemonInfoType

@@ -10,8 +10,6 @@ def check_for_demon(
     learned_info: list[DemonInfo],
     game_info: GameInfo,
 ):
-    # possible_demons: list[list[int]] = []
-
     base_demons: list[int] = [_ for _ in range(game_info.player_count)]
 
     for info_index in info_indices:
@@ -111,33 +109,17 @@ def check_for_demon(
 
                 base_demons = [d for d in base_demons if d not in players]
 
-            case DemonInfoType.SLAYER_KILL:
-                if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!"
-                    )
-                if len(info.target_players) != 1:
-                    raise ValueError(
-                        f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!"
-                    )
-
-                players = info.target_players
-
-                base_demons = [d for d in base_demons if d in players]
-
             case _:
                 raise ValueError(
                     f"Unhandled InfoType: {info.info_type.name}")
 
-
     return base_demons
+    # possible_demons: list[list[int]] = []
     # for team in list(possible_teams):
-    #     demons = [demon for demon in base_demons if demon in team]    
-
+    #     demons = [demon for demon in base_demons if demon in team]
     #     # If there's no valid demon on these assumptions, remove the team from possible teams
     #     if len(demons) == 0:
     #         possible_teams.remove(team)
     #     else:
     #         possible_demons.append(demons)
-
     # return possible_demons
