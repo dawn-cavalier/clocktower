@@ -3,7 +3,7 @@ from worldbuilder.demon.demon_helper import check_for_demon
 from worldbuilder.game_state import GameState
 from worldbuilder.outsiders.outsider_helper import get_possible_outsiders
 from worldbuilder.role_enum import Role
-from worldbuilder.helper import get_all_posibilities, get_info_trust
+from worldbuilder.helper import get_all_posibilities, get_dead_players, get_info_trust
 from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
 from worldbuilder.test import test_12p_tb_game, test_role  # type: ignore
@@ -57,16 +57,17 @@ def main() -> None:
     # is_demon_scores = [0.0 for _ in range(game_info.player_count)]
     # is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
 
+    # Since all player death are 100% certain
+    dead_players = get_dead_players(learned_info)
     lost_trust = 0.0
     for possibility in possibilities:
         game_state: GameState = GameState()
+        game_state.dead_players = dead_players
 
         info_trust = get_info_trust(possibility, learned_info)
-        # TODO: Determine how necessary this is
         if info_trust <= 0.0:
             continue
 
-        # TODO: Is it faster to get Demons and filter teams based on them?
         # Get Evil Teams
         evil_team_info = [info.get_evil_team_info() for info in learned_info]
         possible_evil_teams = get_possible_evil_teams(
@@ -98,10 +99,12 @@ def main() -> None:
         game_state.outsiders = possible_outsiders
 
         print(
-            f"{possibility}:\n\tTrust Score: {info_trust:.4f}\n\t" +
+            f"{possibility}:\n\t" +
+            f"Trust Score: {info_trust:.4f}\n\t" +
             f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
             f"Outsiders: {len(game_state.outsiders)}\n\t" +
-            f"Demons: {len(game_state.demons)}\n\t"
+            f"Demons: {len(game_state.demons)}\n\t" +
+            f"Dead Players: {len(game_state.dead_players)}\n\t"
         )
 
         # evil_player_scores: list[float] = [
