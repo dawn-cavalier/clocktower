@@ -100,14 +100,9 @@ def main() -> None:
         game_state.outsiders = possible_outsiders
 
         game_state.process(game_info, info_trust)
-        print(
-            f"{possibility}:\n\t" +
-            f"Trust Score: {info_trust:.4f}\n\t" +
-            f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
-            f"Outsiders: {len(game_state.outsiders)}\n\t" +
-            f"Demons: {len(game_state.demons)}\n\t" +
-            f"Dead Players: {len(game_state.dead_players)}\n\t"
-        )
+
+        if len(game_state.evil_teams) == 0 or len(game_state.demons) == 0:
+            lost_trust += info_trust
 
         for player, player_score in enumerate(game_state.evil_player_scores):
             is_evil_scores[player] += player_score
@@ -117,6 +112,15 @@ def main() -> None:
 
         for player, player_score in enumerate(game_state.outsider_player_scores):
             is_outsider_scores[player] += player_score
+
+        print(
+            f"{possibility}:\n\t" +
+            f"Trust Score: {info_trust:.4f}\n\t" +
+            f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
+            f"Outsiders: {len(game_state.outsiders)}\n\t" +
+            f"Demons: {len(game_state.demons)}\n\t" +
+            f"Dead Players: {len(game_state.dead_players)}\n\t"
+        )
 
     # Account for trust lost during removal
     is_evil_scores = [score / (1-lost_trust) for score in is_evil_scores]

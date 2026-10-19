@@ -23,6 +23,7 @@ class GameState:
         ]
 
     def process(self, game_info: GameInfo, info_trust: float):
+        self.demons = [demon for demon in self.demons if demon not in self.dead_players]
         self.evil_teams = [evil_team for evil_team in self.evil_teams if len(
             [demon for demon in self.demons if demon in evil_team]) > 0]
 
@@ -31,6 +32,9 @@ class GameState:
         self.__update_outsider_scores__(game_info, info_trust)
 
     def __update_evil_scores__(self, game_info: GameInfo, info_trust: float):
+        if len(self.evil_teams) == 0:
+            return
+
         self.evil_player_scores = [
             sum(1 for t in self.evil_teams if player_id in t)
             * info_trust
@@ -39,7 +43,9 @@ class GameState:
         ]
 
     def __update_demon_scores__(self, game_info: GameInfo, info_trust: float):
-        print(self.demons)
+        if len(self.demons) == 0:
+            return
+
         self.demon_player_scores = [
             sum(1 for d in self.demons if player_id == d)
             * info_trust
@@ -48,6 +54,9 @@ class GameState:
         ]
 
     def __update_outsider_scores__(self, game_info: GameInfo, info_trust: float):
+        if len(self.outsiders) == 0:
+            return
+
         outsider_worlds = [[group for group in self.outsiders if len(set(group) & set(
             evil_team)) == 0] for evil_team in self.evil_teams]
 
