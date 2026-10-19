@@ -3,19 +3,33 @@ from worldbuilder.info_type import InfoType
 from worldbuilder.role_enum import Role
 
 def get_dead_players(learned_info: list[Info]):
-    dead_players: list[int] = []
+    night_deaths: list[int] = []
+    day_deaths: list[int] = []
+    execution_deaths: list[int] = []
     for info in learned_info:
         info_type = info.info_type
         match info_type:
-            case InfoType.PLAYER_DAY_DEATH | InfoType.PLAYER_NIGHT_DEATH | InfoType.PLAYER_EXECUTED:
+            case InfoType.PLAYER_NIGHT_DEATH:
                 if info.target_players is None:
                     raise ValueError(
                         f"{info.info_type.name} has no target players!")
 
-                dead_players += info.target_players
+                night_deaths += info.target_players
+            case InfoType.PLAYER_DAY_DEATH:
+                if info.target_players is None:
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
+
+                day_deaths += info.target_players
+            case InfoType.PLAYER_EXECUTED:
+                if info.target_players is None:
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
+
+                execution_deaths += info.target_players
             case _:
                 pass
-    return dead_players
+    return (night_deaths, day_deaths, execution_deaths)
 
 def get_info_trust(info_indices: list[int], learned_info: list[Info]):
     trust_score = 1.0

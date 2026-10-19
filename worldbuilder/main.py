@@ -58,12 +58,14 @@ def main() -> None:
     is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
 
     # Since all player death are 100% certain
-    dead_players = get_dead_players(learned_info)
+    night_deaths, day_deaths, execution_deaths = get_dead_players(learned_info)
 
     lost_trust = 0.0
     for possibility in possibilities:
         game_state: GameState = GameState(game_info)
-        game_state.dead_players = dead_players
+        game_state.night_deaths = night_deaths
+        game_state.day_deaths = day_deaths
+        game_state.execution_deaths = execution_deaths
 
         info_trust = get_info_trust(possibility, learned_info)
         if info_trust <= 0.0:
@@ -99,8 +101,7 @@ def main() -> None:
 
         game_state.outsiders = possible_outsiders
 
-        game_state.process(game_info)
-        game_state.update_scores(game_info, info_trust)
+        game_state.process(game_info, info_trust)
 
         if len(game_state.evil_teams) == 0 or len(game_state.demons) == 0:
             lost_trust += info_trust
@@ -114,14 +115,13 @@ def main() -> None:
         for player, player_score in enumerate(game_state.outsider_player_scores):
             is_outsider_scores[player] += player_score
 
-        print(
-            f"{possibility}:\n\t" +
-            f"Trust Score: {info_trust:.4f}\n\t" +
-            f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
-            f"Outsiders: {len(game_state.outsiders)}\n\t" +
-            f"Demons: {len(game_state.demons)}\n\t" +
-            f"Dead Players: {len(game_state.dead_players)}\n\t"
-        )
+        # print(
+        #     f"{possibility}:\n\t" +
+        #     f"Trust Score: {info_trust:.4f}\n\t" +
+        #     f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
+        #     f"Outsiders: {len(game_state.outsiders)}\n\t" +
+        #     f"Demons: {len(game_state.demons)}\n\t"
+        # )
 
     # Account for trust lost during removal
     is_evil_scores = [score / (1-lost_trust) for score in is_evil_scores]

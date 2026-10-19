@@ -1,5 +1,6 @@
 
 from worldbuilder.game_info import GameInfo
+from worldbuilder.role_enum import Role
 
 
 class GameState:
@@ -7,11 +8,15 @@ class GameState:
     outsiders: list[list[int]]
 
     demons: list[int]
-    dead_players: list[int]
+    night_deaths: list[int]
+    day_deaths: list[int]
+    execution_deaths: list[int]
 
     evil_player_scores: list[float]
     demon_player_scores: list[float]
     outsider_player_scores: list[float]
+
+    __second_order_demons__: list[int]
 
     def __init__(self, game_info: GameInfo) -> None:
         self.evil_player_scores: list[float] = [
@@ -22,12 +27,22 @@ class GameState:
             0.0 for _ in range(game_info.player_count)
         ]
 
-    def process(self, game_info: GameInfo):
-        self.demons = [demon for demon in self.demons if demon not in self.dead_players]
+    def process(self, game_info: GameInfo, info_trust: float):
+        night_insurance = [Role.SCARLET_WOMAN, Role.IMP]
+        day_insurance = [Role.SCARLET_WOMAN]
+
+        if len(set(game_info.script) & set(night_insurance)) == 0:
+            self.demons = [
+                demon for demon in self.demons if demon not in self.night_deaths]
+
+        if len(set(game_info.script) & set(day_insurance)) == 0:
+            self.demons = [
+                demon for demon in self.demons if
+                demon not in self.execution_deaths or demon not in self.day_deaths
+            ]
+
         self.evil_teams = [evil_team for evil_team in self.evil_teams if len(
             [demon for demon in self.demons if demon in evil_team]) > 0]
-
-    def update_scores(self, game_info: GameInfo, info_trust: float):
         self.__update_evil_scores__(game_info, info_trust)
         self.__update_demon_scores__(game_info, info_trust)
         self.__update_outsider_scores__(game_info, info_trust)
@@ -47,10 +62,13 @@ class GameState:
         if len(self.demons) == 0:
             return
 
+        demon_worlds = [[demon for demon in self.demons if demon in team]
+                        for team in self.evil_teams]
+
         self.demon_player_scores = [
-            sum(1 for d in self.demons if player_id == d)
+            sum(1 / len(d) for d in demon_worlds if player_id in d)
             * info_trust
-            / len(self.demons)
+            / len(demon_worlds)
             for player_id in range(game_info.player_count)
         ]
 
