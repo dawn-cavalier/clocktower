@@ -99,7 +99,8 @@ def main() -> None:
 
         game_state.outsiders = possible_outsiders
 
-        game_state.process(game_info, info_trust)
+        game_state.process(game_info)
+        game_state.update_scores(game_info, info_trust)
 
         if len(game_state.evil_teams) == 0 or len(game_state.demons) == 0:
             lost_trust += info_trust
