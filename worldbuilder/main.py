@@ -12,7 +12,7 @@ import cProfile  # type: ignore
 
 
 def main() -> None:
-    script = [
+    script = {
         # Townsfolk
         Role.WASHERWOMAN,
         Role.LIBRARIAN,
@@ -39,7 +39,7 @@ def main() -> None:
         Role.BARON,
         # Demons
         Role.IMP,
-    ]
+    }
 
     game_info = GameInfo(player_count=12, script=script)
     # Append only list!

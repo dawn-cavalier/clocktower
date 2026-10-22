@@ -12,11 +12,11 @@ class GameInfo:
     outsider_count_base: int
     townsfolk_count_base: int
 
-    script: list[Role]
-    
+    script: set[Role]
+
     __possible_outsider_dict__: dict[int, float] | None = None
 
-    def __init__(self, player_count: int, script: list[Role]) -> None:
+    def __init__(self, player_count: int, script: set[Role]) -> None:
         self.player_count = player_count
         self.script = script
         self.demon_count_base = 1

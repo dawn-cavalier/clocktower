@@ -27,15 +27,15 @@ class GameState:
             0.0 for _ in range(game_info.player_count)
         ]
 
-    def process(self, game_info: GameInfo, info_trust: float):
-        night_insurance = [Role.SCARLET_WOMAN, Role.IMP]
-        day_insurance = [Role.SCARLET_WOMAN]
+        self.__night_insurance__ = {Role.SCARLET_WOMAN, Role.IMP}
+        self.__day_insurance__ = {Role.SCARLET_WOMAN}
 
-        if len(set(game_info.script) & set(night_insurance)) == 0:
+    def process(self, game_info: GameInfo, info_trust: float):
+        if len(game_info.script & self.__night_insurance__) == 0:
             self.demons = [
                 demon for demon in self.demons if demon not in self.night_deaths]
 
-        if len(set(game_info.script) & set(day_insurance)) == 0:
+        if len(game_info.script & self.__day_insurance__) == 0:
             self.demons = [
                 demon for demon in self.demons if
                 demon not in self.execution_deaths or demon not in self.day_deaths
@@ -64,6 +64,11 @@ class GameState:
 
         demon_worlds = [[demon for demon in self.demons if demon in team]
                         for team in self.evil_teams]
+
+        night_insurance = game_info.script & self.__night_insurance__
+        day_insurance = game_info.script & self.__day_insurance__
+        if len(night_insurance) != 0 or len(day_insurance) != 0:
+            pass
 
         self.demon_player_scores = [
             sum(1 / len(d) for d in demon_worlds if player_id in d)
