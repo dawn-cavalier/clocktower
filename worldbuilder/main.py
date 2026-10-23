@@ -1,10 +1,10 @@
 from worldbuilder.game_info import GameInfo
 from worldbuilder.demon.demon_helper import check_for_demon
-from worldbuilder.prediction_calculator_structs import GameState
+from worldbuilder.prediction_calculator_dataclasses import GameState
 from worldbuilder.prediction_calculator import calculate_predictions
 from worldbuilder.outsiders.outsider_helper import get_possible_outsiders
 from worldbuilder.role_enum import Role
-from worldbuilder.helper import get_all_posibilities, get_dead_players, get_info_trust
+from worldbuilder.helper import calculate_permutations, get_dead_players, get_info_trust
 from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
 from worldbuilder.test import test_12p_tb_game, test_role  # type: ignore
@@ -51,8 +51,7 @@ def main() -> None:
 
     test_12p_tb_game(learned_info=learned_info)
     # test_role(learned_info=learned_info)
-
-    possibilities = get_all_posibilities(len(learned_info[1:]))
+    possibilities = calculate_permutations(len(learned_info[1:]))
 
     is_evil_scores = [0.0 for _ in range(game_info.player_count)]
     is_demon_scores = [0.0 for _ in range(game_info.player_count)]

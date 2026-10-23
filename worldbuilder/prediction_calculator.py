@@ -1,5 +1,5 @@
 from worldbuilder.game_info import GameInfo
-from worldbuilder.prediction_calculator_structs import GameState, Predictions
+from worldbuilder.prediction_calculator_dataclasses import GameState, Predictions
 
 
 def calculate_predictions(game_state: GameState, game_info: GameInfo, info_trust: float):
@@ -19,14 +19,14 @@ def calculate_predictions(game_state: GameState, game_info: GameInfo, info_trust
 
     predictions.evil_player_scores = __calculate_evil_scores__(
         game_state.evil_teams,
-        game_info,
+        game_info.player_count,
         info_trust
     )
 
     predictions.demon_player_scores = __calculate_demon_scores__(
         game_state.evil_teams,
         game_state.demons,
-        game_info,
+        game_info.player_count,
         info_trust
     )
 
@@ -42,28 +42,28 @@ def calculate_predictions(game_state: GameState, game_info: GameInfo, info_trust
 
 def __calculate_evil_scores__(
     evil_teams: list[list[int]],
-    game_info: GameInfo,
+    player_count: int,
     info_trust: float
 ):
     if len(evil_teams) == 0:
-        return [0.0 for _ in range(game_info.player_count)]
+        return [0.0 for _ in range(player_count)]
 
     return [
         sum(1 for t in evil_teams if player_id in t)
         * info_trust
         / len(evil_teams)
-        for player_id in range(game_info.player_count)
+        for player_id in range(player_count)
     ]
 
 
 def __calculate_demon_scores__(
     evil_teams: list[list[int]],
     demons: list[int],
-    game_info: GameInfo,
+    player_count: int,
     info_trust: float
 ):
     if len(demons) == 0:
-        return [0.0 for _ in range(game_info.player_count)]
+        return [0.0 for _ in range(player_count)]
 
     demon_worlds = [[demon for demon in demons if demon in team]
                     for team in evil_teams]
@@ -72,7 +72,7 @@ def __calculate_demon_scores__(
         sum(1 / len(d) for d in demon_worlds if player_id in d)
         * info_trust
         / len(demon_worlds)
-        for player_id in range(game_info.player_count)
+        for player_id in range(player_count)
     ]
 
 

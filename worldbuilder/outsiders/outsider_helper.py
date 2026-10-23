@@ -1,5 +1,5 @@
 from worldbuilder.game_info import GameInfo
-from worldbuilder.helper import add_all_possible_combinations, is_outsider
+from worldbuilder.helper import calculate_combinations, is_outsider
 from worldbuilder.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
 
 
@@ -13,8 +13,8 @@ def get_possible_outsiders(
 
     base_outsider_combinations: list[list[int]] = []
     for outsider_count in outsider_counts:
-        add_all_possible_combinations(
-            base_outsider_combinations, outsider_count, player_count
+        base_outsider_combinations += calculate_combinations(
+            outsider_count, player_count
         )
 
     for info_index in info_indices:

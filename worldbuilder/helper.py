@@ -1,6 +1,9 @@
+from itertools import combinations
+
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
 from worldbuilder.role_enum import Role
+
 
 def get_dead_players(learned_info: list[Info]):
     night_deaths: list[int] = []
@@ -31,6 +34,7 @@ def get_dead_players(learned_info: list[Info]):
                 pass
     return (night_deaths, day_deaths, execution_deaths)
 
+
 def get_info_trust(info_indices: list[int], learned_info: list[Info]):
     trust_score = 1.0
 
@@ -45,7 +49,7 @@ def get_info_trust(info_indices: list[int], learned_info: list[Info]):
     return trust_score
 
 
-def get_all_posibilities(num_of_info: int):
+def calculate_permutations(num_of_info: int):
     num_possibilities = 2**num_of_info
     possibilities: list[list[int]] = []
 
@@ -60,39 +64,8 @@ def get_all_posibilities(num_of_info: int):
 
     return possibilities
 
-
-def add_all_possible_combinations(
-    possible_teams: list[list[int]], count: int, player_count: int
-):
-    if count == 1:
-        for i in range(player_count):
-            possible_teams.append([i])
-
-    if count == 2:
-        for i in range(player_count):
-            for j in range(i + 1, player_count):
-                possible_teams.append([i, j])
-
-    if count == 3:
-        for i in range(player_count):
-            for j in range(i + 1, player_count):
-                for k in range(j + 1, player_count):
-                    possible_teams.append([i, j, k])
-
-    if count == 4:
-        for i in range(player_count):
-            for j in range(i + 1, player_count):
-                for k in range(j + 1, player_count):
-                    for l in range(k + 1, player_count):
-                        possible_teams.append([i, j, k, l])
-
-    if count == 5:
-        for i in range(player_count):
-            for j in range(i + 1, player_count):
-                for k in range(j + 1, player_count):
-                    for l in range(k + 1, player_count):
-                        for m in range(l + 1, player_count):
-                            possible_teams.append([i, j, k, l, m])
+def calculate_combinations(count: int, player_count: int):
+    return [list(c) for c in combinations(range(player_count), count)]
 
 
 def is_townsfolk(role: Role) -> bool:
