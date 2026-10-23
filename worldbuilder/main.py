@@ -45,7 +45,8 @@ def main() -> None:
 
     test_12p_tb_game(learned_info=learned_info)
     # test_role(learned_info=learned_info)
-    possibilities = __calculate_permutations__(len(learned_info[1:]))
+
+    possibilities = __calculate_possibilities__(len(learned_info[1:]))
 
     is_evil_scores = [0.0 for _ in range(game_info.player_count)]
     is_demon_scores = [0.0 for _ in range(game_info.player_count)]
@@ -64,14 +65,14 @@ def main() -> None:
 
         predictions = calculate_predictions(game_state, game_info, info_trust)
 
-        for player, player_score in enumerate(predictions.evil_player_scores):
-            is_evil_scores[player] += player_score
+        is_evil_scores = [score + predictions.evil_player_scores[player]
+                          for player, score in enumerate(is_evil_scores)]
 
-        for player, player_score in enumerate(predictions.demon_player_scores):
-            is_demon_scores[player] += player_score
+        is_demon_scores = [score + predictions.demon_player_scores[player]
+                           for player, score in enumerate(is_demon_scores)]
 
-        for player, player_score in enumerate(predictions.outsider_player_scores):
-            is_outsider_scores[player] += player_score
+        is_outsider_scores = [score + predictions.outsider_player_scores[player]
+                              for player, score in enumerate(is_outsider_scores)]
 
         print(
             f"{possibility}:\n\t" +
@@ -100,7 +101,7 @@ def main() -> None:
     print(sum(is_outsider_scores))
 
 
-def __calculate_permutations__(num_of_info: int):
+def __calculate_possibilities__(num_of_info: int):
     num_possibilities = 2**num_of_info
     possibilities: list[list[int]] = []
 

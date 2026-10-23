@@ -32,8 +32,8 @@ class GameInfo:
             self.demon_count_base
         ) = self.__get_player_type_counts__(player_count)
 
-    # TODO: This is a war crime
     def get_possible_outsider_counts(self):
+        # TODO: This is a war crime
         if self.__possible_outsider_dict__ is not None:
             return self.__possible_outsider_dict__
 
