@@ -25,46 +25,12 @@ class GameInfo:
         self.player_count = player_count
         self.script = script
         self.demon_count_base = 1
-
-        match player_count:
-            case 7:
-                self.townsfolk_count_base = 5
-                self.outsider_count_base = 0
-                self.minion_count_base = 1
-            case 8:
-                self.townsfolk_count_base = 5
-                self.outsider_count_base = 1
-                self.minion_count_base = 1
-            case 9:
-                self.townsfolk_count_base = 5
-                self.outsider_count_base = 2
-                self.minion_count_base = 1
-            case 10:
-                self.townsfolk_count_base = 7
-                self.outsider_count_base = 0
-                self.minion_count_base = 2
-            case 11:
-                self.townsfolk_count_base = 7
-                self.outsider_count_base = 1
-                self.minion_count_base = 2
-            case 12:
-                self.townsfolk_count_base = 7
-                self.outsider_count_base = 2
-                self.minion_count_base = 2
-            case 13:
-                self.townsfolk_count_base = 9
-                self.outsider_count_base = 0
-                self.minion_count_base = 3
-            case 14:
-                self.townsfolk_count_base = 9
-                self.outsider_count_base = 1
-                self.minion_count_base = 3
-            case 15:
-                self.townsfolk_count_base = 9
-                self.outsider_count_base = 2
-                self.minion_count_base = 3
-            case _:
-                raise ValueError(f"Player Count {player_count} is invalid.")
+        (
+            self.townsfolk_count_base,
+            self.outsider_count_base,
+            self.minion_count_base,
+            self.demon_count_base
+        ) = self.__get_player_type_counts__(player_count)
 
     # TODO: This is a war crime
     def get_possible_outsider_counts(self):
@@ -185,3 +151,46 @@ class GameInfo:
                 else:
                     new_outsider_dict[mod_sum +
                                       count] = mod_occurance * occurance
+
+    def __get_player_type_counts__(self, player_count: int):
+        match player_count:
+            case 7:
+                townsfolk_count_base = 5
+                outsider_count_base = 0
+                minion_count_base = 1
+            case 8:
+                townsfolk_count_base = 5
+                outsider_count_base = 1
+                minion_count_base = 1
+            case 9:
+                townsfolk_count_base = 5
+                outsider_count_base = 2
+                minion_count_base = 1
+            case 10:
+                townsfolk_count_base = 7
+                outsider_count_base = 0
+                minion_count_base = 2
+            case 11:
+                townsfolk_count_base = 7
+                outsider_count_base = 1
+                minion_count_base = 2
+            case 12:
+                townsfolk_count_base = 7
+                outsider_count_base = 2
+                minion_count_base = 2
+            case 13:
+                townsfolk_count_base = 9
+                outsider_count_base = 0
+                minion_count_base = 3
+            case 14:
+                townsfolk_count_base = 9
+                outsider_count_base = 1
+                minion_count_base = 3
+            case 15:
+                townsfolk_count_base = 9
+                outsider_count_base = 2
+                minion_count_base = 3
+            case _:
+                raise ValueError(f"Player Count {player_count} is invalid.")
+
+        return (townsfolk_count_base, outsider_count_base, minion_count_base, 1)
