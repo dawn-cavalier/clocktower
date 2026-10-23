@@ -3,6 +3,8 @@ from itertools import combinations
 from worldbuilder.helper import get_outsider_mod, is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.role_enum import Role
 
+# TODO: This entire class is a nightmare, refactor this garbage
+
 
 class GameInfo:
     player_count: int
@@ -15,6 +17,9 @@ class GameInfo:
     script: set[Role]
 
     __possible_outsider_dict__: dict[int, float] | None = None
+
+    __NIGHT_INSURANCE__ = {Role.SCARLET_WOMAN, Role.IMP}
+    __DAY_INSURANCE__ = {Role.SCARLET_WOMAN}
 
     def __init__(self, player_count: int, script: set[Role]) -> None:
         self.player_count = player_count
@@ -61,10 +66,11 @@ class GameInfo:
             case _:
                 raise ValueError(f"Player Count {player_count} is invalid.")
 
+    # TODO: This is a war crime
     def get_possible_outsider_counts(self):
         if self.__possible_outsider_dict__ is not None:
             return self.__possible_outsider_dict__
-        
+
         possible_outsider_dict: dict[int, float] = {
             self.outsider_count_base: 1.0
         }
@@ -76,14 +82,13 @@ class GameInfo:
         if len(demon_roles_with_mods) > 0:
             new_outsider_dict = dict(possible_outsider_dict)
             demon_mods_list = [get_outsider_mod(role)
-                                for role in self.script if is_demon(role)]
+                               for role in self.script if is_demon(role)]
 
             for combo in combinations(demon_mods_list, self.demon_count_base):
                 self.__process_combo__(
                     combo, possible_outsider_dict, new_outsider_dict)
 
             possible_outsider_dict = new_outsider_dict
-
 
         minion_roles_with_mods = [
             role for role in roles_with_mods if is_minion(role)]
@@ -109,7 +114,7 @@ class GameInfo:
         if len(townsfolk_roles_with_mods) > 0:
             new_outsider_dict: dict[int, float] = {}
             townsfolk_mods_list = [get_outsider_mod(role)
-                                for role in self.script if is_townsfolk(role)]
+                                   for role in self.script if is_townsfolk(role)]
 
             for combo in combinations(townsfolk_mods_list, self.townsfolk_count_base):
                 self.__process_combo__(
@@ -128,7 +133,7 @@ class GameInfo:
         if len(outsider_roles_with_mods) > 0:
             new_outsider_dict: dict[int, float] = {}
             outsider_mods_list = [get_outsider_mod(role)
-                                for role in self.script if is_outsider(role)]
+                                  for role in self.script if is_outsider(role)]
 
             for combo in combinations(outsider_mods_list, self.outsider_count_base):
                 self.__process_combo__(
@@ -175,6 +180,8 @@ class GameInfo:
         for mod_sum, mod_occurance in sum_dic.items():
             for count, occurance in possible_outsider_dict.items():
                 if mod_sum + count in new_outsider_dict:
-                    new_outsider_dict[mod_sum + count] += mod_occurance * occurance
+                    new_outsider_dict[mod_sum +
+                                      count] += mod_occurance * occurance
                 else:
-                    new_outsider_dict[mod_sum + count] = mod_occurance * occurance
+                    new_outsider_dict[mod_sum +
+                                      count] = mod_occurance * occurance

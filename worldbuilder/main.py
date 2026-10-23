@@ -1,6 +1,7 @@
 from worldbuilder.game_info import GameInfo
 from worldbuilder.demon.demon_helper import check_for_demon
-from worldbuilder.game_state import GameState
+from worldbuilder.prediction_calculator_structs import GameState
+from worldbuilder.prediction_calculator import calculate_predictions
 from worldbuilder.outsiders.outsider_helper import get_possible_outsiders
 from worldbuilder.role_enum import Role
 from worldbuilder.helper import get_all_posibilities, get_dead_players, get_info_trust
@@ -62,7 +63,7 @@ def main() -> None:
 
     lost_trust = 0.0
     for possibility in possibilities:
-        game_state: GameState = GameState(game_info)
+        game_state: GameState = GameState()
         game_state.night_deaths = night_deaths
         game_state.day_deaths = day_deaths
         game_state.execution_deaths = execution_deaths
@@ -101,18 +102,18 @@ def main() -> None:
 
         game_state.outsiders = possible_outsiders
 
-        game_state.process(game_info, info_trust)
+        predictions = calculate_predictions(game_state, game_info, info_trust)
 
         if len(game_state.evil_teams) == 0 or len(game_state.demons) == 0:
             lost_trust += info_trust
 
-        for player, player_score in enumerate(game_state.evil_player_scores):
+        for player, player_score in enumerate(predictions.evil_player_scores):
             is_evil_scores[player] += player_score
 
-        for player, player_score in enumerate(game_state.demon_player_scores):
+        for player, player_score in enumerate(predictions.demon_player_scores):
             is_demon_scores[player] += player_score
 
-        for player, player_score in enumerate(game_state.outsider_player_scores):
+        for player, player_score in enumerate(predictions.outsider_player_scores):
             is_outsider_scores[player] += player_score
 
         # print(
