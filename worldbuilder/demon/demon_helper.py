@@ -5,7 +5,7 @@ from worldbuilder.helper import is_demon
 # TODO: Does this handle different demon counts. Please check.
 
 
-def check_for_demon(
+def determine_demons(
     info_indices: list[int],
     learned_info: list[DemonInfo],
     game_info: GameInfo,

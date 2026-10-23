@@ -3,7 +3,7 @@ from worldbuilder.helper import calculate_combinations, is_outsider
 from worldbuilder.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
 
 
-def get_possible_outsiders(
+def determine_possible_outsider_groups(
     info_indices: list[int],
     learned_info: list[OutsiderInfo],
     game_info: GameInfo,

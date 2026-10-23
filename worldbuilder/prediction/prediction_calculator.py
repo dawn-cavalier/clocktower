@@ -1,22 +1,9 @@
 from worldbuilder.game_info import GameInfo
-from worldbuilder.prediction_calculator_dataclasses import GameState, Predictions
+from worldbuilder.prediction.prediction_dataclasses import GameState, Predictions
 
 
 def calculate_predictions(game_state: GameState, game_info: GameInfo, info_trust: float):
     predictions: Predictions = Predictions()
-    if len(game_info.script & game_info.__NIGHT_INSURANCE__) == 0:
-        game_state.demons = [
-            demon for demon in game_state.demons if demon not in game_state.night_deaths]
-
-    if len(game_info.script & game_info.__DAY_INSURANCE__) == 0:
-        game_state.demons = [
-            demon for demon in game_state.demons if
-            demon not in game_state.execution_deaths or demon not in game_state.day_deaths
-        ]
-
-    game_state.evil_teams = [evil_team for evil_team in game_state.evil_teams if len(
-        [demon for demon in game_state.demons if demon in evil_team]) > 0]
-
     predictions.evil_player_scores = __calculate_evil_scores__(
         game_state.evil_teams,
         game_info.player_count,

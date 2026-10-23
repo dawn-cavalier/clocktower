@@ -1,15 +1,9 @@
 from worldbuilder.game_info import GameInfo
-from worldbuilder.demon.demon_helper import check_for_demon
-from worldbuilder.prediction_calculator_dataclasses import GameState
-from worldbuilder.prediction_calculator import calculate_predictions
-from worldbuilder.outsiders.outsider_helper import get_possible_outsiders
+from worldbuilder.prediction.game_state import build_game_state
+from worldbuilder.prediction.prediction_calculator import calculate_predictions
 from worldbuilder.role_enum import Role
-from worldbuilder.helper import calculate_permutations, get_dead_players, get_info_trust
-from worldbuilder.evil_team.evil_team_helper import get_possible_evil_teams
 from worldbuilder.info import Info, InfoType
-from worldbuilder.test import test_12p_tb_game, test_role  # type: ignore
-
-import cProfile  # type: ignore
+from worldbuilder.test import test_12p_tb_game
 
 
 def main() -> None:
@@ -51,60 +45,24 @@ def main() -> None:
 
     test_12p_tb_game(learned_info=learned_info)
     # test_role(learned_info=learned_info)
-    possibilities = calculate_permutations(len(learned_info[1:]))
+    possibilities = __calculate_permutations__(len(learned_info[1:]))
 
     is_evil_scores = [0.0 for _ in range(game_info.player_count)]
     is_demon_scores = [0.0 for _ in range(game_info.player_count)]
     is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
 
-    # Since all player death are 100% certain
-    night_deaths, day_deaths, execution_deaths = get_dead_players(learned_info)
-
-    lost_trust = 0.0
+    valid_trust = 1.0
     for possibility in possibilities:
-        game_state: GameState = GameState()
-        game_state.night_deaths = night_deaths
-        game_state.day_deaths = day_deaths
-        game_state.execution_deaths = execution_deaths
-
-        info_trust = get_info_trust(possibility, learned_info)
+        info_trust = __calculate_info_trust__(possibility, learned_info)
         if info_trust <= 0.0:
             continue
 
-        # Get Evil Teams
-        evil_team_info = [info.get_evil_team_info() for info in learned_info]
-        possible_evil_teams = get_possible_evil_teams(
-            possibility, evil_team_info, game_info
-        )
-
-        if len(possible_evil_teams) == 0:
+        game_state = build_game_state(learned_info, possibility, game_info)
+        if len(game_state.evil_teams) == 0 or len(game_state.demons) == 0:
+            valid_trust -= info_trust
             continue
-
-        game_state.evil_teams = possible_evil_teams
-
-        # Filter Evil Teams based on Demon info
-        demon_info = [info.get_demon_info() for info in learned_info]
-        possible_demons = check_for_demon(
-            possibility, demon_info, game_info)
-
-        if len(possible_demons) == 0:
-            lost_trust += info_trust
-            continue
-
-        game_state.demons = possible_demons
-
-        # Get possible Outsiders combinations
-        outsider_info = [info.get_outsider_info() for info in learned_info]
-        possible_outsiders = get_possible_outsiders(
-            possibility, outsider_info, game_info
-        )
-
-        game_state.outsiders = possible_outsiders
 
         predictions = calculate_predictions(game_state, game_info, info_trust)
-
-        if len(game_state.evil_teams) == 0 or len(game_state.demons) == 0:
-            lost_trust += info_trust
 
         for player, player_score in enumerate(predictions.evil_player_scores):
             is_evil_scores[player] += player_score
@@ -115,19 +73,18 @@ def main() -> None:
         for player, player_score in enumerate(predictions.outsider_player_scores):
             is_outsider_scores[player] += player_score
 
-        # print(
-        #     f"{possibility}:\n\t" +
-        #     f"Trust Score: {info_trust:.4f}\n\t" +
-        #     f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
-        #     f"Outsiders: {len(game_state.outsiders)}\n\t" +
-        #     f"Demons: {len(game_state.demons)}\n\t"
-        # )
+        print(
+            f"{possibility}:\n\t" +
+            f"Trust Score: {info_trust:.4f}\n\t" +
+            f"Evil Teams: {len(game_state.evil_teams)}\n\t" +
+            f"Outsiders: {len(game_state.outsiders)}\n\t" +
+            f"Demons: {len(game_state.demons)}\n\t"
+        )
 
     # Account for trust lost during removal
-    is_evil_scores = [score / (1-lost_trust) for score in is_evil_scores]
-    is_demon_scores = [score / (1-lost_trust) for score in is_demon_scores]
-    is_outsider_scores = [score / (1-lost_trust)
-                          for score in is_outsider_scores]
+    is_evil_scores = [score / valid_trust for score in is_evil_scores]
+    is_demon_scores = [score / valid_trust for score in is_demon_scores]
+    is_outsider_scores = [score / valid_trust for score in is_outsider_scores]
 
     print(f"Player Seat:\t{[f"{player:<4}" for player in range(
         1, game_info.player_count + 1)]}")
@@ -141,6 +98,36 @@ def main() -> None:
     print(
         f"Outside Scores:\t{[f"{score:.2f}" for score in is_outsider_scores]}")
     print(sum(is_outsider_scores))
+
+
+def __calculate_permutations__(num_of_info: int):
+    num_possibilities = 2**num_of_info
+    possibilities: list[list[int]] = []
+
+    for possibility_i in range(num_possibilities):
+        new_possibility: list[int] = []
+        for bit in range(num_of_info):
+            if possibility_i >> bit & 1:
+                new_possibility.append(bit + 1)
+            else:
+                new_possibility.append(-(bit + 1))
+        possibilities.append(new_possibility)
+
+    return possibilities
+
+
+def __calculate_info_trust__(info_indices: list[int], learned_info: list[Info]):
+    trust_score = 1.0
+
+    for info_index in info_indices:
+        is_inverted = info_index < 0
+        info_trust = learned_info[abs(info_index)].info_trust
+        if is_inverted:
+            trust_score = trust_score * (1.0 - info_trust)
+        else:
+            trust_score = trust_score * info_trust
+
+    return trust_score
 
 
 if __name__ == "__main__":

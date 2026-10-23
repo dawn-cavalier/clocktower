@@ -1,68 +1,7 @@
 from itertools import combinations
 
-from worldbuilder.info import Info
-from worldbuilder.info_type import InfoType
 from worldbuilder.role_enum import Role
 
-
-def get_dead_players(learned_info: list[Info]):
-    night_deaths: list[int] = []
-    day_deaths: list[int] = []
-    execution_deaths: list[int] = []
-    for info in learned_info:
-        info_type = info.info_type
-        match info_type:
-            case InfoType.PLAYER_NIGHT_DEATH:
-                if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
-
-                night_deaths += info.target_players
-            case InfoType.PLAYER_DAY_DEATH:
-                if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
-
-                day_deaths += info.target_players
-            case InfoType.PLAYER_EXECUTED:
-                if info.target_players is None:
-                    raise ValueError(
-                        f"{info.info_type.name} has no target players!")
-
-                execution_deaths += info.target_players
-            case _:
-                pass
-    return (night_deaths, day_deaths, execution_deaths)
-
-
-def get_info_trust(info_indices: list[int], learned_info: list[Info]):
-    trust_score = 1.0
-
-    for info_index in info_indices:
-        is_inverted = info_index < 0
-        info_trust = learned_info[abs(info_index)].info_trust
-        if is_inverted:
-            trust_score = trust_score * (1.0 - info_trust)
-        else:
-            trust_score = trust_score * info_trust
-
-    return trust_score
-
-
-def calculate_permutations(num_of_info: int):
-    num_possibilities = 2**num_of_info
-    possibilities: list[list[int]] = []
-
-    for possibility_i in range(num_possibilities):
-        new_possibility: list[int] = []
-        for bit in range(num_of_info):
-            if possibility_i >> bit & 1:
-                new_possibility.append(bit + 1)
-            else:
-                new_possibility.append(-(bit + 1))
-        possibilities.append(new_possibility)
-
-    return possibilities
 
 def calculate_combinations(count: int, player_count: int):
     return [list(c) for c in combinations(range(player_count), count)]
@@ -83,11 +22,10 @@ def is_minion(role: Role) -> bool:
 def is_demon(role: Role) -> bool:
     return Role.AL_HADIKHIA <= role <= Role.ZOMBUUL
 
-# TODO: Review this for all outsider mods
-# TODO: How do we handle in game character changes?
-
 
 def get_outsider_mod(role: Role) -> list[int]:
+    # TODO: Review this for all outsider mods
+    # TODO: How do we handle in game character changes?
     match role:
         case Role.VIGORMORTIS:
             return [-1]

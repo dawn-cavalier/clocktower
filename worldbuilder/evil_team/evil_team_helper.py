@@ -12,7 +12,7 @@ from worldbuilder.evil_team.evil_team_transformers import (
 from worldbuilder.helper import calculate_combinations
 
 
-def get_possible_evil_teams(
+def determine_possible_evil_teams(
     info_indices: list[int],
     learned_info: list[EvilTeamInfo],
     game_info: GameInfo,
