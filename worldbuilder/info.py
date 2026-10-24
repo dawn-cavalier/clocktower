@@ -50,6 +50,7 @@ class Info:
         match self.info_type:
             case (
                 InfoType.NONE
+                | InfoType.PLAYER_IS_ROLE
                 | InfoType.FORTUNE_TELLER_PING
                 | InfoType.SLAYER_SHOT
                 | InfoType.NO_NIGHT_DEATH
@@ -65,7 +66,7 @@ class Info:
                 )
                 return new_info
 
-            case InfoType.PLAYER_IS_ALIGNMENT | InfoType.PLAYER_IS_ROLE:
+            case InfoType.PLAYER_IS_ALIGNMENT:
                 new_info = EvilTeamInfo(
                     info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
                     source=self.source,

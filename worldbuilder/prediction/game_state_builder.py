@@ -24,7 +24,8 @@ def build_game_state(learned_info: list[Info], possibility: list[int], game_info
 
     demon_info = [info.get_demon_info() for info in learned_info]
     game_state.demons = determine_demons(
-        possibility, demon_info, game_info)
+        possibility, demon_info, game_info
+    )
 
     # Get possible Outsiders combinations
     outsider_info = [info.get_outsider_info() for info in learned_info]
@@ -43,7 +44,8 @@ def build_game_state(learned_info: list[Info], possibility: list[int], game_info
         ]
 
     game_state.evil_teams = [evil_team for evil_team in game_state.evil_teams if len(
-        [demon for demon in game_state.demons if demon in evil_team]) > 0]
+        [demon for demon in game_state.demons if demon in evil_team]) > 0
+    ]
 
     return game_state
 

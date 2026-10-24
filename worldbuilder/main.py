@@ -1,9 +1,11 @@
+import cProfile # type: ignore
+
 from worldbuilder.game_info import GameInfo
-from worldbuilder.prediction.game_state import build_game_state
+from worldbuilder.prediction.game_state_builder import build_game_state
 from worldbuilder.prediction.prediction_calculator import calculate_predictions
 from worldbuilder.role_enum import Role
 from worldbuilder.info import Info, InfoType
-from worldbuilder.test import test_12p_tb_game
+from worldbuilder.test import generate_12p_tb_game, generate_test_game # type: ignore
 
 
 def main() -> None:
@@ -43,8 +45,8 @@ def main() -> None:
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    test_12p_tb_game(learned_info=learned_info)
-    # test_role(learned_info=learned_info)
+    learned_info += generate_12p_tb_game()
+    # learned_info += generate_test_game()
 
     possibilities = __calculate_possibilities__(len(learned_info[1:]))
 

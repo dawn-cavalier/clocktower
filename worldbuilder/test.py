@@ -2,7 +2,8 @@ from worldbuilder.info import Info, InfoType
 from worldbuilder.role_enum import Role
 
 
-def test_role(learned_info: list[Info]):
+def generate_test_game():
+    learned_info: list[Info] = []
     info = Info(
         info_type=InfoType.PLAYER_IS_ROLE,
         day=0,
@@ -57,21 +58,42 @@ def test_role(learned_info: list[Info]):
         is_good=True,
     )
     learned_info.append(info)
+    return learned_info
 
 
-def test_12p_tb_game(learned_info: list[Info]):
-    # TODO: Should info be bundled together to reduce checking impossible worlds?
-    # TODO: Should Info Source have it's own enum? How would you do this?
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
+def generate_12p_tb_game():
+    learned_info: list[Info] = []
+    learned_info.append(player_is_role(
         day=0,
+        role=Role.UNDERTAKER,
+        player=0,
         source=0,
-        info_trust=1.0,
-        seen_roles=[Role.MAYOR],
-        target_players=[0],
+        trust=0.8
+    ))
+
+    learned_info.append(player_is_alignment(
+        day=0,
         is_good=True,
+        player=0,
+        source=0,
+        trust=1.0
+    ))
+
+    info = Info(
+        info_type=InfoType.PLAYER_EXECUTED,
+        day=1,
+        source=-1,
+        target_players=[1],
     )
     learned_info.append(info)
+
+    learned_info.append(player_is_role(
+        day=2,
+        role=Role.IMP,
+        player=1,
+        source=0,
+        trust=0.8
+    ))
 
     # info = Info(
     #     info_type=InfoType.PLAYER_IS_ROLE,
@@ -84,10 +106,10 @@ def test_12p_tb_game(learned_info: list[Info]):
     # )
     # learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.CHEF_NUMBER, day=1, source=1, info_trust=0.5, number=0
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.CHEF_NUMBER, day=1, source=1, info_trust=0.5, number=0
+    # )
+    # learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.PLAYER_IS_ROLE,
@@ -111,15 +133,15 @@ def test_12p_tb_game(learned_info: list[Info]):
     # )
     # learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.FORTUNE_TELLER_PING,
-        day=1,
-        source=8,
-        info_trust=0.5,
-        target_players=[1, 4],
-        is_yes=True,
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.FORTUNE_TELLER_PING,
+    #     day=1,
+    #     source=8,
+    #     info_trust=0.5,
+    #     target_players=[1, 4],
+    #     is_yes=True,
+    # )
+    # learned_info.append(info)
 
     # info = Info(
     #     info_type=InfoType.PLAYER_IS_ROLE,
@@ -130,31 +152,61 @@ def test_12p_tb_game(learned_info: list[Info]):
     #     target_players=[6],
     #     is_good=True,
     # )
-    learned_info.append(info)
+    # learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.INVESTIGATOR_PING,
-        day=1,
-        source=6,
-        info_trust=0.5,
-        seen_roles=[Role.BARON],
-        target_players=[8, 10],
-        is_good=True,
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.INVESTIGATOR_PING,
+    #     day=1,
+    #     source=6,
+    #     info_trust=0.5,
+    #     seen_roles=[Role.BARON],
+    #     target_players=[8, 10],
+    #     is_good=True,
+    # )
+    # learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.PLAYER_EXECUTED,
-        day=1,
-        source=-1,
-        target_players=[1],
-    )
-    learned_info.append(info)
+    # info = Info(
+    #     info_type=InfoType.PLAYER_NIGHT_DEATH,
+    #     day=3,
+    #     source=-1,
+    #     target_players=[4],
+    # )
+    # learned_info.append(info)
 
-    info = Info(
-        info_type=InfoType.PLAYER_NIGHT_DEATH,
-        day=3,
-        source=-1,
-        target_players=[4],
+    return learned_info
+
+
+def player_is_role(
+    day: int,
+    role: Role,
+    player: int,
+    *,
+    source: int = -1,
+    trust: float = 1.0
+):
+    return Info(
+        info_type=InfoType.PLAYER_IS_ROLE,
+        day=day,
+        source=source,
+        info_trust=trust,
+        seen_roles=[role],
+        target_players=[player]
     )
-    learned_info.append(info)
+
+
+def player_is_alignment(
+    day: int,
+    is_good: bool,
+    player: int,
+    *,
+    source: int = -1,
+    trust: float = 1.0
+):
+    return Info(
+        info_type=InfoType.PLAYER_IS_ALIGNMENT,
+        day=day,
+        source=source,
+        info_trust=trust,
+        target_players=[player],
+        is_good=is_good
+    )

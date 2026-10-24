@@ -1,6 +1,6 @@
 """
 Contains the paramenter struct and the return object
-for the prediction calculator.
+for the game state builder and prediction calculator.
 """
 from dataclasses import dataclass, field
 
