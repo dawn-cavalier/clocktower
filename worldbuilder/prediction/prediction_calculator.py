@@ -4,23 +4,23 @@ from worldbuilder.prediction.prediction_dataclasses import GameState, Prediction
 
 def calculate_predictions(game_state: GameState, game_info: GameInfo, info_trust: float):
     evil_player_scores = __calculate_evil_scores__(
-        game_state.evil_teams,
-        game_info.player_count,
-        info_trust
+        evil_teams=game_state.evil_teams,
+        player_count=game_info.player_count,
+        info_trust=info_trust
     )
 
     demon_player_scores = __calculate_demon_scores__(
-        game_state.evil_teams,
-        game_state.demons,
-        game_info.player_count,
-        info_trust
+        evil_teams=game_state.evil_teams,
+        demons=game_state.demons,
+        player_count=game_info.player_count,
+        info_trust=info_trust
     )
 
     outsider_player_scores = __calculate_outsider_scores__(
-        game_state.evil_teams,
-        game_state.outsiders,
-        game_info,
-        info_trust
+        evil_teams=game_state.evil_teams,
+        outsider_groups=game_state.outsiders,
+        game_info=game_info,
+        info_trust=info_trust
     )
 
     backup_demon_player_scores = [
@@ -29,29 +29,47 @@ def calculate_predictions(game_state: GameState, game_info: GameInfo, info_trust
 
     if len(game_info.script & game_info.DAY_INSURANCE) != 0:
         dead_players = set(game_state.day_deaths + game_state.execution_deaths)
+        dead_demons = set(game_state.demons) & dead_players
+        all_deaths = set(
+            game_state.day_deaths +
+            game_state.execution_deaths +
+            game_state.night_deaths
+        )
+
         new_scores = __calculate_backup_scores__(
             player_count=game_info.player_count,
-            dead_players=dead_players,
+            dead_demons=dead_demons,
+            all_deaths=all_deaths,
             evil_teams=game_state.evil_teams,
-            demons=game_state.demons,
             demon_player_scores=demon_player_scores
         )
 
-        backup_demon_player_scores = [score + new_scores[player]
-                                      for player, score in enumerate(backup_demon_player_scores)]
+        backup_demon_player_scores = [
+            score + new_scores[player]
+            for player, score in enumerate(backup_demon_player_scores)
+        ]
 
     if len(game_info.script & game_info.NIGHT_INSURANCE) != 0:
         dead_players = set(game_state.night_deaths)
+        dead_demons = set(game_state.demons) & dead_players
+        all_deaths = set(
+            game_state.day_deaths +
+            game_state.execution_deaths +
+            game_state.night_deaths
+        )
+
         new_scores = __calculate_backup_scores__(
             player_count=game_info.player_count,
-            dead_players=dead_players,
+            dead_demons=dead_demons,
+            all_deaths=all_deaths,
             evil_teams=game_state.evil_teams,
-            demons=game_state.demons,
             demon_player_scores=demon_player_scores
         )
 
-        backup_demon_player_scores = [score + new_scores[player]
-                                      for player, score in enumerate(backup_demon_player_scores)]
+        backup_demon_player_scores = [
+            score + new_scores[player]
+            for player, score in enumerate(backup_demon_player_scores)
+        ]
 
     return Predictions(
         evil_player_scores=evil_player_scores,
@@ -191,21 +209,20 @@ def __calculate_outsider_weight__(
 
 def __calculate_backup_scores__(
     player_count: int,
-    dead_players: set[int],
+    dead_demons: set[int],
+    all_deaths: set[int],
     evil_teams: list[list[int]],
-    demons: list[int],
     demon_player_scores: list[float]
 ):
     backup_demon_player_scores = [
         0.0 for _ in range(player_count)
     ]
 
-    dead_demons = set(demons) & dead_players
     for demon in dead_demons:
         dead_demon_teams = [
             [
                 player for player in team
-                if player is not demon and player not in dead_players
+                if player is not demon and player not in all_deaths
             ]
             for team in evil_teams if demon in team
         ]

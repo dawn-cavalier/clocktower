@@ -9,7 +9,6 @@ from worldbuilder.prediction.prediction_dataclasses import GameState
 
 def build_game_state(learned_info: list[Info], possibility: list[int], game_info: GameInfo):
     game_state: GameState = GameState()
-
     (
         game_state.night_deaths,
         game_state.day_deaths,
@@ -27,26 +26,30 @@ def build_game_state(learned_info: list[Info], possibility: list[int], game_info
         possibility, evil_team_info, game_info
     )
 
-    game_state.evil_teams = [evil_team for evil_team in game_state.evil_teams if len(
-        [demon for demon in game_state.demons if demon in evil_team]) > 0
-    ]
-
     # Get possible Outsiders combinations
     outsider_info = [info.get_outsider_info() for info in learned_info]
     game_state.outsiders = determine_possible_outsider_groups(
         possibility, outsider_info, game_info
     )
 
-    # TODO: This loses trust in a way that isn't caught!
     if len(game_info.script & game_info.NIGHT_INSURANCE) == 0:
         game_state.demons = [
-            demon for demon in game_state.demons if demon not in game_state.night_deaths]
+            demon for demon in game_state.demons if
+            demon not in game_state.night_deaths
+        ]
 
     if len(game_info.script & game_info.DAY_INSURANCE) == 0:
         game_state.demons = [
             demon for demon in game_state.demons if
             demon not in game_state.execution_deaths and demon not in game_state.day_deaths
         ]
+
+    game_state.evil_teams = [
+        evil_team for evil_team in game_state.evil_teams if
+        len([
+            demon for demon in game_state.demons if demon in evil_team
+        ]) > 0
+    ]
 
     return game_state
 

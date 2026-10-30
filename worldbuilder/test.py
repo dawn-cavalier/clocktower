@@ -121,7 +121,7 @@ def generate_ft_seeing_yes_on_two_dead_players():
             info_type=InfoType.FORTUNE_TELLER_PING,
             day=0,
             source=0,
-            info_trust=0.8,
+            info_trust=0.5,
             target_players=[1, 2],
             is_yes=True
         )
@@ -133,6 +133,17 @@ def generate_ft_seeing_yes_on_two_dead_players():
             day=1,
             source=-1,
             target_players=[1],
+        )
+    )
+
+    learned_info.append(
+        Info(
+            info_type=InfoType.FORTUNE_TELLER_PING,
+            day=2,
+            source=0,
+            info_trust=0.5,
+            target_players=[2, 3],
+            is_yes=True
         )
     )
 
