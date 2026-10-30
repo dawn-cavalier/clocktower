@@ -120,19 +120,3 @@ def determine_possible_outsider_groups(
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
     return base_outsider_combinations
-
-    # possible_outsiders: list[list[list[int]]] = []
-    # for evil_team in possible_evil_teams:
-    #     outsider_combinations: list[list[int]] = list(base_outsider_combinations)
-    #     for evil in evil_team:
-    #         outsider_combinations = [
-    #             outsiders
-    #             for outsiders in outsider_combinations
-    #             if evil not in outsiders
-    #         ]
-
-    #     outsider_combinations = [
-    #         outsiders for outsiders in outsider_combinations if len(outsiders) > 0
-    #     ]
-    #     possible_outsiders.append(outsider_combinations)
-    # return possible_outsiders

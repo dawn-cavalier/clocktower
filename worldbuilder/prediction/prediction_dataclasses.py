@@ -25,9 +25,9 @@ class GameState:
 @dataclass
 class Predictions:
     """
-    Stores the different scores that the predicition
-    calculator returns.
+    Stores the different scores that the predicition calculator returns.
     """
-    evil_player_scores: list[float] = field(default_factory=list[float])
-    demon_player_scores: list[float] = field(default_factory=list[float])
-    outsider_player_scores: list[float] = field(default_factory=list[float])
+    evil_player_scores: list[float]
+    demon_player_scores: list[float]
+    backup_demon_player_scores: list[float]
+    outsider_player_scores: list[float]

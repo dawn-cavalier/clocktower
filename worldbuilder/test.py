@@ -61,7 +61,7 @@ def generate_test_game():
     return learned_info
 
 
-def generate_12p_tb_game():
+def generate_gravedug_imp():
     learned_info: list[Info] = []
     learned_info.append(player_is_role(
         day=0,
@@ -95,83 +95,61 @@ def generate_12p_tb_game():
         trust=0.8
     ))
 
-    # info = Info(
-    #     info_type=InfoType.PLAYER_IS_ROLE,
-    #     day=1,
-    #     source=1,
-    #     info_trust=0.5,
-    #     seen_roles=[Role.CHEF],
-    #     target_players=[1],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
+    return learned_info
 
-    # info = Info(
-    #     info_type=InfoType.CHEF_NUMBER, day=1, source=1, info_trust=0.5, number=0
-    # )
-    # learned_info.append(info)
 
-    # info = Info(
-    #     info_type=InfoType.PLAYER_IS_ROLE,
-    #     day=1,
-    #     source=11,
-    #     info_trust=0.5,
-    #     seen_roles=[Role.UNDERTAKER],
-    #     target_players=[11],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
+def generate_ft_seeing_yes_on_two_dead_players():
+    learned_info: list[Info] = []
+    learned_info.append(player_is_role(
+        day=0,
+        role=Role.FORTUNE_TELLER,
+        player=0,
+        source=0,
+        trust=0.8
+    ))
 
-    # info = Info(
-    #     info_type=InfoType.PLAYER_IS_ROLE,
-    #     day=1,
-    #     source=8,
-    #     info_trust=0.5,
-    #     seen_roles=[Role.FORTUNE_TELLER],
-    #     target_players=[8],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
+    learned_info.append(player_is_alignment(
+        day=0,
+        is_good=True,
+        player=0,
+        source=0,
+        trust=1.0
+    ))
 
-    # info = Info(
-    #     info_type=InfoType.FORTUNE_TELLER_PING,
-    #     day=1,
-    #     source=8,
-    #     info_trust=0.5,
-    #     target_players=[1, 4],
-    #     is_yes=True,
-    # )
-    # learned_info.append(info)
+    learned_info.append(
+        Info(
+            info_type=InfoType.FORTUNE_TELLER_PING,
+            day=0,
+            source=0,
+            info_trust=0.8,
+            target_players=[1, 2],
+            is_yes=True
+        )
+    )
 
-    # info = Info(
-    #     info_type=InfoType.PLAYER_IS_ROLE,
-    #     day=1,
-    #     source=6,
-    #     info_trust=0.5,
-    #     seen_roles=[Role.INVESTIGATOR],
-    #     target_players=[6],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
+    learned_info.append(
+        Info(
+            info_type=InfoType.PLAYER_EXECUTED,
+            day=1,
+            source=-1,
+            target_players=[1],
+        )
+    )
 
-    # info = Info(
-    #     info_type=InfoType.INVESTIGATOR_PING,
-    #     day=1,
-    #     source=6,
-    #     info_trust=0.5,
-    #     seen_roles=[Role.BARON],
-    #     target_players=[8, 10],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
+    learned_info.append(
+        Info(
+            info_type=InfoType.PLAYER_NIGHT_DEATH,
+            day=2,
+            source=-1,
+            target_players=[2],
+        )
+    )
 
-    # info = Info(
-    #     info_type=InfoType.PLAYER_NIGHT_DEATH,
-    #     day=3,
-    #     source=-1,
-    #     target_players=[4],
-    # )
-    # learned_info.append(info)
+    return learned_info
+
+
+def actual_game_example():
+    learned_info: list[Info] = []
 
     return learned_info
 

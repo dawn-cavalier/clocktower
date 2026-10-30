@@ -17,15 +17,19 @@ def build_game_state(learned_info: list[Info], possibility: list[int], game_info
     ) = __get_dead_players__(
         learned_info)
 
+    demon_info = [info.get_demon_info() for info in learned_info]
+    game_state.demons = determine_demons(
+        possibility, demon_info, game_info
+    )
+
     evil_team_info = [info.get_evil_team_info() for info in learned_info]
     game_state.evil_teams = determine_possible_evil_teams(
         possibility, evil_team_info, game_info
     )
 
-    demon_info = [info.get_demon_info() for info in learned_info]
-    game_state.demons = determine_demons(
-        possibility, demon_info, game_info
-    )
+    game_state.evil_teams = [evil_team for evil_team in game_state.evil_teams if len(
+        [demon for demon in game_state.demons if demon in evil_team]) > 0
+    ]
 
     # Get possible Outsiders combinations
     outsider_info = [info.get_outsider_info() for info in learned_info]
@@ -33,19 +37,16 @@ def build_game_state(learned_info: list[Info], possibility: list[int], game_info
         possibility, outsider_info, game_info
     )
 
-    if len(game_info.script & game_info.__NIGHT_INSURANCE__) == 0:
+    # TODO: This loses trust in a way that isn't caught!
+    if len(game_info.script & game_info.NIGHT_INSURANCE) == 0:
         game_state.demons = [
             demon for demon in game_state.demons if demon not in game_state.night_deaths]
 
-    if len(game_info.script & game_info.__DAY_INSURANCE__) == 0:
+    if len(game_info.script & game_info.DAY_INSURANCE) == 0:
         game_state.demons = [
             demon for demon in game_state.demons if
-            demon not in game_state.execution_deaths or demon not in game_state.day_deaths
+            demon not in game_state.execution_deaths and demon not in game_state.day_deaths
         ]
-
-    game_state.evil_teams = [evil_team for evil_team in game_state.evil_teams if len(
-        [demon for demon in game_state.demons if demon in evil_team]) > 0
-    ]
 
     return game_state
 

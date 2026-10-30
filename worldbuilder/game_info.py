@@ -18,8 +18,8 @@ class GameInfo:
 
     __possible_outsider_dict__: dict[int, float] | None = None
 
-    __NIGHT_INSURANCE__ = {Role.SCARLET_WOMAN, Role.IMP}
-    __DAY_INSURANCE__ = {Role.SCARLET_WOMAN}
+    NIGHT_INSURANCE = {Role.SCARLET_WOMAN, Role.IMP}
+    DAY_INSURANCE = {Role.SCARLET_WOMAN}
 
     def __init__(self, player_count: int, script: set[Role]) -> None:
         self.player_count = player_count
