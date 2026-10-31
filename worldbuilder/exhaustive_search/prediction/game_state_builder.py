@@ -1,9 +1,9 @@
-from worldbuilder.exhaustive_search.demon.demon_helper import determine_demons
-from worldbuilder.exhaustive_search.evil_team.evil_team_helper import determine_evil_teams
+from worldbuilder.exhaustive_search.demon.demon_helper import determine_demons, convert_demon_info
+from worldbuilder.exhaustive_search.evil_team.evil_team_helper import determine_evil_teams, convert_evil_team_info
 from worldbuilder.game_info import GameInfo
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
-from worldbuilder.exhaustive_search.outsiders.outsider_helper import determine_outsider_groups
+from worldbuilder.exhaustive_search.outsiders.outsider_helper import determine_outsider_groups, convert_outsider_info
 from worldbuilder.exhaustive_search.prediction.prediction_dataclasses import GameState
 
 
@@ -16,18 +16,18 @@ def build_game_state(learned_info: list[Info], possibility: list[int], game_info
     ) = __get_dead_players__(
         learned_info)
 
-    demon_info = [info.get_demon_info() for info in learned_info]
+    demon_info = [convert_demon_info(info) for info in learned_info]
     game_state.demons = determine_demons(
         possibility, demon_info, game_info
     )
 
-    evil_team_info = [info.get_evil_team_info() for info in learned_info]
+    evil_team_info = [convert_evil_team_info(info) for info in learned_info]
     game_state.evil_teams = determine_evil_teams(
         possibility, evil_team_info, game_info
     )
 
     # Get possible Outsiders combinations
-    outsider_info = [info.get_outsider_info() for info in learned_info]
+    outsider_info = [convert_outsider_info(info) for info in learned_info]
     game_state.outsiders = determine_outsider_groups(
         possibility, outsider_info, game_info
     )

@@ -1,6 +1,8 @@
 from worldbuilder.exhaustive_search.demon.demon_info import DemonInfo, DemonInfoType
 from worldbuilder.game_info import GameInfo
 from worldbuilder.helper import is_demon
+from worldbuilder.info import Info
+from worldbuilder.info_type import InfoType
 
 # TODO: Does this handle different demon counts. Please check.
 
@@ -114,3 +116,79 @@ def determine_demons(
                     f"Unhandled InfoType: {info.info_type.name}")
 
     return base_demons
+
+def convert_demon_info(info: Info) -> DemonInfo:
+    match info.info_type:
+        case (
+            InfoType.NONE
+            | InfoType.PLAYER_IS_ALIGNMENT
+            | InfoType.CHEF_NUMBER
+            | InfoType.EMPATH_NUMBER
+            | InfoType.VIRGIN_EXECUTE
+            | InfoType.NO_NIGHT_DEATH
+            | InfoType.PLAYER_EXECUTED
+            | InfoType.PLAYER_NIGHT_DEATH
+            | InfoType.PLAYER_DAY_DEATH
+        ):
+            new_info = DemonInfo(
+                info_type=DemonInfoType.NONE,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+            )
+            return new_info
+
+        case (
+            InfoType.PLAYER_IS_ROLE
+            | InfoType.UNDERTAKER_INFO
+            | InfoType.RAVENKEEPER_PING
+            | InfoType.VIRGIN_TRIGGER
+        ):
+            new_info = DemonInfo(
+                info_type=DemonInfoType.IS_ROLE,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                target_players=info.target_players,
+                seen_roles=info.seen_roles,
+            )
+            return new_info
+
+        case (
+            InfoType.WASHERWOMAN_PING
+            | InfoType.LIBRARIAN_PING
+            | InfoType.INVESTIGATOR_PING
+        ):
+            new_info = DemonInfo(
+                info_type=DemonInfoType.AT_LEAST_ONE_IS_ROLE,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                target_players=info.target_players,
+                seen_roles=info.seen_roles,
+            )
+            return new_info
+
+        case InfoType.FORTUNE_TELLER_PING:
+            new_info = DemonInfo(
+                info_type=DemonInfoType.FORTUNE_TELLER_PING,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                target_players=info.target_players,
+                is_yes=info.is_yes,
+            )
+            return new_info
+
+        case InfoType.SLAYER_SHOT:
+            new_info = DemonInfo(
+                info_type=DemonInfoType.SLAYER_SHOT,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                target_players=info.target_players,
+            )
+            return new_info
+
+        case _:
+            raise ValueError(f"Unhandled InfoType: {info.info_type.name}")

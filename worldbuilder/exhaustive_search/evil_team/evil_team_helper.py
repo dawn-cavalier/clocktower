@@ -10,6 +10,8 @@ from worldbuilder.exhaustive_search.evil_team.evil_team_transformers import (
     transform_empath_number,
 )
 from worldbuilder.helper import calculate_combinations
+from worldbuilder.info import Info
+from worldbuilder.info_type import InfoType
 
 
 def determine_evil_teams(
@@ -38,9 +40,11 @@ def determine_evil_teams(
                 continue
             case EvilTeamInfoType.ALIGNMENT_KNOWN:
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
                 if info.is_good is None:
-                    raise ValueError(f"{info.info_type.name} has no stated alignment!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no stated alignment!")
                 if len(info.target_players) != 1:
                     raise ValueError(
                         f"{info.info_type.name} received {len(info.target_players)} players when 1 was expected!"
@@ -56,21 +60,24 @@ def determine_evil_teams(
                     )
             case EvilTeamInfoType.AT_LEAST_ONE_GOOD:
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_at_least_one_good(
                     evil_teams=possible_teams, target_players=info.target_players
                 )
             case EvilTeamInfoType.AT_LEAST_ONE_EVIL:
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_at_least_one_evil(
                     evil_teams=possible_teams, target_players=info.target_players
                 )
             case EvilTeamInfoType.EXACTLY_ONE_EVIL:
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_exactly_one_evil(
                     evil_teams=possible_teams, target_players=info.target_players
@@ -88,7 +95,8 @@ def determine_evil_teams(
                 if info.number is None:
                     raise ValueError(f"{info.info_type.name} has no number!")
                 if info.target_players is None:
-                    raise ValueError(f"{info.info_type.name} has no target players!")
+                    raise ValueError(
+                        f"{info.info_type.name} has no target players!")
 
                 possible_teams = transform_empath_number(
                     evil_teams=possible_teams,
@@ -99,3 +107,95 @@ def determine_evil_teams(
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
     return possible_teams
+
+
+def convert_evil_team_info(info: Info) -> EvilTeamInfo:
+    match info.info_type:
+        case (
+            InfoType.NONE
+            | InfoType.PLAYER_IS_ROLE
+            | InfoType.FORTUNE_TELLER_PING
+            | InfoType.SLAYER_SHOT
+            | InfoType.NO_NIGHT_DEATH
+            | InfoType.PLAYER_EXECUTED
+            | InfoType.PLAYER_NIGHT_DEATH
+            | InfoType.PLAYER_DAY_DEATH
+        ):
+            new_info = EvilTeamInfo(
+                info_type=EvilTeamInfoType.NONE,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+            )
+            return new_info
+
+        case InfoType.PLAYER_IS_ALIGNMENT:
+            new_info = EvilTeamInfo(
+                info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                is_good=info.is_good,
+                target_players=info.target_players,
+            )
+            return new_info
+
+        case InfoType.WASHERWOMAN_PING | InfoType.LIBRARIAN_PING:
+            new_info = EvilTeamInfo(
+                info_type=EvilTeamInfoType.AT_LEAST_ONE_GOOD,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                target_players=info.target_players,
+            )
+            return new_info
+
+        case InfoType.INVESTIGATOR_PING:
+            new_info = EvilTeamInfo(
+                info_type=EvilTeamInfoType.AT_LEAST_ONE_EVIL,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                target_players=info.target_players,
+            )
+            return new_info
+
+        case InfoType.CHEF_NUMBER:
+            new_info = EvilTeamInfo(
+                info_type=EvilTeamInfoType.CHEF_NUMBER,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                number=info.number,
+            )
+            return new_info
+
+        case InfoType.EMPATH_NUMBER:
+            new_info = EvilTeamInfo(
+                info_type=EvilTeamInfoType.EMPATH_NUMBER,
+                source=info.source,
+                day=info.day,
+                info_trust=info.info_trust,
+                number=info.number,
+                target_players=info.target_players,
+            )
+            return new_info
+
+        case (
+            InfoType.UNDERTAKER_INFO
+            | InfoType.RAVENKEEPER_PING
+            | InfoType.VIRGIN_TRIGGER
+            | InfoType.VIRGIN_EXECUTE
+        ):
+            new_info = EvilTeamInfo(
+                info_type=EvilTeamInfoType.ALIGNMENT_KNOWN,
+                source=info.source,
+                day=info.day,
+                target_players=info.target_players,
+                info_trust=info.info_trust,
+                is_good=info.is_good,
+            )
+            return new_info
+
+        case _:
+            raise ValueError(f"Unhandled InfoType: {info.info_type.name}")

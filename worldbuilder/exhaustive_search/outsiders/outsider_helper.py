@@ -1,6 +1,8 @@
 from worldbuilder.game_info import GameInfo
 from worldbuilder.helper import calculate_combinations, is_outsider
 from worldbuilder.exhaustive_search.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
+from worldbuilder.info import Info
+from worldbuilder.info_type import InfoType
 
 
 def determine_outsider_groups(
@@ -120,3 +122,58 @@ def determine_outsider_groups(
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
     return base_outsider_combinations
+
+def convert_outsider_info(info: Info) -> OutsiderInfo:
+    match info.info_type:
+        case (
+            InfoType.NONE
+            | InfoType.CHEF_NUMBER
+            | InfoType.EMPATH_NUMBER
+            | InfoType.FORTUNE_TELLER_PING
+            | InfoType.SLAYER_SHOT
+            | InfoType.NO_NIGHT_DEATH
+            | InfoType.PLAYER_NIGHT_DEATH
+            | InfoType.PLAYER_EXECUTED
+            | InfoType.PLAYER_IS_ALIGNMENT
+            | InfoType.PLAYER_DAY_DEATH
+        ):
+            new_info = OutsiderInfo(
+                info_type=OutsiderInfoType.NONE,
+                source=info.source,
+                day=info.day,
+            )
+            return new_info
+        case (
+            InfoType.PLAYER_IS_ROLE
+            | InfoType.UNDERTAKER_INFO
+            | InfoType.RAVENKEEPER_PING
+            | InfoType.VIRGIN_TRIGGER
+        ):
+            new_info = OutsiderInfo(
+                info_type=OutsiderInfoType.PLAYER_IS_ROLE,
+                source=info.source,
+                day=info.day,
+                seen_roles=info.seen_roles,
+                target_players=info.target_players,
+            )
+            return new_info
+        case InfoType.LIBRARIAN_PING:
+            new_info = OutsiderInfo(
+                info_type=OutsiderInfoType.AT_LEAST_ONE_IS_OUTSIDER,
+                source=info.source,
+                day=info.day,
+                seen_roles=info.seen_roles,
+                target_players=info.target_players,
+            )
+            return new_info
+        case InfoType.WASHERWOMAN_PING | InfoType.INVESTIGATOR_PING:
+            new_info = OutsiderInfo(
+                info_type=OutsiderInfoType.AT_LEAST_ONE_NOT_OUTSIDER,
+                source=info.source,
+                day=info.day,
+                target_players=info.target_players,
+            )
+            return new_info
+
+        case _:
+            raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
