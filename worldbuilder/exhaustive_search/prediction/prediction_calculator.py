@@ -1,5 +1,5 @@
 from worldbuilder.game_info import GameInfo
-from worldbuilder.prediction.prediction_dataclasses import GameState, Predictions
+from worldbuilder.exhaustive_search.prediction.prediction_dataclasses import GameState, Predictions
 
 
 def calculate_predictions(game_state: GameState, game_info: GameInfo, info_trust: float):

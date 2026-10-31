@@ -1,6 +1,6 @@
 from worldbuilder.game_info import GameInfo
-from worldbuilder.evil_team.evil_team_info import EvilTeamInfo, EvilTeamInfoType
-from worldbuilder.evil_team.evil_team_transformers import (
+from worldbuilder.exhaustive_search.evil_team.evil_team_info import EvilTeamInfo, EvilTeamInfoType
+from worldbuilder.exhaustive_search.evil_team.evil_team_transformers import (
     transform_chef_number,
     transform_player_good,
     transform_player_evil,
@@ -12,7 +12,7 @@ from worldbuilder.evil_team.evil_team_transformers import (
 from worldbuilder.helper import calculate_combinations
 
 
-def determine_possible_evil_teams(
+def determine_evil_teams(
     info_indices: list[int],
     learned_info: list[EvilTeamInfo],
     game_info: GameInfo,

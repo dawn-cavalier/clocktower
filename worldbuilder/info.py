@@ -1,7 +1,7 @@
-from worldbuilder.demon.demon_info import DemonInfo, DemonInfoType
-from worldbuilder.evil_team.evil_team_info import EvilTeamInfo, EvilTeamInfoType
+from worldbuilder.exhaustive_search.demon.demon_info import DemonInfo, DemonInfoType
+from worldbuilder.exhaustive_search.evil_team.evil_team_info import EvilTeamInfo, EvilTeamInfoType
 from worldbuilder.info_type import InfoType
-from worldbuilder.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
+from worldbuilder.exhaustive_search.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
 from worldbuilder.role_enum import Role
 
 

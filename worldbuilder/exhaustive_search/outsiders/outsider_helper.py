@@ -1,9 +1,9 @@
 from worldbuilder.game_info import GameInfo
 from worldbuilder.helper import calculate_combinations, is_outsider
-from worldbuilder.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
+from worldbuilder.exhaustive_search.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
 
 
-def determine_possible_outsider_groups(
+def determine_outsider_groups(
     info_indices: list[int],
     learned_info: list[OutsiderInfo],
     game_info: GameInfo,

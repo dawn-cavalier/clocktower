@@ -1,4 +1,4 @@
-from worldbuilder.demon.demon_info import DemonInfo, DemonInfoType
+from worldbuilder.exhaustive_search.demon.demon_info import DemonInfo, DemonInfoType
 from worldbuilder.game_info import GameInfo
 from worldbuilder.helper import is_demon
 

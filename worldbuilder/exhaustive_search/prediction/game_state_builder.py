@@ -1,10 +1,10 @@
-from worldbuilder.demon.demon_helper import determine_demons
-from worldbuilder.evil_team.evil_team_helper import determine_possible_evil_teams
+from worldbuilder.exhaustive_search.demon.demon_helper import determine_demons
+from worldbuilder.exhaustive_search.evil_team.evil_team_helper import determine_evil_teams
 from worldbuilder.game_info import GameInfo
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
-from worldbuilder.outsiders.outsider_helper import determine_possible_outsider_groups
-from worldbuilder.prediction.prediction_dataclasses import GameState
+from worldbuilder.exhaustive_search.outsiders.outsider_helper import determine_outsider_groups
+from worldbuilder.exhaustive_search.prediction.prediction_dataclasses import GameState
 
 
 def build_game_state(learned_info: list[Info], possibility: list[int], game_info: GameInfo):
@@ -22,13 +22,13 @@ def build_game_state(learned_info: list[Info], possibility: list[int], game_info
     )
 
     evil_team_info = [info.get_evil_team_info() for info in learned_info]
-    game_state.evil_teams = determine_possible_evil_teams(
+    game_state.evil_teams = determine_evil_teams(
         possibility, evil_team_info, game_info
     )
 
     # Get possible Outsiders combinations
     outsider_info = [info.get_outsider_info() for info in learned_info]
-    game_state.outsiders = determine_possible_outsider_groups(
+    game_state.outsiders = determine_outsider_groups(
         possibility, outsider_info, game_info
     )
 
