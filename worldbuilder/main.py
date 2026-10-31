@@ -1,9 +1,9 @@
 
-from worldbuilder.exhaustive_search.exhaustive_search import search_worlds_exhaustively
 from worldbuilder.game_info import GameInfo
 from worldbuilder.role_enum import Role
 from worldbuilder.info import Info, InfoType
 import worldbuilder.test as test
+from worldbuilder.world_scoring.world_scorer import search_world_scores
 
 
 def main() -> None:
@@ -56,7 +56,8 @@ def main() -> None:
         is_demon_scores,
         is_backup_demon_scores,
         is_outsider_scores
-    ) = search_worlds_exhaustively(game_info, learned_info)
+    ) = search_world_scores(game_info, learned_info)
+    # ) = search_worlds_exhaustively(game_info, learned_info)
 
     print(f"Player Seat:\t{[f"{player:<4}" for player in range(
         1, game_info.player_count + 1)]}")
