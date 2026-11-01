@@ -69,7 +69,7 @@ def generate_investigator_ping(day: int, source: int, targets: list[int], seen_r
             info_type=InfoType.INVESTIGATOR_PING,
             day=day,
             source=source,
-            info_trust=0.8,
+            info_trust=1,
             target_players=targets,
             seen_roles=[seen_role]
         )

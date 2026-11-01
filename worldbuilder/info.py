@@ -56,10 +56,9 @@ class Info:
         # TODO: Need to figure out how to better enforce
         #       these objects being correctly constructed
         # Validation
-        if info_trust < 0.0 or info_trust > 1.0:
-            raise ValueError(
-                f"Info trust was {info_trust} when it was expected to be between 0 and 1!"
-            )
+        assert 0.0 <= info_trust <= 1.0, (
+            f"Info trust was {info_trust} when it was expected to be between 0 and 1!"
+        )
 
         required_params: list[Param] = []
         match info_type:

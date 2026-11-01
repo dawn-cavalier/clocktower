@@ -62,29 +62,22 @@ def main() -> None:
     ) = search_world_scores(game_info, learned_info)
     # ) = search_worlds_exhaustively(game_info, learned_info)
 
-    print(
-        f"Player Seat:\t{[
-            f"{player:<5}" for player in range(
-                game_info.player_count
-            )
-        ]}"
-    )
-
-    print(f"Evil Scores:\t{[f"{score:.3f}" for score in is_evil_scores]}")
-    print(sum(is_evil_scores))
+    if sum(is_evil_scores) > 0:
+        print(f"Evil Scores:\t{[f"{score:.3f}" for score in is_evil_scores]}")
+        print(sum(is_evil_scores))
 
     if sum(is_demon_scores) > 0:
         print(
             f"Demon Scores:\t{[f"{score:.3f}" for score in is_demon_scores]}")
         print(sum(is_demon_scores))
 
-    if sum(is_backup_demon_scores) > 0:
+    if sum(is_backup_demon_scores) > 0 and False:
         print(
             f"Backup Scores:\t{[f"{score:.3f}" for score in is_backup_demon_scores]}"
         )
         print(sum(is_backup_demon_scores))
 
-    if sum(is_outsider_scores) > 0:
+    if sum(is_outsider_scores) > 0 and False:
         print(
             f"Outside Scores:\t{[f"{score:.3f}" for score in is_outsider_scores]}")
         print(sum(is_outsider_scores))
