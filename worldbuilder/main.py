@@ -1,4 +1,5 @@
 
+from worldbuilder.exhaustive_search.exhaustive_search import search_worlds_exhaustively  # type: ignore
 from worldbuilder.game_info import GameInfo
 from worldbuilder.role_enum import Role
 from worldbuilder.info import Info, InfoType
@@ -43,8 +44,10 @@ def main() -> None:
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    learned_info += test.generate_ft_seeing_yes_on_two_dead_players()
-    # learned_info += generate_test_game()
+    learned_info += test.generate_start_of_game_info(0, True, Role.LIBRARIAN)
+    learned_info += test.generate_investigator_ping(
+        day=0, source=5, targets=[1, 2], seen_role=Role.BARON
+    )
 
     is_evil_scores = [0.0 for _ in range(game_info.player_count)]
     is_demon_scores = [0.0 for _ in range(game_info.player_count)]
@@ -59,23 +62,32 @@ def main() -> None:
     ) = search_world_scores(game_info, learned_info)
     # ) = search_worlds_exhaustively(game_info, learned_info)
 
-    print(f"Player Seat:\t{[f"{player:<4}" for player in range(
-        1, game_info.player_count + 1)]}")
+    print(
+        f"Player Seat:\t{[
+            f"{player:<5}" for player in range(
+                game_info.player_count
+            )
+        ]}"
+    )
 
-    print(f"Evil Scores:\t{[f"{score:.2f}" for score in is_evil_scores]}")
+    print(f"Evil Scores:\t{[f"{score:.3f}" for score in is_evil_scores]}")
     print(sum(is_evil_scores))
 
-    print(f"Demon Scores:\t{[f"{score:.2f}" for score in is_demon_scores]}")
-    print(sum(is_demon_scores))
+    if sum(is_demon_scores) > 0:
+        print(
+            f"Demon Scores:\t{[f"{score:.3f}" for score in is_demon_scores]}")
+        print(sum(is_demon_scores))
 
-    print(
-        f"Backup Scores:\t{[f"{score:.2f}" for score in is_backup_demon_scores]}"
-    )
-    print(sum(is_backup_demon_scores))
+    if sum(is_backup_demon_scores) > 0:
+        print(
+            f"Backup Scores:\t{[f"{score:.3f}" for score in is_backup_demon_scores]}"
+        )
+        print(sum(is_backup_demon_scores))
 
-    print(
-        f"Outside Scores:\t{[f"{score:.2f}" for score in is_outsider_scores]}")
-    print(sum(is_outsider_scores))
+    if sum(is_outsider_scores) > 0:
+        print(
+            f"Outside Scores:\t{[f"{score:.3f}" for score in is_outsider_scores]}")
+        print(sum(is_outsider_scores))
 
 
 if __name__ == "__main__":

@@ -1,171 +1,83 @@
 from worldbuilder.info import Info, InfoType
 from worldbuilder.role_enum import Role
+from worldbuilder.helper import is_minion, is_outsider, is_townsfolk
 
 
-def generate_test_game():
-    learned_info: list[Info] = []
-    info = Info(
-        info_type=InfoType.PLAYER_IS_ROLE,
-        day=0,
-        source=0,
-        info_trust=1.0,
-        seen_roles=[Role.LIBRARIAN],
-        target_players=[0],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.LIBRARIAN_PING,
-        day=0,
-        source=0,
-        info_trust=1.0,
-        seen_roles=[Role.BUTLER],
-        target_players=[1, 2],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.RAVENKEEPER_PING,
-        day=0,
-        source=0,
-        info_trust=1.0,
-        seen_roles=[Role.BUTLER],
-        target_players=[2],
-        is_good=True,
-    )
-    learned_info.append(info)
-
-    # info = Info(
-    #     info_type=InfoType.RAVENKEEPER_PING,
-    #     day=0,
-    #     source=0,
-    #     info_trust=1.0,
-    #     seen_roles=[Role.BUTLER],
-    #     target_players=[3],
-    #     is_good=True,
-    # )
-    # learned_info.append(info)
-
-    info = Info(
-        info_type=InfoType.RAVENKEEPER_PING,
-        day=0,
-        source=0,
-        info_trust=1.0,
-        seen_roles=[Role.BUTLER],
-        target_players=[4],
-        is_good=True,
-    )
-    learned_info.append(info)
+def generate_start_of_game_info(player_id: int, is_good: bool, role: Role):
+    learned_info: list[Info] = [
+        __player_is_alignment__(0, is_good, player_id),
+        __player_is_role__(0, role, player_id, source=player_id, trust=0.8)
+    ]
     return learned_info
 
 
-def generate_gravedug_imp():
-    learned_info: list[Info] = []
-    learned_info.append(player_is_role(
-        day=0,
-        role=Role.UNDERTAKER,
-        player=0,
-        source=0,
-        trust=0.8
-    ))
-
-    learned_info.append(player_is_alignment(
-        day=0,
-        is_good=True,
-        player=0,
-        source=0,
-        trust=1.0
-    ))
-
-    info = Info(
-        info_type=InfoType.PLAYER_EXECUTED,
-        day=1,
-        source=-1,
-        target_players=[1],
-    )
-    learned_info.append(info)
-
-    learned_info.append(player_is_role(
-        day=2,
-        role=Role.IMP,
-        player=1,
-        source=0,
-        trust=0.8
-    ))
-
+def generate_virgin_trigger(day: int, nominee: int, nominator: int):
+    learned_info: list[Info] = [
+        __player_is_role__(day, Role.VIRGIN, nominee, source=-1, trust=1.0),
+        Info(
+            info_type=InfoType.VIRGIN_EXECUTE,
+            day=day,
+            source=nominator,
+            info_trust=0.8,
+            target_players=[nominator],
+            is_good=True
+        )
+    ]
     return learned_info
 
 
-def generate_ft_seeing_yes_on_two_dead_players():
-    learned_info: list[Info] = []
-    learned_info.append(player_is_role(
-        day=0,
-        role=Role.FORTUNE_TELLER,
-        player=0,
-        source=0,
-        trust=0.8
-    ))
+def generate_washerwoman_ping(day: int, source: int, targets: list[int], seen_role: Role):
+    assert is_townsfolk(seen_role), "Seen role is not a townsfolk!"
+    assert len(targets) == 2, f"Received {len(targets)} when 2 was expected!"
 
-    learned_info.append(player_is_alignment(
-        day=0,
-        is_good=True,
-        player=0,
-        source=0,
-        trust=1.0
-    ))
-
-    learned_info.append(
+    learned_info: list[Info] = [
         Info(
-            info_type=InfoType.FORTUNE_TELLER_PING,
-            day=0,
-            source=0,
-            info_trust=0.5,
-            target_players=[1, 2],
-            is_yes=True
+            info_type=InfoType.WASHERWOMAN_PING,
+            day=day,
+            source=source,
+            info_trust=0.8,
+            target_players=targets,
+            seen_roles=[seen_role]
         )
-    )
-
-    learned_info.append(
-        Info(
-            info_type=InfoType.PLAYER_EXECUTED,
-            day=1,
-            source=-1,
-            target_players=[1],
-        )
-    )
-
-    learned_info.append(
-        Info(
-            info_type=InfoType.FORTUNE_TELLER_PING,
-            day=2,
-            source=0,
-            info_trust=0.5,
-            target_players=[2, 3],
-            is_yes=True
-        )
-    )
-
-    learned_info.append(
-        Info(
-            info_type=InfoType.PLAYER_NIGHT_DEATH,
-            day=2,
-            source=-1,
-            target_players=[2],
-        )
-    )
-
+    ]
     return learned_info
 
 
-def actual_game_example():
-    learned_info: list[Info] = []
+def generate_librarian_ping(day: int, source: int, targets: list[int], seen_role: Role):
+    assert is_outsider(seen_role), "Seen role is not a outsider!"
+    assert len(targets) == 2, f"Received {len(targets)} when 2 was expected!"
 
+    learned_info: list[Info] = [
+        Info(
+            info_type=InfoType.LIBRARIAN_PING,
+            day=day,
+            source=source,
+            info_trust=0.8,
+            target_players=targets,
+            seen_roles=[seen_role]
+        )
+    ]
     return learned_info
 
 
-def player_is_role(
+def generate_investigator_ping(day: int, source: int, targets: list[int], seen_role: Role):
+    assert is_minion(seen_role), "Seen role is not a minion!"
+    assert len(targets) == 2, f"Received {len(targets)} when 2 was expected!"
+
+    learned_info: list[Info] = [
+        Info(
+            info_type=InfoType.INVESTIGATOR_PING,
+            day=day,
+            source=source,
+            info_trust=0.8,
+            target_players=targets,
+            seen_roles=[seen_role]
+        )
+    ]
+    return learned_info
+
+
+def __player_is_role__(
     day: int,
     role: Role,
     player: int,
@@ -183,7 +95,7 @@ def player_is_role(
     )
 
 
-def player_is_alignment(
+def __player_is_alignment__(
     day: int,
     is_good: bool,
     player: int,
