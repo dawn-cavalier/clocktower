@@ -1,5 +1,5 @@
 
-import cProfile
+import cProfile  # type: ignore
 
 from worldbuilder.game_info import GameInfo
 from worldbuilder.role_enum import Role
@@ -46,24 +46,19 @@ def main() -> None:
     learned_info += test.generate_librarian_ping(
         day=0, source=5, targets=[1, 2], seen_role=Role.DRUNK
     )
-    learned_info += test.generate_chef_number(
-        day=0, source=10, number=2
-    )
-    learned_info += test.generate_empath_number(
-        day=0, source=2, number=2, living_neighbors=[1, 3]
-    )
+    # learned_info += test.generate_chef_number(
+    #     day=0, source=10, number=2
+    # )
+    # learned_info += test.generate_empath_number(
+    #     day=0, source=2, number=2, living_neighbors=[1, 3]
+    # )
 
     (
-        is_evil_scores,
         is_demon_scores,
         is_minion_scores,
         is_outsider_scores,
         is_townsfolk_scores
     ) = search_world_scores(game_info, learned_info)
-
-    if sum(is_evil_scores) > 0:
-        print(f"Evil Scores:\t{[f"{score:.3f}" for score in is_evil_scores]}")
-        print(sum(is_evil_scores))
 
     if sum(is_demon_scores) > 0:
         print(
@@ -86,6 +81,7 @@ def main() -> None:
             f"Townsfolk Scores:\t{[f"{score:.3f}" for score in is_townsfolk_scores]}")
         print(sum(is_townsfolk_scores))
 
+
 if __name__ == "__main__":
-    # main()
-    cProfile.run('main()', sort="cumtime")
+    main()
+    # cProfile.run('main()', sort="cumtime")
