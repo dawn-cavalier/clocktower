@@ -1,45 +1,36 @@
-from enum import Enum
-from itertools import combinations, permutations
+from dataclasses import dataclass
+from itertools import combinations
 
 from worldbuilder.game_info import GameInfo
 from worldbuilder.helper import is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
-from worldbuilder.role_enum import Role
 
 
-class RoleGroup(Enum):
-    DEMON = 0
-    MINION = 1
-    OUTSIDER = 2
-    TOWNSFOLK = 3
+@dataclass(frozen=True)
+class World:
+    demons: tuple[int, ...]
+    minions: tuple[int, ...]
+    outsiders: tuple[int, ...]
+    townsfolk: tuple[int, ...]
+
+    def get_evil_team(self):
+        return self.demons + self.minions
 
 
 def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
-    is_evil_scores = [0.0 for _ in range(game_info.player_count)]
-    is_demon_scores = [0.0 for _ in range(game_info.player_count)]
-    is_minion_scores = [0.0 for _ in range(game_info.player_count)]
-    is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
+    player_ids = range(game_info.player_count)
 
-    all_evil_teams = permutations(
-        range(game_info.player_count),
-        game_info.demon_count_base + game_info.minion_count_base
-    )
-    scores: dict[tuple[int, ...], float] = {
-        team: 1.0 for team in all_evil_teams
-    }
+    scores: dict[World, float] = {}
 
     # World Processing
-    for evil_team in scores:
+    for world in __generate_worlds__(game_info):
+        scores[world] = 1.0
         for info in learned_info:
             match info.info_type:
                 case (
                     InfoType.NONE |
 
-                    InfoType.PLAYER_IS_ROLE |
-                    InfoType.UNDERTAKER_INFO |
-                    InfoType.RAVENKEEPER_PING |
-                    InfoType.VIRGIN_TRIGGER |
                     InfoType.SLAYER_SHOT |
 
                     InfoType.FORTUNE_TELLER_PING |
@@ -50,6 +41,22 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                     InfoType.PLAYER_EXECUTED
                 ):
                     continue
+                case                    (
+                    InfoType.PLAYER_IS_ROLE |
+                    InfoType.UNDERTAKER_INFO |
+                    InfoType.RAVENKEEPER_PING |
+                    InfoType.VIRGIN_TRIGGER
+                ):
+                    assert info.target_players is not None, (
+                        f"{info.info_type.name} has no target players!"
+                    )
+                    assert len(info.target_players) == 1, (
+                        f"{info.info_type.name} received " +
+                        f"{len(info.target_players)} players when 1 was expected!"
+                    )
+                    assert info.seen_roles is not None, (
+                        f"{info.info_type.name} has no seen roles!"
+                    )
 
                 case (
                     InfoType.PLAYER_IS_ALIGNMENT |
@@ -68,11 +75,12 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
 
                     is_good = info.is_good
                     player = info.target_players[0]
+                    evil_team = world.get_evil_team()
                     if is_good and player in evil_team:
-                        scores[evil_team] *= 1 - info.info_trust
+                        scores[world] *= 1 - info.info_trust
 
                     if not is_good and player not in evil_team:
-                        scores[evil_team] *= 1 - info.info_trust
+                        scores[world] *= 1 - info.info_trust
 
                 case (
                     InfoType.WASHERWOMAN_PING |
@@ -96,8 +104,9 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
 
                     target_players = info.target_players
                     seen_role = info.seen_roles[0]
-                    demon = evil_team[0]
-                    minions = evil_team[1:]
+                    demons = world.demons
+                    minions = world.minions
+                    evil_team = world.get_evil_team()
 
                     players_present_in_team = sum(
                         player in target_players for player in evil_team
@@ -105,27 +114,30 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                     minions_present_in_team = sum(
                         player in target_players for player in minions
                     )
+                    demons_present_in_team = sum(
+                        player in target_players for player in demons
+                    )
 
                     # Investigator
                     if (
                         is_minion(seen_role) and
                         minions_present_in_team == 0
                     ):
-                        scores[evil_team] *= 1 - info.info_trust
+                        scores[world] *= 1 - info.info_trust
 
                     # Sage
                     if (
                         is_demon(seen_role) and
-                        demon not in target_players
+                        demons_present_in_team == 0
                     ):
-                        scores[evil_team] *= 1 - info.info_trust
+                        scores[world] *= 1 - info.info_trust
 
                     # Washerwoman and Librarian
                     if (
                         (is_townsfolk(seen_role) or is_outsider(seen_role)) and
                         players_present_in_team == 2
                     ):
-                        scores[evil_team] *= 1 - info.info_trust
+                        scores[world] *= 1 - info.info_trust
 
                 case InfoType.CHEF_NUMBER:
                     assert info.number is not None, (
@@ -138,7 +150,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                         game_info.demon_count_base +
                         game_info.minion_count_base
                     )
-                    evil_team_sorted = sorted(evil_team)
+                    evil_team_sorted = sorted(world.get_evil_team())
 
                     for current in range(evil_player_count):
                         right_neighbor = (current + 1) % evil_player_count
@@ -151,7 +163,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                             pair_count += 1
 
                     if number != pair_count:
-                        scores[evil_team] *= 1 - info.info_trust
+                        scores[world] *= 1 - info.info_trust
 
                 case InfoType.EMPATH_NUMBER:
                     assert info.target_players is not None, (
@@ -166,6 +178,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                     )
                     number = info.number
                     target_players = info.target_players
+                    evil_team = world.get_evil_team()
 
                     evil_neighbors = 0
                     for neighbor in target_players:
@@ -173,7 +186,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                             evil_neighbors += 1
 
                     if evil_neighbors != number:
-                        scores[evil_team] *= 1 - info.info_trust
+                        scores[world] *= 1 - info.info_trust
 
                 case _:
                     raise ValueError(
@@ -186,30 +199,84 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     is_evil_scores = [
         sum(
             score for world, score in scores.items()
-            if player in world
+            if player in world.get_evil_team()
         ) / total
-        for player in range(game_info.player_count)
+        for player in player_ids
     ]
 
     is_demon_scores = [
         sum(
             score for world, score in scores.items()
-            if player == world[0]
+            if player in world.demons
         ) / total
-        for player in range(game_info.player_count)
+        for player in player_ids
     ]
 
     is_minion_scores = [
         sum(
             score for world, score in scores.items()
-            if player in world[1:]
+            if player in world.minions
         ) / total
-        for player in range(game_info.player_count)
+        for player in player_ids
+    ]
+
+    is_outsider_scores = [
+        sum(
+            score for world, score in scores.items()
+            if player in world.outsiders
+        ) / total
+        for player in player_ids
+    ]
+
+    is_townsfolk_scores = [
+        sum(
+            score for world, score in scores.items()
+            if player in world.townsfolk
+        ) / total
+        for player in player_ids
     ]
 
     return (
         is_evil_scores,
         is_demon_scores,
         is_minion_scores,
-        is_outsider_scores
+        is_outsider_scores,
+        is_townsfolk_scores
     )
+
+
+def __generate_worlds__(game_info: GameInfo):
+    player_ids = range(game_info.player_count)
+    for demons in combinations(
+        player_ids,
+        game_info.demon_count_base
+    ):
+        non_demons = tuple(
+            player for player in
+            player_ids
+            if player not in demons
+        )
+        for minions in combinations(
+            non_demons,
+            game_info.minion_count_base
+        ):
+            good_players = tuple(
+                player for player in player_ids
+                if player not in minions and
+                player not in demons
+            )
+            for outsiders in combinations(
+                good_players,
+                game_info.outsider_count_base
+            ):
+                townsfolk = tuple(
+                    player for player in
+                    good_players
+                    if player not in outsiders
+                )
+                yield World(
+                    demons=demons,
+                    minions=minions,
+                    outsiders=outsiders,
+                    townsfolk=townsfolk
+                )

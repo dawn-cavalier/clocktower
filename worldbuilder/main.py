@@ -1,8 +1,9 @@
 
-from worldbuilder.exhaustive_search.exhaustive_search import search_worlds_exhaustively  # type: ignore
+import cProfile
+
 from worldbuilder.game_info import GameInfo
 from worldbuilder.role_enum import Role
-from worldbuilder.info import Info, InfoType
+from worldbuilder.info import Info
 import worldbuilder.test as test
 from worldbuilder.world_scoring.world_scorer import search_world_scores
 
@@ -41,30 +42,23 @@ def main() -> None:
     # Append only list!
     learned_info: list[Info] = []
 
-    # Set index zero to be a NONE info object
-    learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
-
-    # learned_info += test.generate_start_of_game_info(0, True, Role.LIBRARIAN)
-    # learned_info += test.generate_investigator_ping(
-    #     day=0, source=5, targets=[1, 2], seen_role=Role.BARON
-    # )
-    # learned_info += test.generate_chef_number(
-    #     day=0, source=1, number=2
-    # )
+    learned_info += test.generate_start_of_game_info(0, True, Role.LIBRARIAN)
+    learned_info += test.generate_librarian_ping(
+        day=0, source=5, targets=[1, 2], seen_role=Role.DRUNK
+    )
+    learned_info += test.generate_chef_number(
+        day=0, source=10, number=2
+    )
     learned_info += test.generate_empath_number(
         day=0, source=2, number=2, living_neighbors=[1, 3]
     )
-
-    is_evil_scores = [0.0 for _ in range(game_info.player_count)]
-    is_demon_scores = [0.0 for _ in range(game_info.player_count)]
-    is_minion_scores = [0.0 for _ in range(game_info.player_count)]
-    is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
 
     (
         is_evil_scores,
         is_demon_scores,
         is_minion_scores,
-        is_outsider_scores
+        is_outsider_scores,
+        is_townsfolk_scores
     ) = search_world_scores(game_info, learned_info)
 
     if sum(is_evil_scores) > 0:
@@ -87,7 +81,11 @@ def main() -> None:
             f"Outside Scores:\t{[f"{score:.3f}" for score in is_outsider_scores]}")
         print(sum(is_outsider_scores))
 
+    if sum(is_townsfolk_scores) > 0:
+        print(
+            f"Townsfolk Scores:\t{[f"{score:.3f}" for score in is_townsfolk_scores]}")
+        print(sum(is_townsfolk_scores))
 
 if __name__ == "__main__":
-    main()
-    # cProfile.run('main()', sort="cumtime")
+    # main()
+    cProfile.run('main()', sort="cumtime")

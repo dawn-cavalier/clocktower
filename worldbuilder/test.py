@@ -85,7 +85,7 @@ def generate_chef_number(day: int, source: int, number: int):
             info_type=InfoType.CHEF_NUMBER,
             day=day,
             source=source,
-            info_trust=0.8,
+            info_trust=1,
             number=number
         )
     ]
