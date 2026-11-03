@@ -44,23 +44,28 @@ def main() -> None:
     # Set index zero to be a NONE info object
     learned_info.append(Info(info_type=InfoType.NONE, day=-1, source=-1))
 
-    learned_info += test.generate_start_of_game_info(0, True, Role.LIBRARIAN)
-    learned_info += test.generate_investigator_ping(
-        day=0, source=5, targets=[1, 2], seen_role=Role.BARON
+    # learned_info += test.generate_start_of_game_info(0, True, Role.LIBRARIAN)
+    # learned_info += test.generate_investigator_ping(
+    #     day=0, source=5, targets=[1, 2], seen_role=Role.BARON
+    # )
+    # learned_info += test.generate_chef_number(
+    #     day=0, source=1, number=2
+    # )
+    learned_info += test.generate_empath_number(
+        day=0, source=2, number=2, living_neighbors=[1, 3]
     )
 
     is_evil_scores = [0.0 for _ in range(game_info.player_count)]
     is_demon_scores = [0.0 for _ in range(game_info.player_count)]
-    is_backup_demon_scores = [0.0 for _ in range(game_info.player_count)]
+    is_minion_scores = [0.0 for _ in range(game_info.player_count)]
     is_outsider_scores = [0.0 for _ in range(game_info.player_count)]
 
     (
         is_evil_scores,
         is_demon_scores,
-        is_backup_demon_scores,
+        is_minion_scores,
         is_outsider_scores
     ) = search_world_scores(game_info, learned_info)
-    # ) = search_worlds_exhaustively(game_info, learned_info)
 
     if sum(is_evil_scores) > 0:
         print(f"Evil Scores:\t{[f"{score:.3f}" for score in is_evil_scores]}")
@@ -71,13 +76,13 @@ def main() -> None:
             f"Demon Scores:\t{[f"{score:.3f}" for score in is_demon_scores]}")
         print(sum(is_demon_scores))
 
-    if sum(is_backup_demon_scores) > 0 and False:
+    if sum(is_minion_scores) > 0:
         print(
-            f"Backup Scores:\t{[f"{score:.3f}" for score in is_backup_demon_scores]}"
+            f"Minion Scores:\t{[f"{score:.3f}" for score in is_minion_scores]}"
         )
-        print(sum(is_backup_demon_scores))
+        print(sum(is_minion_scores))
 
-    if sum(is_outsider_scores) > 0 and False:
+    if sum(is_outsider_scores) > 0:
         print(
             f"Outside Scores:\t{[f"{score:.3f}" for score in is_outsider_scores]}")
         print(sum(is_outsider_scores))

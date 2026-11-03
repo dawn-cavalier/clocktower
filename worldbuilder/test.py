@@ -69,9 +69,41 @@ def generate_investigator_ping(day: int, source: int, targets: list[int], seen_r
             info_type=InfoType.INVESTIGATOR_PING,
             day=day,
             source=source,
-            info_trust=1,
+            info_trust=0.8,
             target_players=targets,
             seen_roles=[seen_role]
+        )
+    ]
+    return learned_info
+
+
+def generate_chef_number(day: int, source: int, number: int):
+    assert number >= 0, "Chef Number must be positive!"
+
+    learned_info: list[Info] = [
+        Info(
+            info_type=InfoType.CHEF_NUMBER,
+            day=day,
+            source=source,
+            info_trust=0.8,
+            number=number
+        )
+    ]
+    return learned_info
+
+
+def generate_empath_number(day: int, source: int, number: int, living_neighbors: list[int]):
+    assert number >= 0, "Empath Number must be positive!"
+    assert len(living_neighbors) == 2, "Empath must have two neighbors!"
+
+    learned_info: list[Info] = [
+        Info(
+            info_type=InfoType.EMPATH_NUMBER,
+            day=day,
+            source=source,
+            info_trust=1,
+            number=number,
+            target_players=living_neighbors
         )
     ]
     return learned_info
