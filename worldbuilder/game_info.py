@@ -4,9 +4,6 @@ from itertools import combinations
 from worldbuilder.helper import get_outsider_mod, is_demon, is_minion
 from worldbuilder.role_enum import Role
 
-# TODO: This entire class is a nightmare, refactor this garbage
-
-
 class GameInfo:
     player_count: int
 
