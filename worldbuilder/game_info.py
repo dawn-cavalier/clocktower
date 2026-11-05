@@ -88,6 +88,7 @@ class GameInfo:
                     if length == 1:
                         combo_mods = [mods[0] + mod for mod in combo_mods]
                     if length == 2:
+                        # TODO: Review this
                         first_mod_list = [mods[0] + mod for mod in combo_mods]
                         second_mod_list = [mods[1] + mod for mod in combo_mods]
                         combo_mods = first_mod_list + second_mod_list

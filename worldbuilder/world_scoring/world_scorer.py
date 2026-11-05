@@ -22,19 +22,22 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     player_ids = range(game_info.player_count)
 
     scores: dict[World, float] = {}
+    outsider_counts = game_info.get_possible_outsider_counts()
 
     # World Processing
     for world in __generate_worlds__(game_info):
-        scores[world] = 1.0
+        mod = len(world.outsiders) - game_info.outsider_count_base
+        total = 1
+        for i in range(mod):
+            total *= (game_info.outsider_count_base + i + 1) / (game_info.townsfolk_count_base - i)
+
+        scores[world] = outsider_counts[len(world.outsiders)] * total
+
         for info in learned_info:
             match info.info_type:
                 case (
                     InfoType.NONE |
-
-                    InfoType.SLAYER_SHOT |
-
                     InfoType.FORTUNE_TELLER_PING |
-
                     InfoType.PLAYER_DAY_DEATH |
                     InfoType.PLAYER_NIGHT_DEATH |
                     InfoType.NO_NIGHT_DEATH |
@@ -45,6 +48,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                     InfoType.PLAYER_IS_ROLE |
                     InfoType.UNDERTAKER_INFO |
                     InfoType.RAVENKEEPER_PING |
+                    InfoType.SLAYER_SHOT |
                     InfoType.VIRGIN_TRIGGER
                 ):
                     assert info.target_players is not None, (
@@ -254,6 +258,8 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
 
 def __generate_worlds__(game_info: GameInfo):
     player_ids = range(game_info.player_count)
+    outsider_counts = game_info.get_possible_outsider_counts()
+
     for demons in combinations(
         player_ids,
         game_info.demon_count_base
@@ -271,17 +277,18 @@ def __generate_worlds__(game_info: GameInfo):
                 player for player in non_demons
                 if player not in minions
             )
-            for outsiders in combinations(
-                good_players,
-                game_info.outsider_count_base
-            ):
-                townsfolk = tuple(
-                    player for player in good_players
-                    if player not in outsiders
-                )
-                yield World(
-                    demons=demons,
-                    minions=minions,
-                    outsiders=outsiders,
-                    townsfolk=townsfolk
-                )
+            for outsider_count in outsider_counts:
+                for outsiders in combinations(
+                    good_players,
+                    outsider_count
+                ):
+                    townsfolk = tuple(
+                        player for player in good_players
+                        if player not in outsiders
+                    )
+                    yield World(
+                        demons=demons,
+                        minions=minions,
+                        outsiders=outsiders,
+                        townsfolk=townsfolk
+                    )

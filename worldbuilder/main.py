@@ -4,7 +4,7 @@ import cProfile  # type: ignore
 from worldbuilder.game_info import GameInfo
 from worldbuilder.role_enum import Role
 from worldbuilder.info import Info
-import worldbuilder.test as test
+import worldbuilder.test as test  # type: ignore
 from worldbuilder.world_scoring.world_scorer import search_world_scores
 
 
@@ -41,18 +41,16 @@ def main() -> None:
     game_info = GameInfo(player_count=12, script=script)
     # Append only list!
     learned_info: list[Info] = []
-
     learned_info += test.generate_start_of_game_info(0, True, Role.LIBRARIAN)
-    learned_info += test.generate_librarian_ping(
-        day=0, source=5, targets=[1, 2], seen_role=Role.DRUNK
-    )
+    # learned_info += test.generate_librarian_ping(
+    #     day=0, source=5, targets=[1, 2], seen_role=Role.DRUNK
+    # )
     # learned_info += test.generate_chef_number(
     #     day=0, source=10, number=2
     # )
     # learned_info += test.generate_empath_number(
     #     day=0, source=2, number=2, living_neighbors=[1, 3]
     # )
-
     (
         is_demon_scores,
         is_minion_scores,
@@ -62,18 +60,18 @@ def main() -> None:
 
     if sum(is_demon_scores) > 0:
         print(
-            f"Demon Scores:\t{[f"{score:.3f}" for score in is_demon_scores]}")
+            f"Demon Scores:\t\t{[f"{score:.3f}" for score in is_demon_scores]}")
         print(sum(is_demon_scores))
 
     if sum(is_minion_scores) > 0:
         print(
-            f"Minion Scores:\t{[f"{score:.3f}" for score in is_minion_scores]}"
+            f"Minion Scores:\t\t{[f"{score:.3f}" for score in is_minion_scores]}"
         )
         print(sum(is_minion_scores))
 
     if sum(is_outsider_scores) > 0:
         print(
-            f"Outside Scores:\t{[f"{score:.3f}" for score in is_outsider_scores]}")
+            f"Outsider Scores:\t{[f"{score:.3f}" for score in is_outsider_scores]}")
         print(sum(is_outsider_scores))
 
     if sum(is_townsfolk_scores) > 0:
