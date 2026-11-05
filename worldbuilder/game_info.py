@@ -62,6 +62,12 @@ class GameInfo:
             minion_combos
         )
 
+        # TODO: Review if you want to make negative outsider mods impossible or 0.
+        #       This makes them impossible
+        possible_outsider_dict = defaultdict(float, {
+            mod: count for (mod, count) in possible_outsider_dict.items() if mod >= 0
+        })
+
         total = sum(possible_outsider_dict.values())
         for mod, value in possible_outsider_dict.items():
             possible_outsider_dict[mod] = value/total

@@ -33,8 +33,8 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                 total *= (game_info.outsider_count_base + i + 1) / \
                     (game_info.townsfolk_count_base - i)
             if mod < 0:
-                total *= (game_info.outsider_count_base - i + 1) / \
-                    (game_info.townsfolk_count_base + i)
+                total *= (game_info.townsfolk_count_base + i + 1) / \
+                    (game_info.outsider_count_base - i)
 
         scores[world] = outsider_counts[len(world.outsiders)] * total
 
