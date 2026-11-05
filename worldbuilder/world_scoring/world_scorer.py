@@ -28,8 +28,13 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     for world in __generate_worlds__(game_info):
         mod = len(world.outsiders) - game_info.outsider_count_base
         total = 1
-        for i in range(mod):
-            total *= (game_info.outsider_count_base + i + 1) / (game_info.townsfolk_count_base - i)
+        for i in range(abs(mod)):
+            if mod > 0:
+                total *= (game_info.outsider_count_base + i + 1) / \
+                    (game_info.townsfolk_count_base - i)
+            if mod < 0:
+                total *= (game_info.outsider_count_base - i + 1) / \
+                    (game_info.townsfolk_count_base + i)
 
         scores[world] = outsider_counts[len(world.outsiders)] * total
 
@@ -37,7 +42,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
             match info.info_type:
                 case (
                     InfoType.NONE |
-                    InfoType.FORTUNE_TELLER_PING |
+
                     InfoType.PLAYER_DAY_DEATH |
                     InfoType.PLAYER_NIGHT_DEATH |
                     InfoType.NO_NIGHT_DEATH |
@@ -71,13 +76,12 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
 
                     if is_demon(seen_role) and target_player not in world.demons:
                         scores[world] *= 1 - info.info_trust
-                    if is_minion(seen_role) and target_player not in world.minions:
+                    elif is_minion(seen_role) and target_player not in world.minions:
                         scores[world] *= 1 - info.info_trust
-                    if is_outsider(seen_role) and target_player not in world.outsiders:
+                    elif is_outsider(seen_role) and target_player not in world.outsiders:
                         scores[world] *= 1 - info.info_trust
-                    if is_townsfolk(seen_role) and target_player not in world.townsfolk:
+                    elif is_townsfolk(seen_role) and target_player not in world.townsfolk:
                         scores[world] *= 1 - info.info_trust
-
                 case (
                     InfoType.PLAYER_IS_ALIGNMENT |
                     InfoType.VIRGIN_EXECUTE
@@ -176,8 +180,8 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                         right_neighbor = (current + 1) % evil_player_count
 
                         if (
-                            (evil_team_sorted[current] +
-                             1) % game_info.player_count
+                            (evil_team_sorted[current] + 1)
+                            % game_info.player_count
                             == evil_team_sorted[right_neighbor]
                         ):
                             pair_count += 1
@@ -194,7 +198,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                         f"{len(info.target_players)} players when 2 was expected!"
                     )
                     assert info.number is not None, (
-                        f"{info.info_type.name} was expected!"
+                        f"{info.info_type.name} is expected to have a number!"
                     )
                     number = info.number
                     target_players = info.target_players
@@ -206,6 +210,27 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
                             evil_neighbors += 1
 
                     if evil_neighbors != number:
+                        scores[world] *= 1 - info.info_trust
+
+                case InfoType.FORTUNE_TELLER_PING:
+                    assert info.target_players is not None, (
+                        f"{info.info_type.name} has no target players!"
+                    )
+                    assert len(info.target_players) == 2, (
+                        f"{info.info_type.name} received " +
+                        f"{len(info.target_players)} players when 2 was expected!"
+                    )
+                    assert info.is_yes is not None, (
+                        f"{info.info_type.name} is expected to have a yes/no!"
+                    )
+                    is_yes = info.is_yes
+                    target_players = info.target_players
+                    demons = world.demons
+
+                    if len(set(demons) & set(target_players)) == 0 and is_yes:
+                        scores[world] *= 1 - info.info_trust
+
+                    if len(set(demons) & set(target_players)) != 0 and not is_yes:
                         scores[world] *= 1 - info.info_trust
 
                 case _:

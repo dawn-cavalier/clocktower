@@ -108,6 +108,21 @@ def generate_empath_number(day: int, source: int, number: int, living_neighbors:
     ]
     return learned_info
 
+def generate_fortune_teller_ping(day: int, source: int, is_yes: bool, target_players: list[int]):
+    assert len(target_players) == 2, "Fortune Teller must target two players!"
+
+    learned_info: list[Info] = [
+        Info(
+            info_type=InfoType.FORTUNE_TELLER_PING,
+            day=day,
+            source=source,
+            info_trust=0.5,
+            is_yes=is_yes,
+            target_players=target_players
+        )
+    ]
+    return learned_info
+
 
 def __player_is_role__(
     day: int,

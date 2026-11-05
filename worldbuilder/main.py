@@ -41,7 +41,17 @@ def main() -> None:
     game_info = GameInfo(player_count=12, script=script)
     # Append only list!
     learned_info: list[Info] = []
-    learned_info += test.generate_start_of_game_info(0, True, Role.LIBRARIAN)
+    learned_info += test.generate_start_of_game_info(
+        player_id=0,
+        is_good=True,
+        role=Role.FORTUNE_TELLER
+    )
+    learned_info += test.generate_fortune_teller_ping(
+        day=0,
+        source=0,
+        is_yes=True,
+        target_players=[1, 2]
+    )
     # learned_info += test.generate_librarian_ping(
     #     day=0, source=5, targets=[1, 2], seen_role=Role.DRUNK
     # )
