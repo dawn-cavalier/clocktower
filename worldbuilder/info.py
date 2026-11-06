@@ -60,7 +60,7 @@ class Info:
             self.inverse_trust_log = log(1 - info_trust)
         else:
             self.inverse_trust_log = -inf
-            
+
         # TODO: Need to figure out how to better enforce
         #       these objects being correctly constructed
         # Validation
@@ -77,6 +77,7 @@ class Info:
                 InfoType.LIBRARIAN_PING |
                 InfoType.INVESTIGATOR_PING |
                 InfoType.UNDERTAKER_INFO |
+                InfoType.SAGE_PING |
                 InfoType.RAVENKEEPER_PING |
                 InfoType.VIRGIN_TRIGGER |
                 InfoType.PLAYER_IS_ROLE
@@ -96,8 +97,9 @@ class Info:
             ):
                 required_params = [Param.TARGET_PLAYERS]
             case _:
-                raise ValueError(
-                    f"Unhandled InfoType: {info_type.name}")
+                raise NotImplementedError(
+                    f"Unhandled InfoType: {info_type.name}"
+                )
 
         if Param.SEEN_ROLES in required_params and seen_roles is None:
             raise ValueError(

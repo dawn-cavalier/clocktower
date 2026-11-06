@@ -1,6 +1,7 @@
 # TODO: Sort this so that role information is underneath game information
 from enum import Enum
 
+
 class InfoType(Enum):
     NONE = -1
     WASHERWOMAN_PING = 0
@@ -20,3 +21,5 @@ class InfoType(Enum):
     PLAYER_NIGHT_DEATH = 14
     PLAYER_IS_ROLE = 15
     PLAYER_IS_ALIGNMENT = 16
+    
+    SAGE_PING = 17

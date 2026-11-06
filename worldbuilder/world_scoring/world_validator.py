@@ -195,6 +195,7 @@ INFO_VALIDATORS = {
     InfoType.WASHERWOMAN_PING:      _check_invalid_ping,
     InfoType.LIBRARIAN_PING:        _check_invalid_ping,
     InfoType.INVESTIGATOR_PING:     _check_invalid_ping,
+    InfoType.SAGE_PING:             _check_invalid_ping,
     InfoType.CHEF_NUMBER:           _check_invalid_chef_number,
     InfoType.EMPATH_NUMBER:         _check_invalid_empath_number,
     InfoType.FORTUNE_TELLER_PING:   _check_invalid_fortune_teller_ping
