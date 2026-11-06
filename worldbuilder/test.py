@@ -6,8 +6,8 @@ from worldbuilder.helper import is_minion, is_outsider, is_townsfolk
 def generate_start_of_game_info(player_id: int, trust: float, is_good: bool, role: Role):
     assert 0 <= trust <= 1, "Trust must be between 0-1!"
     learned_info: list[Info] = [
-        __player_is_alignment__(0, is_good, player_id),
-        __player_is_role__(
+        _player_is_alignment(0, is_good, player_id),
+        _player_is_role(
             day=0,
             role=role,
             player=player_id,
@@ -21,7 +21,7 @@ def generate_start_of_game_info(player_id: int, trust: float, is_good: bool, rol
 def generate_virgin_trigger(day: int, trust: float, nominee: int, nominator: int):
     assert 0 <= trust <= 1, "Trust must be between 0-1!"
     learned_info: list[Info] = [
-        __player_is_role__(day, Role.VIRGIN, nominee, source=-1, trust=1.0),
+        _player_is_role(day, Role.VIRGIN, nominee, source=-1, trust=1.0),
         Info(
             info_type=InfoType.VIRGIN_EXECUTE,
             day=day,
@@ -139,7 +139,7 @@ def generate_fortune_teller_ping(day: int, source: int, trust: float, is_yes: bo
     return learned_info
 
 
-def __player_is_role__(
+def _player_is_role(
     day: int,
     role: Role,
     player: int,
@@ -157,7 +157,7 @@ def __player_is_role__(
     )
 
 
-def __player_is_alignment__(
+def _player_is_alignment(
     day: int,
     is_good: bool,
     player: int,

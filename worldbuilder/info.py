@@ -30,7 +30,7 @@ class Info:
 
     # Internal Variables
     info_trust: float = 1.0
-    trust_log: float = 0.0
+    inverse_trust_log: float = 0.0
 
     def __init__(
         self,
@@ -60,7 +60,7 @@ class Info:
             self.inverse_trust_log = log(1 - info_trust)
         else:
             self.inverse_trust_log = -inf
-
+            
         # TODO: Need to figure out how to better enforce
         #       these objects being correctly constructed
         # Validation

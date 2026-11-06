@@ -1,5 +1,5 @@
 
-import cProfile # type: ignore
+import cProfile  # type: ignore
 import tracemalloc  # type: ignore
 from worldbuilder.game_info import GameInfo
 from worldbuilder.role_enum import Role
@@ -38,14 +38,21 @@ def main() -> None:
         Role.IMP,
     }
 
-    game_info = GameInfo(player_count=15, script=script)
+    game_info = GameInfo(player_count=7, script=script)
     # Append only list!
     learned_info: list[Info] = []
     # learned_info += test.generate_start_of_game_info(
     #     player_id=0,
     #     is_good=True,
     #     trust=0.8,
-    #     role=Role.FORTUNE_TELLER
+    #     role=Role.INVESTIGATOR
+    # )
+    # learned_info += test.generate_investigator_ping(
+    #     day=0,
+    #     source=0,
+    #     trust=0.8,
+    #     targets=[1, 2],
+    #     seen_role=Role.BARON
     # )
     # learned_info += test.generate_fortune_teller_ping(
     #     day=0,
