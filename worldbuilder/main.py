@@ -38,7 +38,7 @@ def main() -> None:
         Role.IMP,
     }
 
-    game_info = GameInfo(player_count=7, script=script)
+    game_info = GameInfo(player_count=10, script=script)
     # Append only list!
     learned_info: list[Info] = []
     # learned_info += test.generate_start_of_game_info(

@@ -1,3 +1,4 @@
+from cmath import inf
 from collections import defaultdict
 from itertools import combinations
 from math import exp, log
@@ -29,7 +30,9 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
             if INFO_VALIDATORS[info.info_type](info, world, game_info):
                 scores[world] += info.inverse_trust_log
 
-    median_log_score = median(scores.values())
+    median_log_score = median(
+        score for score in scores.values() if score != -inf
+    )
     scores = {
         world: exp(score - median_log_score)
         for world, score in scores.items()

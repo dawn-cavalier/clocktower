@@ -1,10 +1,11 @@
 from collections import defaultdict
+from dataclasses import dataclass
 from itertools import combinations
 
 from worldbuilder.helper import get_outsider_mod, is_demon, is_minion
 from worldbuilder.role_enum import Role
 
-
+@dataclass
 class GameInfo:
     player_count: int
 
@@ -23,7 +24,7 @@ class GameInfo:
             self.outsider_count_base,
             self.minion_count_base,
             self.demon_count_base
-        ) = self.__get_player_type_counts__(player_count)
+        ) = self._get_player_type_counts(player_count)
 
     def get_possible_outsider_counts(self):
         possible_outsider_dict: defaultdict[int, float] = defaultdict(float)
@@ -37,7 +38,7 @@ class GameInfo:
 
         demon_combos = list(combinations(demon_mods, self.demon_count_base))
 
-        possible_outsider_dict = self.__process_combos__(
+        possible_outsider_dict = self._process_combos(
             possible_outsider_dict,
             demon_combos
         )
@@ -49,7 +50,7 @@ class GameInfo:
         ]
         minion_combos = list(combinations(minion_mods, self.minion_count_base))
 
-        possible_outsider_dict = self.__process_combos__(
+        possible_outsider_dict = self._process_combos(
             possible_outsider_dict,
             minion_combos
         )
@@ -66,7 +67,7 @@ class GameInfo:
 
         return possible_outsider_dict
 
-    def __process_combos__(
+    def _process_combos(
         self,
         original_dict: defaultdict[int, float],
         combos: list[tuple[list[int], ...]]
@@ -98,7 +99,7 @@ class GameInfo:
 
         return new_dict
 
-    def __get_player_type_counts__(self, player_count: int):
+    def _get_player_type_counts(self, player_count: int):
         match player_count:
             case 7:
                 townsfolk_count_base = 5
