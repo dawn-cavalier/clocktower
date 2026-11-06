@@ -1,3 +1,5 @@
+from itertools import combinations
+
 from worldbuilder.game_info import GameInfo
 from worldbuilder.exhaustive_search.evil_team.evil_team_info import EvilTeamInfo, EvilTeamInfoType
 from worldbuilder.exhaustive_search.evil_team.evil_team_transformers import (
@@ -9,7 +11,6 @@ from worldbuilder.exhaustive_search.evil_team.evil_team_transformers import (
     transform_exactly_one_evil,
     transform_empath_number,
 )
-from worldbuilder.helper import calculate_combinations
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
 
@@ -23,7 +24,9 @@ def determine_evil_teams(
     player_count = game_info.player_count
 
     possible_teams: list[list[int]] = []
-    possible_teams += calculate_combinations(evil_count, player_count)
+    possible_teams += [
+        list(c) for c in combinations(range(player_count), evil_count)
+    ]
 
     for info_index in info_indices:
         is_inverted = info_index < 0

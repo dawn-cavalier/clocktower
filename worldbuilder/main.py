@@ -40,8 +40,6 @@ def main() -> None:
     }
 
     game_info = GameInfo(player_count=10, script=script)
-    print(game_info.get_possible_outsider_counts())
-    return
     # Append only list!
     learned_info: list[Info] = []
     # learned_info += info_builder.generate_start_of_game_info(

@@ -1,10 +1,4 @@
-from itertools import combinations
-
 from worldbuilder.role_enum import Role
-
-
-def calculate_combinations(count: int, player_count: int):
-    return [list(c) for c in combinations(range(player_count), count)]
 
 
 def is_townsfolk(role: Role) -> bool:
@@ -26,20 +20,20 @@ def is_demon(role: Role) -> bool:
 def get_outsider_mod(role: Role) -> list[int]:
     # TODO: Review this for all outsider mods
     # TODO: How do we handle in game character changes?
-    match role:
-        case Role.VIGORMORTIS:
-            return [-1]
-        case Role.FANG_GU:
-            return [1]
-        case Role.BARON:
-            return [2]
-        case Role.HERMIT:
-            return [-1, 0]
-        case Role.GODFATHER:
-            return [-1, 1]
-        case Role.BALLOONIST | Role.HUNTSMAN:
-            return [0, 1]
-        case Role.KAZALI | Role.LORD_OF_TYPHON | Role.XAAN:
-            raise NotImplementedError(f"Role {role.name} is currently unhandled!")
-        case _:
-            return [0]
+    if role in (Role.KAZALI, Role.LORD_OF_TYPHON, Role.XAAN):
+        raise NotImplementedError(
+            f"Role {role.name} is currently unhandled!")
+
+    modifier_dict = {
+        Role.VIGORMORTIS:   [-1],
+        Role.FANG_GU:       [1],
+        Role.BARON:         [2],
+        Role.HERMIT:        [-1, 0],
+        Role.GODFATHER:     [-1, 1],
+        Role.BALLOONIST:    [0, 1],
+        Role.HUNTSMAN:      [0, 1],
+    }
+    if role not in modifier_dict:
+        return [0]
+
+    return modifier_dict[role]

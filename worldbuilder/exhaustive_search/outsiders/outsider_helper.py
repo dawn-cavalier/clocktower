@@ -1,5 +1,7 @@
+from itertools import combinations
+
 from worldbuilder.game_info import GameInfo
-from worldbuilder.helper import calculate_combinations, is_outsider
+from worldbuilder.helper import is_outsider
 from worldbuilder.exhaustive_search.outsiders.outsiders_info import OutsiderInfo, OutsiderInfoType
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
@@ -15,9 +17,10 @@ def determine_outsider_groups(
 
     base_outsider_combinations: list[list[int]] = []
     for outsider_count in outsider_counts:
-        base_outsider_combinations += calculate_combinations(
-            outsider_count, player_count
-        )
+        base_outsider_combinations += [
+            list(c)
+            for c in combinations(range(player_count), outsider_count)
+        ]
 
     for info_index in info_indices:
         is_inverted = info_index < 0
@@ -122,6 +125,7 @@ def determine_outsider_groups(
                 raise ValueError(f"Unhandled InfoType: {info.info_type.name}")
 
     return base_outsider_combinations
+
 
 def convert_outsider_info(info: Info) -> OutsiderInfo:
     match info.info_type:
