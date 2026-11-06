@@ -33,20 +33,23 @@ def main() -> None:
         Role.POISONER,
         Role.SPY,
         Role.SCARLET_WOMAN,
-        Role.BARON,
+        # Role.BARON,
+        Role.GODFATHER,
         # Demons
         Role.IMP,
     }
 
     game_info = GameInfo(player_count=10, script=script)
+    print(game_info.get_possible_outsider_counts())
+    return
     # Append only list!
     learned_info: list[Info] = []
-    learned_info += info_builder.generate_start_of_game_info(
-        player_id=0,
-        is_good=True,
-        trust=0.8,
-        role=Role.INVESTIGATOR
-    )
+    # learned_info += info_builder.generate_start_of_game_info(
+    #     player_id=0,
+    #     is_good=True,
+    #     trust=0.8,
+    #     role=Role.INVESTIGATOR
+    # )
 
     (
         is_demon_scores,
