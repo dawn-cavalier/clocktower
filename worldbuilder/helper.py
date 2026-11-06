@@ -40,6 +40,6 @@ def get_outsider_mod(role: Role) -> list[int]:
         case Role.BALLOONIST | Role.HUNTSMAN:
             return [0, 1]
         case Role.KAZALI | Role.LORD_OF_TYPHON | Role.XAAN:
-            raise ValueError(f"Role {role.name} is currently unhandled!")
+            raise NotImplementedError(f"Role {role.name} is currently unhandled!")
         case _:
             return [0]

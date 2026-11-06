@@ -38,24 +38,24 @@ def main() -> None:
         Role.IMP,
     }
 
-    game_info = GameInfo(player_count=12, script=script)
+    game_info = GameInfo(player_count=15, script=script)
     # Append only list!
     learned_info: list[Info] = []
-    learned_info += test.generate_start_of_game_info(
-        player_id=0,
-        is_good=True,
-        trust=0.8,
-        role=Role.FORTUNE_TELLER
-    )
-    learned_info += test.generate_fortune_teller_ping(
-        day=0,
-        source=0,
-        trust=0.5,
-        is_yes=True,
-        target_players=[1, 2]
-    )
+    # learned_info += test.generate_start_of_game_info(
+    #     player_id=0,
+    #     is_good=True,
+    #     trust=0.8,
+    #     role=Role.FORTUNE_TELLER
+    # )
+    # learned_info += test.generate_fortune_teller_ping(
+    #     day=0,
+    #     source=0,
+    #     trust=0.5,
+    #     is_yes=True,
+    #     target_players=[1, 2]
+    # )
     # learned_info += test.generate_librarian_ping(
-    #     day=0, source=5, targets=[1, 2], seen_role=Role.DRUNK
+    #     day=0, source=5, trust=0.8, targets=[1, 2], seen_role=Role.DRUNK
     # )
     # learned_info += test.generate_chef_number(
     #     day=0, source=10, number=2

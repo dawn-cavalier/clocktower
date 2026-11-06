@@ -16,6 +16,7 @@ class World:
     outsiders: tuple[int, ...]
     townsfolk: tuple[int, ...]
 
+    # TODO: Cache this?
     def get_evil_team(self):
         return self.demons + self.minions
 
@@ -24,28 +25,28 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     scores: dict[World, float] = {}
     outsider_counts = game_info.get_possible_outsider_counts()
     info_functions = {
-        InfoType.NONE:                  __check_nothing__,
-        InfoType.PLAYER_DAY_DEATH:      __check_nothing__,
-        InfoType.PLAYER_NIGHT_DEATH:    __check_nothing__,
-        InfoType.NO_NIGHT_DEATH:        __check_nothing__,
-        InfoType.PLAYER_EXECUTED:       __check_nothing__,
-        InfoType.PLAYER_IS_ROLE:        __check_invalid_role__,
-        InfoType.UNDERTAKER_INFO:       __check_invalid_role__,
-        InfoType.RAVENKEEPER_PING:      __check_invalid_role__,
-        InfoType.SLAYER_SHOT:           __check_invalid_role__,
-        InfoType.VIRGIN_TRIGGER:        __check_invalid_role__,
-        InfoType.PLAYER_IS_ALIGNMENT:   __check_invalid_alignment__,
-        InfoType.VIRGIN_EXECUTE:        __check_invalid_alignment__,
-        InfoType.WASHERWOMAN_PING:      __check_invalid_ping__,
-        InfoType.LIBRARIAN_PING:        __check_invalid_ping__,
-        InfoType.INVESTIGATOR_PING:     __check_invalid_ping__,
-        InfoType.CHEF_NUMBER:           __check_invalid_chef_number__,
-        InfoType.EMPATH_NUMBER:         __check_invalid_empath_number__,
-        InfoType.FORTUNE_TELLER_PING:   __check_invalid_fortune_teller_ping__
+        InfoType.NONE:                  _check_nothing,
+        InfoType.PLAYER_DAY_DEATH:      _check_nothing,
+        InfoType.PLAYER_NIGHT_DEATH:    _check_nothing,
+        InfoType.NO_NIGHT_DEATH:        _check_nothing,
+        InfoType.PLAYER_EXECUTED:       _check_nothing,
+        InfoType.PLAYER_IS_ROLE:        _check_invalid_role,
+        InfoType.UNDERTAKER_INFO:       _check_invalid_role,
+        InfoType.RAVENKEEPER_PING:      _check_invalid_role,
+        InfoType.SLAYER_SHOT:           _check_invalid_role,
+        InfoType.VIRGIN_TRIGGER:        _check_invalid_role,
+        InfoType.PLAYER_IS_ALIGNMENT:   _check_invalid_alignment,
+        InfoType.VIRGIN_EXECUTE:        _check_invalid_alignment,
+        InfoType.WASHERWOMAN_PING:      _check_invalid_ping,
+        InfoType.LIBRARIAN_PING:        _check_invalid_ping,
+        InfoType.INVESTIGATOR_PING:     _check_invalid_ping,
+        InfoType.CHEF_NUMBER:           _check_invalid_chef_number,
+        InfoType.EMPATH_NUMBER:         _check_invalid_empath_number,
+        InfoType.FORTUNE_TELLER_PING:   _check_invalid_fortune_teller_ping
     }
 
-    for world in __generate_worlds__(game_info):
-        scores[world] = __calculate_world_prior__(
+    for world in _generate_worlds(game_info):
+        scores[world] = _calculate_world_prior(
             world=world,
             outsider_counts=outsider_counts,
             outsider_count_base=game_info.outsider_count_base,
@@ -60,12 +61,16 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
             if info_functions[info.info_type](info, world, game_info):
                 scores[world] += info.inverse_trust_log
 
-    scores = {world: exp(score) for world, score in scores.items()}
+    max_log_score = min(scores.values())
+    scores = {
+        world: exp(score-max_log_score)
+        for world, score in scores.items()
+    }
 
-    return __calculate_probabilities__(scores, player_count=game_info.player_count)
+    return _calculate_probabilities(scores, player_count=game_info.player_count)
 
 
-def __generate_worlds__(game_info: GameInfo):
+def _generate_worlds(game_info: GameInfo):
     player_ids = range(game_info.player_count)
     outsider_counts = game_info.get_possible_outsider_counts()
 
@@ -103,7 +108,7 @@ def __generate_worlds__(game_info: GameInfo):
                     )
 
 
-def __calculate_world_prior__(
+def _calculate_world_prior(
     world: World,
     outsider_counts: defaultdict[int, float],
     outsider_count_base: int,
@@ -130,42 +135,28 @@ def __calculate_world_prior__(
     return log(outsider_counts[len(world.outsiders)]) + total
 
 
-def __calculate_probabilities__(scores: dict[World, float], player_count: int):
+def _calculate_probabilities(scores: dict[World, float], player_count: int):
     total = sum(scores.values())
     assert total != 0, "No valid worlds!"
-    player_ids = range(player_count)
+    is_demon_scores = [0.0 for _ in range(player_count)]
+    is_minion_scores = [0.0 for _ in range(player_count)]
+    is_outsider_scores = [0.0 for _ in range(player_count)]
+    is_townsfolk_scores = [0.0 for _ in range(player_count)]
 
-    is_demon_scores = [
-        sum(
-            score for world, score in scores.items()
-            if player in world.demons
-        ) / total
-        for player in player_ids
-    ]
+    for world, score in scores.items():
+        for player in world.demons:
+            is_demon_scores[player] += score
+        for player in world.minions:
+            is_minion_scores[player] += score
+        for player in world.outsiders:
+            is_outsider_scores[player] += score
+        for player in world.townsfolk:
+            is_townsfolk_scores[player] += score
 
-    is_minion_scores = [
-        sum(
-            score for world, score in scores.items()
-            if player in world.minions
-        ) / total
-        for player in player_ids
-    ]
-
-    is_outsider_scores = [
-        sum(
-            score for world, score in scores.items()
-            if player in world.outsiders
-        ) / total
-        for player in player_ids
-    ]
-
-    is_townsfolk_scores = [
-        sum(
-            score for world, score in scores.items()
-            if player in world.townsfolk
-        ) / total
-        for player in player_ids
-    ]
+    is_demon_scores = [score / total for score in is_demon_scores]
+    is_minion_scores = [score / total for score in is_minion_scores]
+    is_outsider_scores = [score / total for score in is_outsider_scores]
+    is_townsfolk_scores = [score / total for score in is_townsfolk_scores]
 
     return (
         is_demon_scores,
@@ -175,11 +166,11 @@ def __calculate_probabilities__(scores: dict[World, float], player_count: int):
     )
 
 
-def __check_nothing__(info: Info, world: World, game_info: GameInfo):
+def _check_nothing(info: Info, world: World, game_info: GameInfo):
     return False
 
 
-def __check_invalid_role__(info: Info, world: World, game_info: GameInfo):
+def _check_invalid_role(info: Info, world: World, game_info: GameInfo):
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -206,7 +197,7 @@ def __check_invalid_role__(info: Info, world: World, game_info: GameInfo):
     )
 
 
-def __check_invalid_alignment__(info: Info, world: World, game_info: GameInfo):
+def _check_invalid_alignment(info: Info, world: World, game_info: GameInfo):
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -227,7 +218,7 @@ def __check_invalid_alignment__(info: Info, world: World, game_info: GameInfo):
     )
 
 
-def __check_invalid_ping__(info: Info, world: World, game_info: GameInfo):
+def _check_invalid_ping(info: Info, world: World, game_info: GameInfo):
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -243,53 +234,48 @@ def __check_invalid_ping__(info: Info, world: World, game_info: GameInfo):
         f"{len(info.seen_roles)} roles when 1 was expected!"
     )
 
-    target_players = info.target_players
     seen_role = info.seen_roles[0]
-    demons = world.demons
-    minions = world.minions
-    evil_team = world.get_evil_team()
+    target_players = set(info.target_players)
+    demons = set(world.demons)
+    minions = set(world.minions)
+    evil_team = set(world.get_evil_team())
 
-    players_present_in_team = sum(
-        player in target_players for player in evil_team
-    )
-    minions_present_in_team = sum(
-        player in target_players for player in minions
-    )
-    demons_present_in_team = sum(
-        player in target_players for player in demons
-    )
+    evil_players_present = len(target_players & evil_team)
+    minions_present = len(target_players & minions)
+    demons_present = len(target_players & demons)
 
     # Investigator
     if (
         is_minion(seen_role) and
-        minions_present_in_team == 0
+        minions_present == 0
     ):
         return True
 
     # Sage
     if (
         is_demon(seen_role) and
-        demons_present_in_team == 0
+        demons_present == 0
     ):
         return True
 
     # Washerwoman and Librarian
     if (
         (is_townsfolk(seen_role) or is_outsider(seen_role)) and
-        players_present_in_team == 2
+        evil_players_present == 2
     ):
         return True
 
     return False
 
 
-def __check_invalid_chef_number__(info: Info, world: World, game_info: GameInfo):
-    assert info.number is not None, (
+def _check_invalid_chef_number(info: Info, world: World, game_info: GameInfo):
+    number = info.number
+    assert number is not None, (
         f"{info.info_type.name} was expected!"
     )
 
-    number = info.number
     pair_count = 0
+    # TODO: Handle alignment changes.
     evil_player_count = (
         game_info.demon_count_base +
         game_info.minion_count_base
@@ -309,7 +295,7 @@ def __check_invalid_chef_number__(info: Info, world: World, game_info: GameInfo)
     return number != pair_count
 
 
-def __check_invalid_empath_number__(info: Info, world: World, game_info: GameInfo):
+def _check_invalid_empath_number(info: Info, world: World, game_info: GameInfo):
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -332,7 +318,7 @@ def __check_invalid_empath_number__(info: Info, world: World, game_info: GameInf
     return evil_neighbors != number
 
 
-def __check_invalid_fortune_teller_ping__(info: Info, world: World, game_info: GameInfo):
+def _check_invalid_fortune_teller_ping(info: Info, world: World, game_info: GameInfo):
 
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
@@ -349,6 +335,6 @@ def __check_invalid_fortune_teller_ping__(info: Info, world: World, game_info: G
     demons = world.demons
 
     return (
-        (len(set(demons) & set(target_players)) == 0 and is_yes) and
+        (len(set(demons) & set(target_players)) == 0 and is_yes) or
         (len(set(demons) & set(target_players)) != 0 and not is_yes)
     )

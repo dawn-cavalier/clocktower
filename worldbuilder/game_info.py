@@ -4,6 +4,7 @@ from itertools import combinations
 from worldbuilder.helper import get_outsider_mod, is_demon, is_minion
 from worldbuilder.role_enum import Role
 
+
 class GameInfo:
     player_count: int
 
@@ -14,15 +15,9 @@ class GameInfo:
 
     script: set[Role]
 
-    __possible_outsider_dict__: dict[int, float] | None = None
-
-    NIGHT_INSURANCE = {Role.SCARLET_WOMAN, Role.IMP}
-    DAY_INSURANCE = {Role.SCARLET_WOMAN}
-
     def __init__(self, player_count: int, script: set[Role]) -> None:
         self.player_count = player_count
         self.script = script
-        self.demon_count_base = 1
         (
             self.townsfolk_count_base,
             self.outsider_count_base,
