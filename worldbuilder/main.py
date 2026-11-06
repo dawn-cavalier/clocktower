@@ -4,7 +4,7 @@ import tracemalloc  # type: ignore
 from worldbuilder.game_info import GameInfo
 from worldbuilder.role_enum import Role
 from worldbuilder.info import Info
-import worldbuilder.test as test  # type: ignore
+import worldbuilder.info_builder as info_builder  # type: ignore
 from worldbuilder.world_scoring.world_scorer import search_world_scores
 
 
@@ -41,35 +41,13 @@ def main() -> None:
     game_info = GameInfo(player_count=10, script=script)
     # Append only list!
     learned_info: list[Info] = []
-    # learned_info += test.generate_start_of_game_info(
-    #     player_id=0,
-    #     is_good=True,
-    #     trust=0.8,
-    #     role=Role.INVESTIGATOR
-    # )
-    # learned_info += test.generate_investigator_ping(
-    #     day=0,
-    #     source=0,
-    #     trust=0.8,
-    #     targets=[1, 2],
-    #     seen_role=Role.BARON
-    # )
-    # learned_info += test.generate_fortune_teller_ping(
-    #     day=0,
-    #     source=0,
-    #     trust=0.5,
-    #     is_yes=True,
-    #     target_players=[1, 2]
-    # )
-    # learned_info += test.generate_librarian_ping(
-    #     day=0, source=5, trust=0.8, targets=[1, 2], seen_role=Role.DRUNK
-    # )
-    # learned_info += test.generate_chef_number(
-    #     day=0, source=10, number=2
-    # )
-    # learned_info += test.generate_empath_number(
-    #     day=0, source=2, number=2, living_neighbors=[1, 3]
-    # )
+    learned_info += info_builder.generate_start_of_game_info(
+        player_id=0,
+        is_good=True,
+        trust=0.8,
+        role=Role.INVESTIGATOR
+    )
+
     (
         is_demon_scores,
         is_minion_scores,
