@@ -1,6 +1,6 @@
 
-import cProfile  # type: ignore
-
+import cProfile # type: ignore
+import tracemalloc  # type: ignore
 from worldbuilder.game_info import GameInfo
 from worldbuilder.role_enum import Role
 from worldbuilder.info import Info
@@ -41,17 +41,19 @@ def main() -> None:
     game_info = GameInfo(player_count=12, script=script)
     # Append only list!
     learned_info: list[Info] = []
-    # learned_info += test.generate_start_of_game_info(
-    #     player_id=0,
-    #     is_good=True,
-    #     role=Role.FORTUNE_TELLER
-    # )
-    # learned_info += test.generate_fortune_teller_ping(
-    #     day=0,
-    #     source=0,
-    #     is_yes=True,
-    #     target_players=[1, 2]
-    # )
+    learned_info += test.generate_start_of_game_info(
+        player_id=0,
+        is_good=True,
+        trust=0.8,
+        role=Role.FORTUNE_TELLER
+    )
+    learned_info += test.generate_fortune_teller_ping(
+        day=0,
+        source=0,
+        trust=0.5,
+        is_yes=True,
+        target_players=[1, 2]
+    )
     # learned_info += test.generate_librarian_ping(
     #     day=0, source=5, targets=[1, 2], seen_role=Role.DRUNK
     # )
@@ -92,4 +94,10 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+    # tracemalloc.start()
+    # main()
+    # print(tracemalloc.get_traced_memory())
+    # tracemalloc.stop()
+
     # cProfile.run('main()', sort="cumtime")

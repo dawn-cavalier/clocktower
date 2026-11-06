@@ -60,7 +60,7 @@ class GameInfo:
         )
 
         # TODO: Review if you want to make negative outsider mods impossible or 0.
-        #       This makes them impossible
+        #       Currently, this makes them impossible
         possible_outsider_dict = defaultdict(float, {
             mod: count for (mod, count) in possible_outsider_dict.items() if mod >= 0
         })

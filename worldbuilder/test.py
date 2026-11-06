@@ -7,7 +7,13 @@ def generate_start_of_game_info(player_id: int, trust: float, is_good: bool, rol
     assert 0 <= trust <= 1, "Trust must be between 0-1!"
     learned_info: list[Info] = [
         __player_is_alignment__(0, is_good, player_id),
-        __player_is_role__(0, role, player_id, source=player_id, trust=trust)
+        __player_is_role__(
+            day=0,
+            role=role,
+            player=player_id,
+            source=player_id,
+            trust=trust
+        )
     ]
     return learned_info
 

@@ -1,4 +1,6 @@
+from dataclasses import dataclass
 from enum import Enum
+from math import inf, log
 
 from worldbuilder.info_type import InfoType
 from worldbuilder.role_enum import Role
@@ -12,6 +14,7 @@ class Param(Enum):
     IS_GOOD = 4
 
 
+@dataclass
 class Info:
     # All the time information
     info_type: InfoType
@@ -27,7 +30,7 @@ class Info:
 
     # Internal Variables
     info_trust: float = 1.0
-    invert: bool = False
+    trust_log: float = 0.0
 
     def __init__(
         self,
@@ -45,13 +48,18 @@ class Info:
         self.info_type = info_type
         self.day = day
         self.source = source
-        self.info_trust = info_trust
 
         self.seen_roles = seen_roles
         self.target_players = target_players
         self.number = number
         self.is_yes = is_yes
         self.is_good = is_good
+
+        self.info_trust = info_trust
+        if 1 - info_trust > 0.0:
+            self.inverse_trust_log = log(1 - info_trust)
+        else:
+            self.inverse_trust_log = -inf
 
         # TODO: Need to figure out how to better enforce
         #       these objects being correctly constructed
