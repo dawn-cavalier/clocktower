@@ -1,3 +1,4 @@
+from worldbuilder import info_builder
 from worldbuilder.game_info import GameInfo
 from worldbuilder.helper import is_minion
 from worldbuilder.info import Info
@@ -103,12 +104,44 @@ ACCECPTABLE_ERROR = 1e-9
 
 def test_base_setup():
     for i in range(7, 16):
-        _check_world_scores_TB(i)
-        _check_world_scores_SNV(i)
-        _check_world_scores_BMR(i)
+        _check_world_scores_tb(i)
+        _check_world_scores_snv(i)
+        _check_world_scores_bmr(i)
 
 
-def _check_world_scores_TB(player_count: int):
+def test_learning_baron_tb():
+    game_info = GameInfo(player_count=7, script=TROUBLE_BREWING)
+    learned_info: list[Info] = []
+    learned_info += info_builder.generate_investigator_ping(
+        day=0,
+        source=0,
+        trust=1.0,
+        targets=[1, 2],
+        seen_role=Role.BARON,
+    )
+
+    (
+        is_demon_scores,
+        is_minion_scores,
+        is_outsider_scores,
+        is_townsfolk_scores
+    ) = search_world_scores(game_info, learned_info)
+
+    _check_sums(
+        is_demon_scores,
+        is_minion_scores,
+        is_outsider_scores,
+        is_townsfolk_scores,
+        game_info
+    )
+
+    assert abs(
+        sum(is_outsider_scores) -
+        (game_info.outsider_count_base + 2)
+    ) < ACCECPTABLE_ERROR
+
+
+def _check_world_scores_tb(player_count: int):
     game_info = GameInfo(player_count=player_count, script=TROUBLE_BREWING)
     learned_info: list[Info] = []
     (
@@ -118,26 +151,23 @@ def _check_world_scores_TB(player_count: int):
         is_townsfolk_scores
     ) = search_world_scores(game_info, learned_info)
 
-    assert abs(sum(is_demon_scores) -
-               game_info.demon_count_base) <= ACCECPTABLE_ERROR
+    _check_sums(
+        is_demon_scores,
+        is_minion_scores,
+        is_outsider_scores,
+        is_townsfolk_scores,
+        game_info
+    )
+
     for score in is_demon_scores:
         assert abs(
             score - game_info.demon_count_base/player_count
         ) <= ACCECPTABLE_ERROR
 
-    assert abs(sum(is_minion_scores) -
-               game_info.minion_count_base) <= ACCECPTABLE_ERROR
     for score in is_minion_scores:
         assert abs(
             score - game_info.minion_count_base/player_count
         ) <= ACCECPTABLE_ERROR
-
-    assert (
-        abs(
-            sum(is_outsider_scores) + sum(is_townsfolk_scores) -
-            (game_info.outsider_count_base + game_info.townsfolk_count_base)
-        ) <= ACCECPTABLE_ERROR
-    )
 
     expected_score = (
         (game_info.townsfolk_count_base) -
@@ -167,7 +197,7 @@ def _check_world_scores_TB(player_count: int):
         ) <= ACCECPTABLE_ERROR
 
 
-def _check_world_scores_SNV(player_count: int):
+def _check_world_scores_snv(player_count: int):
     game_info = GameInfo(player_count=player_count, script=SECTS_AND_VIOLETS)
     learned_info: list[Info] = []
     (
@@ -176,27 +206,23 @@ def _check_world_scores_SNV(player_count: int):
         is_outsider_scores,
         is_townsfolk_scores
     ) = search_world_scores(game_info, learned_info)
+    _check_sums(
+        is_demon_scores,
+        is_minion_scores,
+        is_outsider_scores,
+        is_townsfolk_scores,
+        game_info
+    )
 
-    assert abs(sum(is_demon_scores) -
-               game_info.demon_count_base) <= ACCECPTABLE_ERROR
     for score in is_demon_scores:
         assert abs(
             score - game_info.demon_count_base/player_count
         ) <= ACCECPTABLE_ERROR
 
-    assert abs(sum(is_minion_scores) -
-               game_info.minion_count_base) <= ACCECPTABLE_ERROR
     for score in is_minion_scores:
         assert abs(
             score - game_info.minion_count_base/player_count
         ) <= ACCECPTABLE_ERROR
-
-    assert (
-        abs(
-            sum(is_outsider_scores) + sum(is_townsfolk_scores) -
-            (game_info.outsider_count_base + game_info.townsfolk_count_base)
-        ) <= ACCECPTABLE_ERROR
-    )
 
     expected_score = (
         (game_info.townsfolk_count_base)
@@ -227,7 +253,7 @@ def _check_world_scores_SNV(player_count: int):
         ) <= ACCECPTABLE_ERROR
 
 
-def _check_world_scores_BMR(player_count: int):
+def _check_world_scores_bmr(player_count: int):
     game_info = GameInfo(player_count=player_count, script=BAD_MOON_RISING)
     learned_info: list[Info] = []
     (
@@ -236,27 +262,22 @@ def _check_world_scores_BMR(player_count: int):
         is_outsider_scores,
         is_townsfolk_scores
     ) = search_world_scores(game_info, learned_info)
-
-    assert abs(sum(is_demon_scores) -
-               game_info.demon_count_base) <= ACCECPTABLE_ERROR
+    _check_sums(
+        is_demon_scores,
+        is_minion_scores,
+        is_outsider_scores,
+        is_townsfolk_scores,
+        game_info
+    )
     for score in is_demon_scores:
         assert abs(
             score - game_info.demon_count_base/player_count
         ) <= ACCECPTABLE_ERROR
 
-    assert abs(sum(is_minion_scores) -
-               game_info.minion_count_base) <= ACCECPTABLE_ERROR
     for score in is_minion_scores:
         assert abs(
             score - game_info.minion_count_base/player_count
         ) <= ACCECPTABLE_ERROR
-
-    assert (
-        abs(
-            sum(is_outsider_scores) + sum(is_townsfolk_scores) -
-            (game_info.outsider_count_base + game_info.townsfolk_count_base)
-        ) <= ACCECPTABLE_ERROR
-    )
 
     expected_score = (
         (game_info.townsfolk_count_base)
@@ -289,3 +310,22 @@ def _check_world_scores_BMR(player_count: int):
         assert abs(
             score - expected_score
         ) <= ACCECPTABLE_ERROR
+
+
+def _check_sums(
+    is_demon_scores: list[float],
+    is_minion_scores: list[float],
+    is_outsider_scores: list[float],
+    is_townsfolk_scores: list[float],
+    game_info: GameInfo
+):
+    assert abs(sum(is_demon_scores) -
+               game_info.demon_count_base) <= ACCECPTABLE_ERROR
+    assert abs(sum(is_minion_scores) -
+               game_info.minion_count_base) <= ACCECPTABLE_ERROR
+    assert (
+        abs(
+            sum(is_outsider_scores) + sum(is_townsfolk_scores) -
+            (game_info.outsider_count_base + game_info.townsfolk_count_base)
+        ) <= ACCECPTABLE_ERROR
+    )

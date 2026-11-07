@@ -42,12 +42,13 @@ def main() -> None:
     game_info = GameInfo(player_count=7, script=script)
     # Append only list!
     learned_info: list[Info] = []
-    # learned_info += info_builder.generate_start_of_game_info(
-    #     player_id=0,
-    #     is_good=True,
-    #     trust=0.8,
-    #     role=Role.INVESTIGATOR
-    # )
+    learned_info += info_builder.generate_investigator_ping(
+        day=0,
+        source=0,
+        trust=0.8,
+        targets=[1, 2],
+        seen_role=Role.BARON,
+    )
 
     (
         demon_scores,
@@ -72,7 +73,6 @@ def main() -> None:
             f"Outsider Scores:\t{[f"{score:.3f}" for score in outsider_scores]}")
         print(sum(outsider_scores))
 
-    print(townsfolk_scores)
     if sum(townsfolk_scores) > 0:
         print(
             f"Townsfolk Scores:\t{[f"{score:.3f}" for score in townsfolk_scores]}")
