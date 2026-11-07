@@ -7,7 +7,7 @@ from statistics import median
 from worldbuilder.game_info import GameInfo
 from worldbuilder.info import Info
 from worldbuilder.world_scoring.world import World
-from worldbuilder.world_scoring.world_validator import INFO_VALIDATORS
+from worldbuilder.world_scoring.world_validators import INFO_VALIDATORS
 
 
 def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
