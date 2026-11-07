@@ -193,6 +193,19 @@ def test_get_possible_outsider_counts_TB():
 
 
 def test_get_possible_outsider_counts_SNV():
+    # TODO: Review if Vigormortis should be
+    #       removed from consideration in
+    #       base 0 outsider games.
+    outsider_mods: dict[int, float] = GameInfo(
+        7, SECTS_AND_VIOLETS
+    ).get_possible_outsider_counts()
+
+    assert 0 in outsider_mods
+    assert abs(outsider_mods[0] - 0.75) <= 1e-9
+
+    assert 1 in outsider_mods
+    assert abs(outsider_mods[1] - 0.25) <= 1e-9
+
     outsider_mods: dict[int, float] = GameInfo(
         9, SECTS_AND_VIOLETS
     ).get_possible_outsider_counts()
@@ -207,6 +220,16 @@ def test_get_possible_outsider_counts_SNV():
     assert abs(outsider_mods[3] - 0.25) <= 1e-9
 
     outsider_mods: dict[int, float] = GameInfo(
+        10, SECTS_AND_VIOLETS
+    ).get_possible_outsider_counts()
+
+    assert 0 in outsider_mods
+    assert abs(outsider_mods[0] - 2/3) <= 1e-9
+
+    assert 1 in outsider_mods
+    assert abs(outsider_mods[1] - 1/3) <= 1e-9
+
+    outsider_mods: dict[int, float] = GameInfo(
         12, SECTS_AND_VIOLETS
     ).get_possible_outsider_counts()
 
@@ -218,6 +241,16 @@ def test_get_possible_outsider_counts_SNV():
 
     assert 3 in outsider_mods
     assert abs(outsider_mods[3] - 0.25) <= 1e-9
+
+    outsider_mods: dict[int, float] = GameInfo(
+        13, SECTS_AND_VIOLETS
+    ).get_possible_outsider_counts()
+
+    assert 0 in outsider_mods
+    assert abs(outsider_mods[0] - 2/3) <= 1e-9
+
+    assert 1 in outsider_mods
+    assert abs(outsider_mods[1] - 1/3) <= 1e-9
 
     outsider_mods: dict[int, float] = GameInfo(
         15, SECTS_AND_VIOLETS
