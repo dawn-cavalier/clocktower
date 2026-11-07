@@ -39,7 +39,7 @@ def main() -> None:
         Role.IMP,
     }
 
-    game_info = GameInfo(player_count=10, script=script)
+    game_info = GameInfo(player_count=7, script=script)
     # Append only list!
     learned_info: list[Info] = []
     # learned_info += info_builder.generate_start_of_game_info(
@@ -50,32 +50,33 @@ def main() -> None:
     # )
 
     (
-        is_demon_scores,
-        is_minion_scores,
-        is_outsider_scores,
-        is_townsfolk_scores
+        demon_scores,
+        minion_scores,
+        outsider_scores,
+        townsfolk_scores
     ) = search_world_scores(game_info, learned_info)
 
-    if sum(is_demon_scores) > 0:
+    if sum(demon_scores) > 0:
         print(
-            f"Demon Scores:\t\t{[f"{score:.3f}" for score in is_demon_scores]}")
-        print(sum(is_demon_scores))
+            f"Demon Scores:\t\t{[f"{score:.3f}" for score in demon_scores]}")
+        print(sum(demon_scores))
 
-    if sum(is_minion_scores) > 0:
+    if sum(minion_scores) > 0:
         print(
-            f"Minion Scores:\t\t{[f"{score:.3f}" for score in is_minion_scores]}"
+            f"Minion Scores:\t\t{[f"{score:.3f}" for score in minion_scores]}"
         )
-        print(sum(is_minion_scores))
+        print(sum(minion_scores))
 
-    if sum(is_outsider_scores) > 0:
+    if sum(outsider_scores) > 0:
         print(
-            f"Outsider Scores:\t{[f"{score:.3f}" for score in is_outsider_scores]}")
-        print(sum(is_outsider_scores))
+            f"Outsider Scores:\t{[f"{score:.3f}" for score in outsider_scores]}")
+        print(sum(outsider_scores))
 
-    if sum(is_townsfolk_scores) > 0:
+    print(townsfolk_scores)
+    if sum(townsfolk_scores) > 0:
         print(
-            f"Townsfolk Scores:\t{[f"{score:.3f}" for score in is_townsfolk_scores]}")
-        print(sum(is_townsfolk_scores))
+            f"Townsfolk Scores:\t{[f"{score:.3f}" for score in townsfolk_scores]}")
+        print(sum(townsfolk_scores))
 
 
 if __name__ == "__main__":
