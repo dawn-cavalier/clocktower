@@ -3,7 +3,7 @@ from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
 from worldbuilder.role_enum import Role
 from worldbuilder.world_scoring.world import World
-import worldbuilder.world_scoring.world_validator as world_validator
+import worldbuilder.world_scoring.world_validators as world_validators
 
 TROUBLE_BREWING = {
     # Townsfolk
@@ -48,7 +48,7 @@ def test_nothing():
         day=0,
         source=0
     )
-    assert not world_validator._check_nothing(  # type: ignore
+    assert not world_validators._check_nothing(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -62,7 +62,7 @@ def test_check_valid_roles():
         seen_roles=[Role.IMP],
         target_players=[0]
     )
-    assert not world_validator._check_invalid_role(  # type: ignore
+    assert not world_validators._check_is_invalid_role(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -74,7 +74,7 @@ def test_check_valid_roles():
         seen_roles=[Role.SPY],
         target_players=[1]
     )
-    assert not world_validator._check_invalid_role(  # type: ignore
+    assert not world_validators._check_is_invalid_role(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -86,7 +86,7 @@ def test_check_valid_roles():
         seen_roles=[Role.DRUNK],
         target_players=[2]
     )
-    assert not world_validator._check_invalid_role(  # type: ignore
+    assert not world_validators._check_is_invalid_role(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -98,7 +98,7 @@ def test_check_valid_roles():
         seen_roles=[Role.WASHERWOMAN],
         target_players=[3]
     )
-    assert not world_validator._check_invalid_role(  # type: ignore
+    assert not world_validators._check_is_invalid_role(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -112,7 +112,7 @@ def test_check_invalid_roles():
         seen_roles=[Role.WASHERWOMAN],
         target_players=[0]
     )
-    assert world_validator._check_invalid_role(  # type: ignore
+    assert world_validators._check_is_invalid_role(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -126,7 +126,7 @@ def test_check_valid_alignment():
         target_players=[0],
         is_good=False
     )
-    assert not world_validator._check_invalid_alignment(  # type: ignore
+    assert not world_validators._check_is_invalid_alignment(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -138,7 +138,7 @@ def test_check_valid_alignment():
         target_players=[1],
         is_good=False
     )
-    assert not world_validator._check_invalid_alignment(  # type: ignore
+    assert not world_validators._check_is_invalid_alignment(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -150,7 +150,7 @@ def test_check_valid_alignment():
         target_players=[2],
         is_good=True
     )
-    assert not world_validator._check_invalid_alignment(  # type: ignore
+    assert not world_validators._check_is_invalid_alignment(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -162,7 +162,7 @@ def test_check_valid_alignment():
         target_players=[3],
         is_good=True
     )
-    assert not world_validator._check_invalid_alignment(  # type: ignore
+    assert not world_validators._check_is_invalid_alignment(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -176,7 +176,7 @@ def test_check_invalid_alignment():
         target_players=[0],
         is_good=True
     )
-    assert world_validator._check_invalid_alignment(  # type: ignore
+    assert world_validators._check_is_invalid_alignment(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -191,7 +191,7 @@ def test_check_valid_ping():
         seen_roles=[Role.CHEF],
         target_players=[0, 1]
     )
-    assert world_validator._check_invalid_ping(  # type: ignore
+    assert world_validators._check_is_invalid_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -204,7 +204,7 @@ def test_check_valid_ping():
         seen_roles=[Role.RECLUSE],
         target_players=[0, 1]
     )
-    assert world_validator._check_invalid_ping(  # type: ignore
+    assert world_validators._check_is_invalid_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -217,7 +217,7 @@ def test_check_valid_ping():
         seen_roles=[Role.POISONER],
         target_players=[0, 2]
     )
-    assert world_validator._check_invalid_ping(  # type: ignore
+    assert world_validators._check_is_invalid_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -230,7 +230,7 @@ def test_check_valid_ping():
         seen_roles=[Role.IMP],
         target_players=[1, 2]
     )
-    assert world_validator._check_invalid_ping(  # type: ignore
+    assert world_validators._check_is_invalid_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -244,7 +244,7 @@ def test_check_invalid_ping():
         seen_roles=[Role.POISONER],
         target_players=[1, 3]
     )
-    assert not world_validator._check_invalid_ping(  # type: ignore
+    assert not world_validators._check_is_invalid_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -257,7 +257,7 @@ def test_check_valid_chef_number():
         source=0,
         number=1
     )
-    assert not world_validator._check_invalid_chef_number(  # type: ignore
+    assert not world_validators._check_is_invalid_chef_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -270,7 +270,7 @@ def test_check_invalid_chef_number():
         source=0,
         number=0
     )
-    assert world_validator._check_invalid_chef_number(  # type: ignore
+    assert world_validators._check_is_invalid_chef_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -284,7 +284,7 @@ def test_check_valid_empath_number():
         number=2,
         target_players=[0, 1]
     )
-    assert not world_validator._check_invalid_empath_number(  # type: ignore
+    assert not world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -296,7 +296,7 @@ def test_check_valid_empath_number():
         number=1,
         target_players=[1, 2]
     )
-    assert not world_validator._check_invalid_empath_number(  # type: ignore
+    assert not world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -308,7 +308,7 @@ def test_check_valid_empath_number():
         number=0,
         target_players=[2, 3]
     )
-    assert not world_validator._check_invalid_empath_number(  # type: ignore
+    assert not world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -322,7 +322,7 @@ def test_check_invalid_empath_number():
         number=0,
         target_players=[0, 1]
     )
-    assert world_validator._check_invalid_empath_number(  # type: ignore
+    assert world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -334,7 +334,7 @@ def test_check_invalid_empath_number():
         number=1,
         target_players=[0, 1]
     )
-    assert world_validator._check_invalid_empath_number(  # type: ignore
+    assert world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -346,7 +346,7 @@ def test_check_invalid_empath_number():
         number=0,
         target_players=[1, 2]
     )
-    assert world_validator._check_invalid_empath_number(  # type: ignore
+    assert world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -358,7 +358,7 @@ def test_check_invalid_empath_number():
         number=2,
         target_players=[1, 2]
     )
-    assert world_validator._check_invalid_empath_number(  # type: ignore
+    assert world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -370,7 +370,7 @@ def test_check_invalid_empath_number():
         number=1,
         target_players=[2, 3]
     )
-    assert world_validator._check_invalid_empath_number(  # type: ignore
+    assert world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -382,7 +382,7 @@ def test_check_invalid_empath_number():
         number=2,
         target_players=[2, 3]
     )
-    assert world_validator._check_invalid_empath_number(  # type: ignore
+    assert world_validators._check_is_invalid_empath_number(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -397,7 +397,7 @@ def test_check_valid_fortune_teller_ping():
         target_players=[0, 1]
     )
 
-    assert not world_validator._check_invalid_fortune_teller_ping(  # type: ignore
+    assert not world_validators._check_is_invalid_fortune_teller_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -410,7 +410,7 @@ def test_check_valid_fortune_teller_ping():
         target_players=[1, 2]
     )
 
-    assert not world_validator._check_invalid_fortune_teller_ping(  # type: ignore
+    assert not world_validators._check_is_invalid_fortune_teller_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -425,7 +425,7 @@ def test_check_invalid_fortune_teller_ping():
         target_players=[0, 1]
     )
 
-    assert world_validator._check_invalid_fortune_teller_ping(  # type: ignore
+    assert world_validators._check_is_invalid_fortune_teller_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )
@@ -438,7 +438,7 @@ def test_check_invalid_fortune_teller_ping():
         target_players=[1, 2]
     )
 
-    assert world_validator._check_invalid_fortune_teller_ping(  # type: ignore
+    assert world_validators._check_is_invalid_fortune_teller_ping(  # type: ignore
         info, WORLD,
         GAME_INFO
     )

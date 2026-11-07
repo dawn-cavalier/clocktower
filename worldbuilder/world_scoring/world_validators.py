@@ -9,7 +9,7 @@ def _check_nothing(info: Info, world: World, game_info: GameInfo):
     return False
 
 
-def _check_invalid_role(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_role(info: Info, world: World, game_info: GameInfo):
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -36,7 +36,7 @@ def _check_invalid_role(info: Info, world: World, game_info: GameInfo):
     )
 
 
-def _check_invalid_alignment(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_alignment(info: Info, world: World, game_info: GameInfo):
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -57,7 +57,7 @@ def _check_invalid_alignment(info: Info, world: World, game_info: GameInfo):
     )
 
 
-def _check_invalid_ping(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_ping(info: Info, world: World, game_info: GameInfo):
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -107,7 +107,7 @@ def _check_invalid_ping(info: Info, world: World, game_info: GameInfo):
     return False
 
 
-def _check_invalid_chef_number(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_chef_number(info: Info, world: World, game_info: GameInfo):
     number = info.number
     assert number is not None, (
         f"{info.info_type.name} was expected!"
@@ -134,7 +134,7 @@ def _check_invalid_chef_number(info: Info, world: World, game_info: GameInfo):
     return number != pair_count
 
 
-def _check_invalid_empath_number(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_empath_number(info: Info, world: World, game_info: GameInfo):
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -157,7 +157,7 @@ def _check_invalid_empath_number(info: Info, world: World, game_info: GameInfo):
     return evil_neighbors != number
 
 
-def _check_invalid_fortune_teller_ping(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_fortune_teller_ping(info: Info, world: World, game_info: GameInfo):
 
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
@@ -185,18 +185,18 @@ INFO_VALIDATORS = {
     InfoType.PLAYER_NIGHT_DEATH:    _check_nothing,
     InfoType.NO_NIGHT_DEATH:        _check_nothing,
     InfoType.PLAYER_EXECUTED:       _check_nothing,
-    InfoType.PLAYER_IS_ROLE:        _check_invalid_role,
-    InfoType.UNDERTAKER_INFO:       _check_invalid_role,
-    InfoType.RAVENKEEPER_PING:      _check_invalid_role,
-    InfoType.SLAYER_SHOT:           _check_invalid_role,
-    InfoType.VIRGIN_TRIGGER:        _check_invalid_role,
-    InfoType.PLAYER_IS_ALIGNMENT:   _check_invalid_alignment,
-    InfoType.VIRGIN_EXECUTE:        _check_invalid_alignment,
-    InfoType.WASHERWOMAN_PING:      _check_invalid_ping,
-    InfoType.LIBRARIAN_PING:        _check_invalid_ping,
-    InfoType.INVESTIGATOR_PING:     _check_invalid_ping,
-    InfoType.SAGE_PING:             _check_invalid_ping,
-    InfoType.CHEF_NUMBER:           _check_invalid_chef_number,
-    InfoType.EMPATH_NUMBER:         _check_invalid_empath_number,
-    InfoType.FORTUNE_TELLER_PING:   _check_invalid_fortune_teller_ping
+    InfoType.PLAYER_IS_ROLE:        _check_is_invalid_role,
+    InfoType.UNDERTAKER_INFO:       _check_is_invalid_role,
+    InfoType.RAVENKEEPER_PING:      _check_is_invalid_role,
+    InfoType.SLAYER_SHOT:           _check_is_invalid_role,
+    InfoType.VIRGIN_TRIGGER:        _check_is_invalid_role,
+    InfoType.PLAYER_IS_ALIGNMENT:   _check_is_invalid_alignment,
+    InfoType.VIRGIN_EXECUTE:        _check_is_invalid_alignment,
+    InfoType.WASHERWOMAN_PING:      _check_is_invalid_ping,
+    InfoType.LIBRARIAN_PING:        _check_is_invalid_ping,
+    InfoType.INVESTIGATOR_PING:     _check_is_invalid_ping,
+    InfoType.SAGE_PING:             _check_is_invalid_ping,
+    InfoType.CHEF_NUMBER:           _check_is_invalid_chef_number,
+    InfoType.EMPATH_NUMBER:         _check_is_invalid_empath_number,
+    InfoType.FORTUNE_TELLER_PING:   _check_is_invalid_fortune_teller_ping
 }
