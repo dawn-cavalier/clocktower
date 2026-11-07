@@ -154,7 +154,7 @@ def test_init():
     is_invalid = False
     try:
         game_info = GameInfo(-1, TROUBLE_BREWING)
-    except:
+    except ValueError:
         is_invalid = True
 
     assert is_invalid
@@ -193,9 +193,6 @@ def test_get_possible_outsider_counts_TB():
 
 
 def test_get_possible_outsider_counts_SNV():
-    # TODO: Review if Vigormortis should be
-    #       removed from consideration in
-    #       base 0 outsider games.
     outsider_mods: dict[int, float] = GameInfo(
         7, SECTS_AND_VIOLETS
     ).get_possible_outsider_counts()
@@ -224,10 +221,10 @@ def test_get_possible_outsider_counts_SNV():
     ).get_possible_outsider_counts()
 
     assert 0 in outsider_mods
-    assert abs(outsider_mods[0] - 2/3) <= 1e-9
+    assert abs(outsider_mods[0] - 0.75) <= 1e-9
 
     assert 1 in outsider_mods
-    assert abs(outsider_mods[1] - 1/3) <= 1e-9
+    assert abs(outsider_mods[1] - 0.25) <= 1e-9
 
     outsider_mods: dict[int, float] = GameInfo(
         12, SECTS_AND_VIOLETS
@@ -247,10 +244,10 @@ def test_get_possible_outsider_counts_SNV():
     ).get_possible_outsider_counts()
 
     assert 0 in outsider_mods
-    assert abs(outsider_mods[0] - 2/3) <= 1e-9
+    assert abs(outsider_mods[0] - 0.75) <= 1e-9
 
     assert 1 in outsider_mods
-    assert abs(outsider_mods[1] - 1/3) <= 1e-9
+    assert abs(outsider_mods[1] - 0.25) <= 1e-9
 
     outsider_mods: dict[int, float] = GameInfo(
         15, SECTS_AND_VIOLETS

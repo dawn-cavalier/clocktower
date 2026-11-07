@@ -5,6 +5,7 @@ from itertools import combinations
 from worldbuilder.helper import get_outsider_mod, is_demon, is_minion
 from worldbuilder.role_enum import Role
 
+
 @dataclass
 class GameInfo:
     player_count: int
@@ -30,36 +31,83 @@ class GameInfo:
         possible_outsider_dict: defaultdict[int, float] = defaultdict(float)
         possible_outsider_dict[self.outsider_count_base] = 1
 
-        demon_mods = [
+        demon_modifiers = [
             get_outsider_mod(role)
             for role in self.script
             if is_demon(role)
         ]
 
-        demon_combos = list(combinations(demon_mods, self.demon_count_base))
+        demon_combos = list(combinations(
+            demon_modifiers, self.demon_count_base))
 
         possible_outsider_dict = self._process_combos(
             possible_outsider_dict,
             demon_combos
         )
 
-        minion_mods = [
+        minion_modifiers = [
             get_outsider_mod(role)
             for role in self.script
             if is_minion(role)
         ]
-        minion_combos = list(combinations(minion_mods, self.minion_count_base))
+        minion_combos = list(combinations(
+            minion_modifiers, self.minion_count_base))
 
         possible_outsider_dict = self._process_combos(
             possible_outsider_dict,
             minion_combos
         )
 
-        # TODO: Review if you want to make negative outsider mods impossible or 0.
-        #       Currently, this makes them impossible
-        possible_outsider_dict = defaultdict(float, {
-            mod: count for (mod, count) in possible_outsider_dict.items() if mod >= 0
-        })
+        # Finalizing Dict Scores
+        is_negative_modifier_sum_present = any(
+            modifier for modifier in possible_outsider_dict if modifier < 0
+        )
+
+        if is_negative_modifier_sum_present:
+            # Godfather, Hermit
+            negative_multi_modifiers = [
+                modifiers for modifiers in
+                demon_modifiers + minion_modifiers
+                if len(modifiers) > 1 and any(mod for mod in modifiers if mod < 0)
+            ]
+            nmm_length = len(negative_multi_modifiers)
+            if nmm_length == 0:
+                possible_outsider_dict[0] += sum(
+                    count for mod, count in possible_outsider_dict.items() if mod < 0
+                )
+                possible_outsider_dict = defaultdict(float, {
+                    mod: count for (mod, count) in possible_outsider_dict.items() if mod >= 0
+                })
+
+            elif nmm_length == 1:
+                modifier = negative_multi_modifiers[0]
+                offset = max(modifier) - min(modifier)
+                negative_mod_sums = sorted([
+                    modifier for modifier in possible_outsider_dict if modifier < 0
+                ], reverse=True)
+
+                for mod_sum in negative_mod_sums:
+                    possible_outsider_dict[
+                        mod_sum + offset
+                    ] += possible_outsider_dict[mod_sum]
+                    possible_outsider_dict[mod_sum] = 0
+
+                possible_outsider_dict[0] += sum(
+                    count for mod, count in possible_outsider_dict.items() if mod < 0
+                )
+                possible_outsider_dict = defaultdict(float, {
+                    mod: count for (mod, count) in possible_outsider_dict.items() if mod >= 0
+                })
+
+            elif nmm_length == 2:
+                raise NotImplementedError(
+                    "Hermit and Godfather together are currently unsupported!"
+                )
+            else:
+                raise ValueError(
+                    f"Expected 0-2 negative multi modifiers and {nmm_length} was received!\n" +
+                    f"Mods are {negative_multi_modifiers}."
+                )
 
         total = sum(possible_outsider_dict.values())
         for mod, value in possible_outsider_dict.items():
