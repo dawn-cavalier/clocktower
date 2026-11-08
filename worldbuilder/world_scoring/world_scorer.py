@@ -13,14 +13,14 @@ from worldbuilder.world_scoring.world_validators import INFO_VALIDATORS
 def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     scores: dict[World, float] = {}
     outsider_counts = game_info.get_possible_outsider_counts()
+    priors = _calculate_world_priors(
+        outsider_counts=outsider_counts,
+        outsider_count_base=game_info.outsider_count_base,
+        townsfolk_count_base=game_info.townsfolk_count_base
+    )
 
     for world in _generate_worlds(game_info):
-        scores[world] = _calculate_world_prior(
-            world=world,
-            outsider_counts=outsider_counts,
-            outsider_count_base=game_info.outsider_count_base,
-            townsfolk_count_base=game_info.townsfolk_count_base
-        )
+        scores[world] = priors[len(world.outsiders)]
 
         for info in learned_info:
             assert info.info_type in INFO_VALIDATORS, (
@@ -79,31 +79,29 @@ def _generate_worlds(game_info: GameInfo):
                     )
 
 
-def _calculate_world_prior(
-    world: World,
+def _calculate_world_priors(
     outsider_counts: defaultdict[int, float],
     outsider_count_base: int,
     townsfolk_count_base: int
 ):
-    mod = len(world.outsiders) - outsider_count_base
-    total = 0
-    for i in range(abs(mod)):
-        if mod > 0:
-            total += log(
-                (outsider_count_base + i + 1) /
-                (townsfolk_count_base - i)
-            )
-        if mod < 0:
-            total += log(
-                (townsfolk_count_base + i + 1) /
-                (outsider_count_base - i)
-            )
+    priors: dict[int, float] = {}
+    for possible_count in outsider_counts:
+        mod = possible_count - outsider_count_base
+        total = 1
+        for i in range(abs(mod)):
+            if mod > 0:
+                total *= (
+                    (outsider_count_base + i + 1) /
+                    (townsfolk_count_base - i)
+                )
+            if mod < 0:
+                total *= (
+                    (townsfolk_count_base + i + 1) /
+                    (outsider_count_base - i)
+                )
+        priors[possible_count] = log(outsider_counts[possible_count] * total)
 
-    assert len(world.outsiders) in outsider_counts, (
-        f"Had {len(world.outsiders)} outsiders in world when " +
-        f"{outsider_counts.keys()} were the possible counts!"
-    )
-    return log(outsider_counts[len(world.outsiders)]) + total
+    return priors
 
 
 def _calculate_probabilities(scores: dict[World, float], player_count: int):
