@@ -160,7 +160,149 @@ def test_init():
     assert is_invalid
 
 
-def test_get_possible_outsider_counts_TB():
+def test_get_possible_outsider_mods_tb():
+    game_info = GameInfo(7, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 2
+    assert 0 in result
+    assert 2 in result
+
+    game_info = GameInfo(8, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 2
+    assert 1 in result
+    assert 3 in result
+
+    game_info = GameInfo(9, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 2
+    assert 2 in result
+    assert 4 in result
+
+
+def test_get_possible_outsider_mods_tb_w_known_baron():
+    game_info = GameInfo(7, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.BARON])
+    assert len(result) == 1
+    assert 2 in result
+
+    game_info = GameInfo(8, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.BARON])
+    assert len(result) == 1
+    assert 3 in result
+
+    game_info = GameInfo(9, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.BARON])
+    assert len(result) == 1
+    assert 4 in result
+
+
+def test_get_possible_outsider_mods_snv():
+    game_info = GameInfo(7, SECTS_AND_VIOLETS)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 2
+    assert 0 in result
+    assert 1 in result
+
+    game_info = GameInfo(8, SECTS_AND_VIOLETS)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 3
+    assert 0 in result
+    assert 1 in result
+    assert 2 in result
+
+    game_info = GameInfo(9, SECTS_AND_VIOLETS)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 3
+    assert 1 in result
+    assert 2 in result
+    assert 3 in result
+
+
+def test_get_possible_outsider_mods_snv_w_known_demon():
+    game_info = GameInfo(7, SECTS_AND_VIOLETS)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.FANG_GU])
+    assert len(result) == 1
+    assert 1 in result
+
+    result = game_info.get_possible_outsider_mods(
+        present_roles=[Role.VIGORMORTIS])
+    assert len(result) == 1
+    assert 0 in result
+
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.VORTOX])
+    assert len(result) == 1
+    assert 0 in result
+
+    game_info = GameInfo(8, SECTS_AND_VIOLETS)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.FANG_GU])
+    assert len(result) == 1
+    assert 2 in result
+
+    result = game_info.get_possible_outsider_mods(
+        present_roles=[Role.VIGORMORTIS])
+    assert len(result) == 1
+    assert 0 in result
+
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.VORTOX])
+    assert len(result) == 1
+    assert 1 in result
+
+    game_info = GameInfo(9, SECTS_AND_VIOLETS)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.FANG_GU])
+    assert len(result) == 1
+    assert 3 in result
+
+    result = game_info.get_possible_outsider_mods(
+        present_roles=[Role.VIGORMORTIS])
+    assert len(result) == 1
+    assert 1 in result
+
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.VORTOX])
+    assert len(result) == 1
+    assert 2 in result
+
+
+def test_get_possible_outsider_mods_bmr():
+    game_info = GameInfo(7, BAD_MOON_RISING)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 2
+    assert 0 in result
+    assert 1 in result
+
+    game_info = GameInfo(8, BAD_MOON_RISING)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 3
+    assert 0 in result
+    assert 1 in result
+    assert 2 in result
+
+    game_info = GameInfo(9, BAD_MOON_RISING)
+    result = game_info.get_possible_outsider_mods()
+    assert len(result) == 3
+    assert 1 in result
+    assert 2 in result
+    assert 3 in result
+
+def test_get_possible_outsider_mods_bmr_w_known_godfather():
+    game_info = GameInfo(7, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.GODFATHER])
+    assert len(result) == 1
+    assert 1 in result
+
+    game_info = GameInfo(8, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.GODFATHER])
+    assert len(result) == 2
+    assert 0 in result
+    assert 2 in result
+
+    game_info = GameInfo(9, TROUBLE_BREWING)
+    result = game_info.get_possible_outsider_mods(present_roles=[Role.GODFATHER])
+    assert len(result) == 2
+    assert 1 in result
+    assert 3 in result
+
+def test_get_possible_outsider_counts_tb():
     outsider_mods: dict[int, float] = GameInfo(
         9, TROUBLE_BREWING
     ).get_possible_outsider_counts()
@@ -192,7 +334,7 @@ def test_get_possible_outsider_counts_TB():
     assert abs(outsider_mods[4] - 0.75) <= 1e-9
 
 
-def test_get_possible_outsider_counts_SNV():
+def test_get_possible_outsider_counts_snv():
     outsider_mods: dict[int, float] = GameInfo(
         7, SECTS_AND_VIOLETS
     ).get_possible_outsider_counts()
@@ -263,7 +405,7 @@ def test_get_possible_outsider_counts_SNV():
     assert abs(outsider_mods[3] - 0.25) <= 1e-9
 
 
-def test_get_possible_outsider_counts_BMR():
+def test_get_possible_outsider_counts_bmr():
     outsider_mods: dict[int, float] = GameInfo(
         7, BAD_MOON_RISING
     ).get_possible_outsider_counts()

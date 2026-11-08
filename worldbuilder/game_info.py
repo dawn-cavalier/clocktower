@@ -2,7 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import combinations
 
-from worldbuilder.helper import get_outsider_mod, is_demon, is_minion
+from worldbuilder.helper import get_outsider_mod, is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.role_enum import Role
 
 
@@ -27,7 +27,81 @@ class GameInfo:
             self.demon_count_base
         ) = self._get_player_type_counts(player_count)
 
+    def get_possible_outsider_mods(self, *, present_roles: list[Role] | None = None):
+        # TODO: Handle Townsfolk and Outsiders with modifiers.
+        present_roles = [] if present_roles is None else present_roles
+        demon_count = self.demon_count_base
+        minion_count = self.minion_count_base
+
+        outsider_mods = [self.outsider_count_base]
+
+        # Handles present roles
+        for role in present_roles:
+            new_outsider_mods: list[int] = []
+            if is_demon(role):
+                demon_count -= 1
+            if is_minion(role):
+                minion_count -= 1
+
+            for role_mod in get_outsider_mod(role):
+                for saved_mod in outsider_mods:
+                    if role_mod + saved_mod not in new_outsider_mods:
+                        new_outsider_mods.append(role_mod + saved_mod)
+
+            outsider_mods = new_outsider_mods
+
+        demon_modifiers = [
+            get_outsider_mod(role)
+            for role in self.script
+            if is_demon(role) and
+            role not in present_roles
+        ]
+
+        demon_combos = list(combinations(
+            demon_modifiers, demon_count
+        ))
+
+        new_outsider_mods: list[int] = []
+        for combo in demon_combos:
+            for role in combo:
+                for modifier in role:
+                    for exisiting_mod in outsider_mods:
+                        if modifier + exisiting_mod not in new_outsider_mods:
+                            new_outsider_mods.append(modifier + exisiting_mod)
+
+        if new_outsider_mods:
+            outsider_mods = new_outsider_mods
+
+        minion_modifiers = [
+            get_outsider_mod(role)
+            for role in self.script
+            if is_minion(role) and
+            role not in present_roles
+        ]
+
+        minion_combos = list(combinations(
+            minion_modifiers, minion_count
+        ))
+
+        new_outsider_mods: list[int] = []
+        for combo in minion_combos:
+            for role in combo:
+                for modifier in role:
+                    for exisiting_mod in outsider_mods:
+                        if modifier + exisiting_mod not in new_outsider_mods:
+                            new_outsider_mods.append(modifier + exisiting_mod)
+
+        if new_outsider_mods:
+            outsider_mods = new_outsider_mods
+
+        outsider_mods = [mod for mod in outsider_mods if mod >= 0]
+        if outsider_mods:
+            return outsider_mods
+
+        return [0]
+
     def get_possible_outsider_counts(self):
+        # TODO: Handle Townsfolk and Outsiders with modifiers.
         possible_outsider_dict: defaultdict[int, float] = defaultdict(float)
         possible_outsider_dict[self.outsider_count_base] = 1
 
