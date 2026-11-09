@@ -38,9 +38,10 @@ def _check_is_invalid_role(info: Info, world: World, game_info: GameInfo):
     if is_invalid:
         return True
 
-    possible_mods = game_info.calculate_outsider_mods(
-        present_roles=[seen_role])
-    return len(world.outsiders) not in possible_mods
+    possible_outsider_counts = game_info.calculate_outsider_counts(
+        present_roles=[seen_role]
+    )
+    return len(world.outsiders) not in possible_outsider_counts
 
 
 def _check_is_invalid_alignment(info: Info, world: World, game_info: GameInfo):

@@ -12,9 +12,9 @@ from worldbuilder.world_scoring.world_validators import INFO_VALIDATORS
 
 def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     scores: dict[World, float] = {}
-    outsider_counts = game_info.calculate_outsider_mod_counts()
+    outsider_count_occurances = game_info.calculate_outsider_counts_occurances()
     priors = _calculate_world_priors(
-        outsider_counts=outsider_counts,
+        outsider_count_occurances=outsider_count_occurances,
         outsider_count_base=game_info.outsider_count_base,
         townsfolk_count_base=game_info.townsfolk_count_base
     )
@@ -43,7 +43,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
 
 def _generate_worlds(game_info: GameInfo):
     player_ids = range(game_info.player_count)
-    outsider_counts = game_info.calculate_outsider_mod_counts()
+    outsider_counts = game_info.calculate_outsider_counts_occurances()
 
     for demons in combinations(
         player_ids,
@@ -80,12 +80,12 @@ def _generate_worlds(game_info: GameInfo):
 
 
 def _calculate_world_priors(
-    outsider_counts: defaultdict[int, float],
+    outsider_count_occurances: defaultdict[int, float],
     outsider_count_base: int,
     townsfolk_count_base: int
 ):
     priors: dict[int, float] = {}
-    for possible_count in outsider_counts:
+    for possible_count in outsider_count_occurances:
         mod = possible_count - outsider_count_base
         total = 1
         for i in range(abs(mod)):
@@ -99,7 +99,7 @@ def _calculate_world_priors(
                     (townsfolk_count_base + i + 1) /
                     (outsider_count_base - i)
                 )
-        priors[possible_count] = log(outsider_counts[possible_count] * total)
+        priors[possible_count] = log(outsider_count_occurances[possible_count] * total)
 
     return priors
 

@@ -1,5 +1,14 @@
 from worldbuilder.role_enum import Role
 
+_MODIFIER_DICT = {
+    Role.VIGORMORTIS:   [-1],
+    Role.FANG_GU:       [1],
+    Role.BARON:         [2],
+    Role.HERMIT:        [-1, 0],
+    Role.GODFATHER:     [-1, 1],
+    Role.BALLOONIST:    [0, 1],
+    Role.HUNTSMAN:      [0, 1],
+}
 
 def is_townsfolk(role: Role) -> bool:
     return Role.ACROBAT <= role <= Role.WASHERWOMAN
@@ -24,16 +33,7 @@ def get_outsider_mod(role: Role) -> list[int]:
         raise NotImplementedError(
             f"Role {role.name} is currently unhandled!")
 
-    modifier_dict = {
-        Role.VIGORMORTIS:   [-1],
-        Role.FANG_GU:       [1],
-        Role.BARON:         [2],
-        Role.HERMIT:        [-1, 0],
-        Role.GODFATHER:     [-1, 1],
-        Role.BALLOONIST:    [0, 1],
-        Role.HUNTSMAN:      [0, 1],
-    }
-    if role not in modifier_dict:
+    if role not in _MODIFIER_DICT:
         return [0]
 
-    return modifier_dict[role]
+    return _MODIFIER_DICT[role]

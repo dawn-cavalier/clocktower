@@ -27,74 +27,91 @@ class GameInfo:
             self.demon_count_base
         ) = self._get_player_type_counts(player_count)
 
-    def calculate_outsider_mods(self, *, present_roles: list[Role] | None = None):
+    def calculate_outsider_counts(self, *, present_roles: list[Role] | None = None) -> list[int]:
         # TODO: Handle Townsfolk and Outsiders with modifiers.
         present_roles = [] if present_roles is None else present_roles
         demon_count = self.demon_count_base
         minion_count = self.minion_count_base
 
-        outsider_mods = [self.outsider_count_base]
+        outsider_mods = {self.outsider_count_base}
 
         # Handles present roles
         for role in present_roles:
-            new_outsider_mods: list[int] = []
             if is_demon(role):
                 demon_count -= 1
-            if is_minion(role):
+            elif is_minion(role):
                 minion_count -= 1
 
-            for role_mod in get_outsider_mod(role):
-                for saved_mod in outsider_mods:
-                    if role_mod + saved_mod not in new_outsider_mods:
-                        new_outsider_mods.append(role_mod + saved_mod)
+            outsider_mods = {
+                existing_mod + modifier
+                for existing_mod in outsider_mods
+                for modifier in get_outsider_mod(role)
+            }
 
-            outsider_mods = new_outsider_mods
+        for role_type, count in (
+            (is_demon, demon_count),
+            (is_minion, minion_count)
+        ):
+            available_modifiers = [
+                get_outsider_mod(role)
+                for role in self.script
+                if role_type(role) and
+                role not in present_roles
+            ]
+            combos = list(combinations(
+                available_modifiers, count
+            ))
+            outsider_mods = self._process_outsider_mods_combos(
+                combos,
+                outsider_mods
+            )
 
-        demon_modifiers = [
-            get_outsider_mod(role)
-            for role in self.script
-            if is_demon(role) and
-            role not in present_roles
-        ]
-
-        demon_combos = list(combinations(
-            demon_modifiers, demon_count
-        ))
-
-        new_outsider_mods = self._process_outsider_mods_combos(
-            demon_combos,
-            outsider_mods
+        # Finalizing Dict Scores
+        is_negative_modifier_sum_present = any(
+            modifier < 0
+            for modifier
+            in outsider_mods
         )
 
-        if new_outsider_mods:
-            outsider_mods = new_outsider_mods
+        if is_negative_modifier_sum_present:
+            # Godfather, Hermit
+            negative_multi_modifiers = [
+                modifiers
+                for modifiers
+                in [
+                    get_outsider_mod(role)
+                    for role in self.script
+                    if is_minion(role) or is_demon(role)
+                ]
+                if len(modifiers) > 1 and any(mod < 0 for mod in modifiers)
+            ]
+            nmm_length = len(negative_multi_modifiers)
+            if nmm_length == 0:
+                outsider_mods.add(0)
 
-        minion_modifiers = [
-            get_outsider_mod(role)
-            for role in self.script
-            if is_minion(role) and
-            role not in present_roles
-        ]
+            elif nmm_length == 1:
+                modifier = negative_multi_modifiers[0]
+                offset = max(modifier) - min(modifier)
+                negative_mod_sums = sorted([
+                    modifier for modifier in outsider_mods if modifier < 0
+                ], reverse=True)
 
-        minion_combos = list(combinations(
-            minion_modifiers, minion_count
-        ))
+                for mod_sum in negative_mod_sums:
+                    outsider_mods.add(mod_sum + offset)
 
-        new_outsider_mods = self._process_outsider_mods_combos(
-            minion_combos,
-            outsider_mods
-        )
+            elif nmm_length == 2:
+                raise NotImplementedError(
+                    "Hermit and Godfather together are currently unsupported!"
+                )
+            else:
+                raise ValueError(
+                    f"Expected 0-2 negative multi modifiers and {nmm_length} was received!\n" +
+                    f"Mods are {negative_multi_modifiers}."
+                )
 
-        if new_outsider_mods:
-            outsider_mods = new_outsider_mods
+        return [mod for mod in outsider_mods if mod >= 0]
 
-        outsider_mods = [mod for mod in outsider_mods if mod >= 0]
-        if outsider_mods:
-            return outsider_mods
-
-        return [0]
-
-    def calculate_outsider_mod_counts(self):
+    def calculate_outsider_counts_occurances(self):
         # TODO: Handle Townsfolk and Outsiders with modifiers.
         possible_outsider_dict: defaultdict[int, float] = defaultdict(float)
         possible_outsider_dict[self.outsider_count_base] = 1
@@ -128,24 +145,22 @@ class GameInfo:
 
         # Finalizing Dict Scores
         is_negative_modifier_sum_present = any(
-            modifier for modifier in possible_outsider_dict if modifier < 0
+            modifier < 0 for modifier in possible_outsider_dict
         )
 
         if is_negative_modifier_sum_present:
             # Godfather, Hermit
             negative_multi_modifiers = [
-                modifiers for modifiers in
-                demon_modifiers + minion_modifiers
-                if len(modifiers) > 1 and any(mod for mod in modifiers if mod < 0)
+                modifiers
+                for modifiers
+                in demon_modifiers + minion_modifiers
+                if len(modifiers) > 1 and any(mod < 0 for mod in modifiers)
             ]
             nmm_length = len(negative_multi_modifiers)
             if nmm_length == 0:
                 possible_outsider_dict[0] += sum(
                     count for mod, count in possible_outsider_dict.items() if mod < 0
                 )
-                possible_outsider_dict = defaultdict(float, {
-                    mod: count for (mod, count) in possible_outsider_dict.items() if mod >= 0
-                })
 
             elif nmm_length == 1:
                 modifier = negative_multi_modifiers[0]
@@ -163,10 +178,6 @@ class GameInfo:
                 possible_outsider_dict[0] += sum(
                     count for mod, count in possible_outsider_dict.items() if mod < 0
                 )
-                possible_outsider_dict = defaultdict(float, {
-                    mod: count for (mod, count) in possible_outsider_dict.items() if mod >= 0
-                })
-
             elif nmm_length == 2:
                 raise NotImplementedError(
                     "Hermit and Godfather together are currently unsupported!"
@@ -177,6 +188,10 @@ class GameInfo:
                     f"Mods are {negative_multi_modifiers}."
                 )
 
+        possible_outsider_dict = defaultdict(float, {
+            mod: count for (mod, count) in possible_outsider_dict.items() if mod >= 0
+        })
+
         total = sum(possible_outsider_dict.values())
         for mod, value in possible_outsider_dict.items():
             possible_outsider_dict[mod] = value/total
@@ -186,21 +201,22 @@ class GameInfo:
     def _process_outsider_mods_combos(
         self,
         combos: list[tuple[list[int], ...]],
-        outsider_mods: list[int]
+        outsider_mods: set[int]
     ):
-        new_outsider_mods: list[int] = []
+        new_outsider_mods: set[int] = set()
         for combo in combos:
-            mod_sums: list[int] = [0]
+            mod_sums: set[int] = {0}
             for role in combo:
-                new_mod_sums: list[int] = []
+                new_mod_sums: set[int] = set()
                 for modifier in role:
-                    new_mod_sums += [sum + modifier for sum in mod_sums]
+                    for mod_sum in mod_sums:
+                        new_mod_sums.add(mod_sum + modifier)
+
                 mod_sums = new_mod_sums
 
             for existing_mod in outsider_mods:
                 for modifier in mod_sums:
-                    if modifier + existing_mod not in new_outsider_mods:
-                        new_outsider_mods.append(modifier + existing_mod)
+                    new_outsider_mods.add(modifier + existing_mod)
 
         return new_outsider_mods
 
