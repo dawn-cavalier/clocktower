@@ -20,12 +20,15 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     )
 
     for world in _generate_worlds(game_info):
-        scores[world] = priors[len(world.outsiders)]
+        score = priors[len(world.outsiders)]
 
         for info in learned_info:
             assert info.info_type in INFO_VALIDATORS, (
                 f"Unhandled InfoType: {info.info_type.name}"
             )
+            score += _calculate_log_likelihood(world, info, game_info)
+
+        scores[world] = score
 
     median_log_score = median(
         score for score in scores.values() if score != -inf
@@ -102,8 +105,35 @@ def _calculate_log_world_priors(
     return priors
 
 
-def _calculate_log_likelihood(world: World, info: Info):
+def _calculate_log_likelihood(world: World, info: Info, game_info: GameInfo):
     odds_sober = info.odds_sober
+    possible_outputs = info.count_possible_outputs(
+        player_count=game_info.player_count,
+        evil_count=len(world.get_evil_team()),
+        script=game_info.script
+    )
+    if possible_outputs <= 0:
+        raise ValueError(
+            f"{info.info_type.name} received {possible_outputs} possible outputs " +
+            "when a greater than zero number of inputs was expected!"
+        )
+
+    is_arbitary_chance = 1.0 / possible_outputs
+
+    is_inconsistent = INFO_VALIDATORS[info.info_type](info, world, game_info)
+    truthful_likelihood = 1.0
+    if is_inconsistent:
+        truthful_likelihood = 0.0
+
+    likelihood = (
+        odds_sober * truthful_likelihood
+        + (1.0 - odds_sober) * is_arbitary_chance
+    )
+
+    if likelihood == 0:
+        return -inf
+
+    return log(likelihood)
 
 
 def _calculate_probabilities(scores: dict[World, float], player_count: int):

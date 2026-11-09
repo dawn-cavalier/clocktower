@@ -115,7 +115,7 @@ def test_learning_baron_tb():
         learned_info: list[Info] = []
         learned_info += info_builder.generate_start_of_game_info(
             player_id=0,
-            trust=1.0,
+            odds_sober=1.0,
             is_good=False,
             role=Role.BARON
         )
@@ -146,7 +146,7 @@ def test_learning_demon_snv():
         learned_info: list[Info] = []
         learned_info += info_builder.generate_start_of_game_info(
             player_id=0,
-            trust=1.0,
+            odds_sober=1.0,
             is_good=False,
             role=Role.BARON
         )
@@ -175,7 +175,7 @@ def test_learning_demon_snv():
         learned_info: list[Info] = []
         learned_info += info_builder.generate_start_of_game_info(
             player_id=0,
-            trust=1.0,
+            odds_sober=1.0,
             is_good=False,
             role=Role.FANG_GU
         )

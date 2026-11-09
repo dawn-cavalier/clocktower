@@ -3,8 +3,8 @@ from worldbuilder.role_enum import Role
 from worldbuilder.helper import is_minion, is_outsider, is_townsfolk
 
 
-def generate_start_of_game_info(player_id: int, trust: float, is_good: bool, role: Role):
-    assert 0 <= trust <= 1, "Trust must be between 0-1!"
+def generate_start_of_game_info(player_id: int, odds_sober: float, is_good: bool, role: Role):
+    assert 0 <= odds_sober <= 1, "Trust must be between 0-1!"
     learned_info: list[Info] = [
         _player_is_alignment(0, is_good, player_id),
         _player_is_role(
@@ -12,7 +12,7 @@ def generate_start_of_game_info(player_id: int, trust: float, is_good: bool, rol
             role=role,
             player=player_id,
             source=player_id,
-            trust=trust
+            odds_sober=odds_sober
         )
     ]
     return learned_info
@@ -21,7 +21,7 @@ def generate_start_of_game_info(player_id: int, trust: float, is_good: bool, rol
 def generate_virgin_trigger(day: int, trust: float, nominee: int, nominator: int):
     assert 0 <= trust <= 1, "Trust must be between 0-1!"
     learned_info: list[Info] = [
-        _player_is_role(day, Role.VIRGIN, nominee, source=-1, trust=1.0),
+        _player_is_role(day, Role.VIRGIN, nominee, source=-1, odds_sober=1.0),
         Info(
             info_type=InfoType.VIRGIN_EXECUTE,
             day=day,
@@ -145,13 +145,13 @@ def _player_is_role(
     player: int,
     *,
     source: int = -1,
-    trust: float = 1.0
+    odds_sober: float = 1.0
 ):
     return Info(
         info_type=InfoType.PLAYER_IS_ROLE,
         day=day,
         source=source,
-        odds_sober=trust,
+        odds_sober=odds_sober,
         seen_roles=[role],
         target_players=[player]
     )

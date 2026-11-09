@@ -68,6 +68,9 @@ def test_count_possible_outputs():
         if info_type is InfoType.WASHERWOMAN_PING:
             role_count -= 1
 
+        if info_type is InfoType.SAGE_PING:
+            role_count = 1
+
         assert info.count_possible_outputs(
             player_count=12, script=TROUBLE_BREWING
         ) == valid_player_pair_count * role_count

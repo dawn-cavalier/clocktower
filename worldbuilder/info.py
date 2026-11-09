@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from math import comb
 
 from worldbuilder.game_info import GameInfo
 from worldbuilder.helper import is_demon, is_minion, is_outsider, is_townsfolk
@@ -148,10 +149,22 @@ class Info:
                 assert len(script) > 0, (
                     f"Script param is required for {self.info_type.name}!"
                 )
-                return len(script)
+                assert self.seen_roles is not None, (
+                    f"{self.info_type.name} has no seen roles!"
+                )
+                assert len(self.seen_roles) == 1, (
+                    f"{self.info_type.name} received " +
+                    f"{len(self.seen_roles)} roles when 1 was expected!"
+                )
+                seen_role = self.seen_roles[0]
+                # TODO: Handle Hermit, Lunatic, and Marionette
+                if is_townsfolk(seen_role) and Role.DRUNK in script:
+                    return 2
+
+                return 1
             case InfoType.PLAYER_IS_ALIGNMENT:
                 # TODO: Add Drunk, Lunatic and Marionette handling here
-                return len([True, False])
+                return 2
             case InfoType.RAVENKEEPER_PING | InfoType.UNDERTAKER_INFO:
                 assert len(script) > 0, (
                     f"Script param is required for {self.info_type.name}!"
@@ -163,9 +176,9 @@ class Info:
                 )
                 return evil_count
             case InfoType.EMPATH_NUMBER:
-                return len([0, 1, 2])
+                return 3
             case InfoType.FORTUNE_TELLER_PING:
-                return len([True, False])
+                return 2
             case InfoType.WASHERWOMAN_PING:
                 assert len(script) > 0, (
                     f"Script param is required for {self.info_type.name}!"
@@ -178,8 +191,7 @@ class Info:
 
                 return (
                     townsfolk_role_count *
-                    (player_count - 1) *
-                    (player_count - 2) / 2
+                    comb(player_count - 1, 2)
                 )
             case InfoType.LIBRARIAN_PING:
                 assert len(script) > 0, (
@@ -193,8 +205,7 @@ class Info:
 
                 return (
                     outsider_role_count *
-                    (player_count - 1) *
-                    (player_count - 2) / 2
+                    comb(player_count - 1, 2)
                 )
             case InfoType.INVESTIGATOR_PING:
                 assert len(script) > 0, (
@@ -208,24 +219,14 @@ class Info:
 
                 return (
                     outsider_role_count *
-                    (player_count - 1) *
-                    (player_count - 2) / 2
+                    comb(player_count - 1, 2)
                 )
             case InfoType.SAGE_PING:
                 assert len(script) > 0, (
                     f"Script param is required for {self.info_type.name}!"
                 )
-                demon_role_count = sum(
-                    is_demon(role)
-                    for role
-                    in script
-                )
+                return comb(player_count - 1, 2)
 
-                return (
-                    demon_role_count *
-                    (player_count - 1) *
-                    (player_count - 2) / 2
-                )
             case _:
                 raise ValueError(
                     f"{self.info_type.name} is currently unhandled!"
