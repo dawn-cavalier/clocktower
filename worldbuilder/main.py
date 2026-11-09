@@ -41,18 +41,18 @@ def main() -> None:
     game_info = GameInfo(player_count=10, script=script)
     # Append only list!
     learned_info: list[Info] = []
-    # learned_info += info_builder.generate_start_of_game_info(
-    #     player_id=0,
-    #     odds_sober=0.8,
-    #     is_good=True,
-    #     role=Role.WASHERWOMAN
-    # )
-    learned_info += info_builder.generate_investigator_ping(
+
+    learned_info += info_builder.generate_start_of_game_info(
+        player_id=0,
+        odds_sober=1.0,
+        is_good=True,
+        role=Role.CHEF
+    )
+    learned_info += info_builder.generate_chef_number(
         day=0,
         source=0,
-        trust=0.8,
-        targets=[1, 2],
-        seen_role=Role.BARON,
+        odds_sober=1.0,
+        number=2
     )
 
     (

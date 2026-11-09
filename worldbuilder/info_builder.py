@@ -18,6 +18,21 @@ def generate_start_of_game_info(player_id: int, odds_sober: float, is_good: bool
     return learned_info
 
 
+def generate_ravenkeeper_ping(source: int, target: int, day: int, odds_sober: float, seen_role: Role):
+    assert 0 <= odds_sober <= 1, "Odds sober must be between 0-1!"
+    learned_info: list[Info] = [
+        Info(
+            info_type=InfoType.RAVENKEEPER_PING,
+            day=day,
+            source=source,
+            odds_sober=odds_sober,
+            seen_roles=[seen_role],
+            target_players=[target]
+        )
+    ]
+    return learned_info
+
+
 def generate_virgin_trigger(day: int, trust: float, nominee: int, nominator: int):
     assert 0 <= trust <= 1, "Trust must be between 0-1!"
     learned_info: list[Info] = [
@@ -88,16 +103,16 @@ def generate_investigator_ping(day: int, source: int, trust: float, targets: lis
     return learned_info
 
 
-def generate_chef_number(day: int, source: int, trust: float, number: int):
+def generate_chef_number(day: int, source: int, odds_sober: float, number: int):
     assert number >= 0, "Chef Number must be positive!"
-    assert 0 <= trust <= 1, "Trust must be between 0-1!"
+    assert 0 <= odds_sober <= 1, "Trust must be between 0-1!"
 
     learned_info: list[Info] = [
         Info(
             info_type=InfoType.CHEF_NUMBER,
             day=day,
             source=source,
-            odds_sober=trust,
+            odds_sober=odds_sober,
             number=number
         )
     ]
