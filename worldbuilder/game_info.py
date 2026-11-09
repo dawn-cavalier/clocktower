@@ -27,7 +27,7 @@ class GameInfo:
             self.demon_count_base
         ) = self._get_player_type_counts(player_count)
 
-    def get_possible_outsider_mods(self, *, present_roles: list[Role] | None = None):
+    def calculate_outsider_mods(self, *, present_roles: list[Role] | None = None):
         # TODO: Handle Townsfolk and Outsiders with modifiers.
         present_roles = [] if present_roles is None else present_roles
         demon_count = self.demon_count_base
@@ -61,13 +61,10 @@ class GameInfo:
             demon_modifiers, demon_count
         ))
 
-        new_outsider_mods: list[int] = []
-        for combo in demon_combos:
-            for role in combo:
-                for modifier in role:
-                    for exisiting_mod in outsider_mods:
-                        if modifier + exisiting_mod not in new_outsider_mods:
-                            new_outsider_mods.append(modifier + exisiting_mod)
+        new_outsider_mods = self._process_outsider_mods_combos(
+            demon_combos,
+            outsider_mods
+        )
 
         if new_outsider_mods:
             outsider_mods = new_outsider_mods
@@ -83,13 +80,10 @@ class GameInfo:
             minion_modifiers, minion_count
         ))
 
-        new_outsider_mods: list[int] = []
-        for combo in minion_combos:
-            for role in combo:
-                for modifier in role:
-                    for exisiting_mod in outsider_mods:
-                        if modifier + exisiting_mod not in new_outsider_mods:
-                            new_outsider_mods.append(modifier + exisiting_mod)
+        new_outsider_mods = self._process_outsider_mods_combos(
+            minion_combos,
+            outsider_mods
+        )
 
         if new_outsider_mods:
             outsider_mods = new_outsider_mods
@@ -100,7 +94,7 @@ class GameInfo:
 
         return [0]
 
-    def get_possible_outsider_counts(self):
+    def calculate_outsider_mod_counts(self):
         # TODO: Handle Townsfolk and Outsiders with modifiers.
         possible_outsider_dict: defaultdict[int, float] = defaultdict(float)
         possible_outsider_dict[self.outsider_count_base] = 1
@@ -114,7 +108,7 @@ class GameInfo:
         demon_combos = list(combinations(
             demon_modifiers, self.demon_count_base))
 
-        possible_outsider_dict = self._process_combos(
+        possible_outsider_dict = self._process_outsider_counts_combos(
             possible_outsider_dict,
             demon_combos
         )
@@ -127,7 +121,7 @@ class GameInfo:
         minion_combos = list(combinations(
             minion_modifiers, self.minion_count_base))
 
-        possible_outsider_dict = self._process_combos(
+        possible_outsider_dict = self._process_outsider_counts_combos(
             possible_outsider_dict,
             minion_combos
         )
@@ -189,7 +183,28 @@ class GameInfo:
 
         return possible_outsider_dict
 
-    def _process_combos(
+    def _process_outsider_mods_combos(
+        self,
+        combos: list[tuple[list[int], ...]],
+        outsider_mods: list[int]
+    ):
+        new_outsider_mods: list[int] = []
+        for combo in combos:
+            mod_sums: list[int] = [0]
+            for role in combo:
+                new_mod_sums: list[int] = []
+                for modifier in role:
+                    new_mod_sums += [sum + modifier for sum in mod_sums]
+                mod_sums = new_mod_sums
+
+            for existing_mod in outsider_mods:
+                for modifier in mod_sums:
+                    if modifier + existing_mod not in new_outsider_mods:
+                        new_outsider_mods.append(modifier + existing_mod)
+
+        return new_outsider_mods
+
+    def _process_outsider_counts_combos(
         self,
         original_dict: defaultdict[int, float],
         combos: list[tuple[list[int], ...]]

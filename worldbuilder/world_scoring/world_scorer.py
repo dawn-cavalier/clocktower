@@ -12,7 +12,7 @@ from worldbuilder.world_scoring.world_validators import INFO_VALIDATORS
 
 def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     scores: dict[World, float] = {}
-    outsider_counts = game_info.get_possible_outsider_counts()
+    outsider_counts = game_info.calculate_outsider_mod_counts()
     priors = _calculate_world_priors(
         outsider_counts=outsider_counts,
         outsider_count_base=game_info.outsider_count_base,
@@ -43,7 +43,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
 
 def _generate_worlds(game_info: GameInfo):
     player_ids = range(game_info.player_count)
-    outsider_counts = game_info.get_possible_outsider_counts()
+    outsider_counts = game_info.calculate_outsider_mod_counts()
 
     for demons in combinations(
         player_ids,

@@ -38,10 +38,8 @@ def _check_is_invalid_role(info: Info, world: World, game_info: GameInfo):
     if is_invalid:
         return True
 
-    if get_outsider_mod(seen_role) == [0]:
-        return False
-
-    possible_mods = game_info.get_possible_outsider_mods(present_roles=[seen_role])
+    possible_mods = game_info.calculate_outsider_mods(
+        present_roles=[seen_role])
     return len(world.outsiders) not in possible_mods
 
 
