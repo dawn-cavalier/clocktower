@@ -33,6 +33,70 @@ TROUBLE_BREWING = {
     # Demons
     Role.IMP,
 }
+
+SECTS_AND_VIOLETS = {
+    # Townsfolk
+    Role.CLOCKMAKER,
+    Role.DREAMER,
+    Role.SNAKE_CHARMER,
+    Role.MATHEMATICIAN,
+    Role.FLOWERGIRL,
+    Role.TOWN_CRIER,
+    Role.ORACLE,
+    Role.SAVANT,
+    Role.SEAMSTRESS,
+    Role.PHILOSOPHER,
+    Role.ARTIST,
+    Role.JUGGLER,
+    Role.SAGE,
+    # Outsiders
+    Role.MUTANT,
+    Role.SWEETHEART,
+    Role.BARBER,
+    Role.KLUTZ,
+    # Minions
+    Role.EVIL_TWIN,
+    Role.WITCH,
+    Role.CERENOVUS,
+    Role.PIT_HAG,
+    # Demons
+    Role.FANG_GU,
+    Role.VIGORMORTIS,
+    Role.NO_DASHII,
+    Role.VORTOX
+}
+
+BAD_MOON_RISING = {
+    # Townsfolk
+    Role.GRANDMOTHER,
+    Role.SAILOR,
+    Role.CHAMBERMAID,
+    Role.EXORCIST,
+    Role.INNKEEPER,
+    Role.GAMBLER,
+    Role.GOSSIP,
+    Role.COURTIER,
+    Role.PROFESSOR,
+    Role.MINSTREL,
+    Role.TEA_LADY,
+    Role.PACIFIST,
+    Role.FOOL,
+    # Outsiders
+    Role.GOON,
+    Role.LUNATIC,
+    Role.TINKER,
+    Role.MOONCHILD,
+    # Minions
+    Role.GODFATHER,
+    Role.DEVILS_ADVOCATE,
+    Role.ASSASSIN,
+    Role.MASTERMIND,
+    # Demons
+    Role.ZOMBUUL,
+    Role.PUKKA,
+    Role.SHABALOTH,
+    Role.PO
+}
 GAME_INFO = GameInfo(player_count=8, script=TROUBLE_BREWING)
 WORLD = World(
     demons=(0,),
@@ -115,6 +179,34 @@ def test_check_invalid_roles():
     assert world_validators._check_is_invalid_role(  # type: ignore
         info, WORLD,
         GAME_INFO
+    )
+
+
+def test_check_invalid_outsider_mod():
+    game_info = GameInfo(player_count=8, script=TROUBLE_BREWING)
+    info = Info(
+        info_type=InfoType.PLAYER_IS_ROLE,
+        day=0,
+        source=0,
+        seen_roles=[Role.BARON],
+        target_players=[1]
+    )
+    assert world_validators._check_is_invalid_role(  # type: ignore
+        info, WORLD,
+        game_info
+    )
+
+    game_info = GameInfo(player_count=8, script=SECTS_AND_VIOLETS)
+    info = Info(
+        info_type=InfoType.PLAYER_IS_ROLE,
+        day=0,
+        source=0,
+        seen_roles=[Role.FANG_GU],
+        target_players=[0]
+    )
+    assert world_validators._check_is_invalid_role(  # type: ignore
+        info, WORLD,
+        game_info
     )
 
 

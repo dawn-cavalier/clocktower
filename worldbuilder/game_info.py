@@ -2,7 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import combinations
 
-from worldbuilder.helper import get_outsider_mod, is_demon, is_minion, is_outsider, is_townsfolk
+from worldbuilder.helper import get_outsider_mod, is_demon, is_minion
 from worldbuilder.role_enum import Role
 
 

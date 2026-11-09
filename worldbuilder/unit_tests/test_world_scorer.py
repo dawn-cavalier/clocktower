@@ -110,35 +110,96 @@ def test_base_setup():
 
 
 def test_learning_baron_tb():
-    game_info = GameInfo(player_count=7, script=TROUBLE_BREWING)
-    learned_info: list[Info] = []
-    learned_info += info_builder.generate_investigator_ping(
-        day=0,
-        source=0,
-        trust=1.0,
-        targets=[1, 2],
-        seen_role=Role.BARON,
-    )
+    for i in range(7, 10):
+        game_info = GameInfo(player_count=i, script=TROUBLE_BREWING)
+        learned_info: list[Info] = []
+        learned_info += info_builder.generate_start_of_game_info(
+            player_id=0,
+            trust=1.0,
+            is_good=False,
+            role=Role.BARON
+        )
 
-    (
-        is_demon_scores,
-        is_minion_scores,
-        is_outsider_scores,
-        is_townsfolk_scores
-    ) = search_world_scores(game_info, learned_info)
+        (
+            is_demon_scores,
+            is_minion_scores,
+            is_outsider_scores,
+            is_townsfolk_scores
+        ) = search_world_scores(game_info, learned_info)
 
-    _check_sums(
-        is_demon_scores,
-        is_minion_scores,
-        is_outsider_scores,
-        is_townsfolk_scores,
-        game_info
-    )
+        _check_sums(
+            is_demon_scores,
+            is_minion_scores,
+            is_outsider_scores,
+            is_townsfolk_scores,
+            game_info
+        )
 
-    assert abs(
-        sum(is_outsider_scores) -
-        (game_info.outsider_count_base + 2)
-    ) < ACCECPTABLE_ERROR
+        assert abs(
+            sum(is_outsider_scores) -
+            (game_info.outsider_count_base + 2)
+        ) < ACCECPTABLE_ERROR
+
+def test_learning_demon_snv():
+    for i in range(7, 10):
+        game_info = GameInfo(player_count=i, script=TROUBLE_BREWING)
+        learned_info: list[Info] = []
+        learned_info += info_builder.generate_start_of_game_info(
+            player_id=0,
+            trust=1.0,
+            is_good=False,
+            role=Role.BARON
+        )
+
+        (
+            is_demon_scores,
+            is_minion_scores,
+            is_outsider_scores,
+            is_townsfolk_scores
+        ) = search_world_scores(game_info, learned_info)
+
+        _check_sums(
+            is_demon_scores,
+            is_minion_scores,
+            is_outsider_scores,
+            is_townsfolk_scores,
+            game_info
+        )
+
+        assert abs(
+            sum(is_outsider_scores) -
+            max(game_info.outsider_count_base + 2, 0)
+        ) < ACCECPTABLE_ERROR
+
+        game_info = GameInfo(player_count=i, script=SECTS_AND_VIOLETS)
+        learned_info: list[Info] = []
+        learned_info += info_builder.generate_start_of_game_info(
+            player_id=0,
+            trust=1.0,
+            is_good=False,
+            role=Role.FANG_GU
+        )
+
+        (
+            is_demon_scores,
+            is_minion_scores,
+            is_outsider_scores,
+            is_townsfolk_scores
+        ) = search_world_scores(game_info, learned_info)
+
+        _check_sums(
+            is_demon_scores,
+            is_minion_scores,
+            is_outsider_scores,
+            is_townsfolk_scores,
+            game_info
+        )
+
+        assert abs(
+            sum(is_outsider_scores) -
+            max(game_info.outsider_count_base + 1, 0)
+        ) < ACCECPTABLE_ERROR
+
 
 
 def _check_world_scores_tb(player_count: int):

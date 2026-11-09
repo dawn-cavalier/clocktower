@@ -1,5 +1,5 @@
 from worldbuilder.game_info import GameInfo
-from worldbuilder.helper import is_demon, is_minion, is_outsider, is_townsfolk
+from worldbuilder.helper import get_outsider_mod, is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
 from worldbuilder.world_scoring.world import World
@@ -28,12 +28,21 @@ def _check_is_invalid_role(info: Info, world: World, game_info: GameInfo):
     target_player = info.target_players[0]
     seen_role = info.seen_roles[0]
 
-    return (
+    is_invalid = (
         (is_demon(seen_role) and target_player not in world.demons) or
         (is_minion(seen_role) and target_player not in world.minions) or
         (is_outsider(seen_role) and target_player not in world.outsiders) or
         (is_townsfolk(seen_role) and target_player not in world.townsfolk)
     )
+
+    if is_invalid:
+        return True
+
+    if get_outsider_mod(seen_role) == [0]:
+        return False
+
+    possible_mods = game_info.get_possible_outsider_mods(present_roles=[seen_role])
+    return len(world.outsiders) not in possible_mods
 
 
 def _check_is_invalid_alignment(info: Info, world: World, game_info: GameInfo):
