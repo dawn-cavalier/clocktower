@@ -26,7 +26,7 @@ def generate_virgin_trigger(day: int, trust: float, nominee: int, nominator: int
             info_type=InfoType.VIRGIN_EXECUTE,
             day=day,
             source=nominator,
-            info_trust=trust,
+            odds_sober=trust,
             target_players=[nominator],
             is_good=True
         )
@@ -44,7 +44,7 @@ def generate_washerwoman_ping(day: int, source: int, trust: float, targets: list
             info_type=InfoType.WASHERWOMAN_PING,
             day=day,
             source=source,
-            info_trust=trust,
+            odds_sober=trust,
             target_players=targets,
             seen_roles=[seen_role]
         )
@@ -62,7 +62,7 @@ def generate_librarian_ping(day: int, source: int, trust: float, targets: list[i
             info_type=InfoType.LIBRARIAN_PING,
             day=day,
             source=source,
-            info_trust=trust,
+            odds_sober=trust,
             target_players=targets,
             seen_roles=[seen_role]
         )
@@ -80,7 +80,7 @@ def generate_investigator_ping(day: int, source: int, trust: float, targets: lis
             info_type=InfoType.INVESTIGATOR_PING,
             day=day,
             source=source,
-            info_trust=trust,
+            odds_sober=trust,
             target_players=targets,
             seen_roles=[seen_role]
         )
@@ -97,7 +97,7 @@ def generate_chef_number(day: int, source: int, trust: float, number: int):
             info_type=InfoType.CHEF_NUMBER,
             day=day,
             source=source,
-            info_trust=trust,
+            odds_sober=trust,
             number=number
         )
     ]
@@ -114,7 +114,7 @@ def generate_empath_number(day: int, source: int, trust: float, number: int, liv
             info_type=InfoType.EMPATH_NUMBER,
             day=day,
             source=source,
-            info_trust=trust,
+            odds_sober=trust,
             number=number,
             target_players=living_neighbors
         )
@@ -131,7 +131,7 @@ def generate_fortune_teller_ping(day: int, source: int, trust: float, is_yes: bo
             info_type=InfoType.FORTUNE_TELLER_PING,
             day=day,
             source=source,
-            info_trust=trust,
+            odds_sober=trust,
             is_yes=is_yes,
             target_players=target_players
         )
@@ -151,7 +151,7 @@ def _player_is_role(
         info_type=InfoType.PLAYER_IS_ROLE,
         day=day,
         source=source,
-        info_trust=trust,
+        odds_sober=trust,
         seen_roles=[role],
         target_players=[player]
     )
@@ -169,7 +169,7 @@ def _player_is_alignment(
         info_type=InfoType.PLAYER_IS_ALIGNMENT,
         day=day,
         source=source,
-        info_trust=trust,
+        odds_sober=trust,
         target_players=[player],
         is_good=is_good
     )

@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
-from math import inf, log
 
+from worldbuilder.game_info import GameInfo
+from worldbuilder.helper import is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.info_type import InfoType
 from worldbuilder.role_enum import Role
 
@@ -29,15 +30,14 @@ class Info:
     is_good: bool | None
 
     # Internal Variables
-    info_trust: float = 1.0
-    inverse_trust_log: float = 0.0
+    odds_sober: float = 1.0
 
     def __init__(
         self,
         info_type: InfoType,
         day: int,
         source: int,
-        info_trust: float = 1.0,
+        odds_sober: float = 1.0,
         *,
         seen_roles: list[Role] | None = None,
         target_players: list[int] | None = None,
@@ -55,18 +55,15 @@ class Info:
         self.is_yes = is_yes
         self.is_good = is_good
 
-        self.info_trust = info_trust
-        if 1 - info_trust > 0.0:
-            self.inverse_trust_log = log(1 - info_trust)
-        else:
-            self.inverse_trust_log = -inf
+        self.odds_sober = odds_sober
 
         # TODO: Need to figure out how to better enforce
         #       these objects being correctly constructed
         # Validation
-        assert 0.0 <= info_trust <= 1.0, (
-            f"Info trust was {info_trust} when it was expected to be between 0 and 1!"
-        )
+        if 0.0 > odds_sober or odds_sober > 1.0:
+            raise ValueError(
+                f"Info trust was {odds_sober} when it was expected to be between 0 and 1!"
+            )
 
         required_params: list[Param] = []
         match info_type:
@@ -125,3 +122,111 @@ class Info:
             raise ValueError(
                 f"{info_type.name} missing is good flag!"
             )
+
+    def count_possible_outputs(
+        self,
+        *,
+        player_count: int = -1,
+        evil_count: int = -1,
+        script: set[Role] | None = None
+    ):
+        script = script if script else set()
+        match self.info_type:
+            case (
+                InfoType.NONE |
+                InfoType.PLAYER_DAY_DEATH |
+                InfoType.PLAYER_EXECUTED |
+                InfoType.PLAYER_NIGHT_DEATH |
+                InfoType.NO_NIGHT_DEATH |
+                InfoType.VIRGIN_EXECUTE |
+                InfoType.VIRGIN_TRIGGER |
+                InfoType.SLAYER_SHOT
+            ):
+                return 1
+            case InfoType.PLAYER_IS_ROLE:
+                # TODO: Add Drunk, Lunatic and Marionette handling here
+                assert len(script) > 0, (
+                    f"Script param is required for {self.info_type.name}!"
+                )
+                return len(script)
+            case InfoType.PLAYER_IS_ALIGNMENT:
+                # TODO: Add Drunk, Lunatic and Marionette handling here
+                return len([True, False])
+            case InfoType.RAVENKEEPER_PING | InfoType.UNDERTAKER_INFO:
+                assert len(script) > 0, (
+                    f"Script param is required for {self.info_type.name}!"
+                )
+                return len(script) - 1
+            case InfoType.CHEF_NUMBER:
+                assert evil_count > 0, (
+                    f"Evil Counts Param required for {self.info_type.name}!"
+                )
+                return evil_count
+            case InfoType.EMPATH_NUMBER:
+                return len([0, 1, 2])
+            case InfoType.FORTUNE_TELLER_PING:
+                return len([True, False])
+            case InfoType.WASHERWOMAN_PING:
+                assert len(script) > 0, (
+                    f"Script param is required for {self.info_type.name}!"
+                )
+                townsfolk_role_count = sum(
+                    is_townsfolk(role)
+                    for role
+                    in script
+                ) - 1
+
+                return (
+                    townsfolk_role_count *
+                    (player_count - 1) *
+                    (player_count - 2) / 2
+                )
+            case InfoType.LIBRARIAN_PING:
+                assert len(script) > 0, (
+                    f"Script param is required for {self.info_type.name}!"
+                )
+                outsider_role_count = sum(
+                    is_outsider(role)
+                    for role
+                    in script
+                )
+
+                return (
+                    outsider_role_count *
+                    (player_count - 1) *
+                    (player_count - 2) / 2
+                )
+            case InfoType.INVESTIGATOR_PING:
+                assert len(script) > 0, (
+                    f"Script param is required for {self.info_type.name}!"
+                )
+                outsider_role_count = sum(
+                    is_minion(role)
+                    for role
+                    in script
+                )
+
+                return (
+                    outsider_role_count *
+                    (player_count - 1) *
+                    (player_count - 2) / 2
+                )
+            case InfoType.SAGE_PING:
+                assert len(script) > 0, (
+                    f"Script param is required for {self.info_type.name}!"
+                )
+                demon_role_count = sum(
+                    is_demon(role)
+                    for role
+                    in script
+                )
+
+                return (
+                    demon_role_count *
+                    (player_count - 1) *
+                    (player_count - 2) / 2
+                )
+            case _:
+                raise ValueError(
+                    f"{self.info_type.name} is currently unhandled!"
+                )

@@ -13,7 +13,7 @@ from worldbuilder.world_scoring.world_validators import INFO_VALIDATORS
 def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     scores: dict[World, float] = {}
     outsider_count_occurances = game_info.calculate_outsider_counts_occurances()
-    priors = _calculate_world_priors(
+    priors = _calculate_log_world_priors(
         outsider_count_occurances=outsider_count_occurances,
         outsider_count_base=game_info.outsider_count_base,
         townsfolk_count_base=game_info.townsfolk_count_base
@@ -26,9 +26,6 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
             assert info.info_type in INFO_VALIDATORS, (
                 f"Unhandled InfoType: {info.info_type.name}"
             )
-
-            if INFO_VALIDATORS[info.info_type](info, world, game_info):
-                scores[world] += info.inverse_trust_log
 
     median_log_score = median(
         score for score in scores.values() if score != -inf
@@ -79,7 +76,7 @@ def _generate_worlds(game_info: GameInfo):
                     )
 
 
-def _calculate_world_priors(
+def _calculate_log_world_priors(
     outsider_count_occurances: defaultdict[int, float],
     outsider_count_base: int,
     townsfolk_count_base: int
@@ -99,9 +96,14 @@ def _calculate_world_priors(
                     (townsfolk_count_base + i + 1) /
                     (outsider_count_base - i)
                 )
-        priors[possible_count] = log(outsider_count_occurances[possible_count] * total)
+        priors[possible_count] = log(
+            outsider_count_occurances[possible_count] * total)
 
     return priors
+
+
+def _calculate_log_likelihood(world: World, info: Info):
+    odds_sober = info.odds_sober
 
 
 def _calculate_probabilities(scores: dict[World, float], player_count: int):
