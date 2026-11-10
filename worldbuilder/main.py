@@ -51,7 +51,7 @@ def main() -> None:
     learned_info += info_builder.generate_chef_number(
         day=0,
         source=0,
-        odds_sober=1.0,
+        odds_sober=0.0,
         number=2
     )
 

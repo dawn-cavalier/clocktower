@@ -1,3 +1,6 @@
+from collections import defaultdict
+from itertools import combinations
+
 from worldbuilder import info_builder
 from worldbuilder.game_info import GameInfo
 from worldbuilder.helper import is_minion
@@ -142,53 +145,130 @@ def test_learning_baron_tb():
 
 
 def test_ravenkeeper_learning_demon_tb():
-    odds_sober = 0.9
-    for player_count in range(7, 16):
-        game_info = GameInfo(player_count=player_count, script=TROUBLE_BREWING)
-        learned_info: list[Info] = []
-        learned_info += info_builder.generate_ravenkeeper_ping(
-            source=0,
-            day=0,
-            odds_sober=odds_sober,
-            seen_role=Role.IMP,
-            target=1
-        )
+    for odds_sober in (0.0, 0.5, 0.8, 1.0):
+        for player_count in (7, 8, 9, 10, 11, 12):
+            game_info = GameInfo(player_count=player_count, script=TROUBLE_BREWING)
+            learned_info: list[Info] = []
+            learned_info += info_builder.generate_ravenkeeper_ping(
+                source=0,
+                day=0,
+                odds_sober=odds_sober,
+                seen_role=Role.IMP,
+                target=1
+            )
 
-        (
-            is_demon_scores,
-            is_minion_scores,
-            is_outsider_scores,
-            is_townsfolk_scores
-        ) = search_world_scores(game_info, learned_info)
+            (
+                is_demon_scores,
+                is_minion_scores,
+                is_outsider_scores,
+                is_townsfolk_scores
+            ) = search_world_scores(game_info, learned_info)
 
-        _check_sums(
-            is_demon_scores,
-            is_minion_scores,
-            is_outsider_scores,
-            is_townsfolk_scores,
-            game_info
-        )
+            _check_sums(
+                is_demon_scores,
+                is_minion_scores,
+                is_outsider_scores,
+                is_townsfolk_scores,
+                game_info
+            )
 
-        probability_demon = 1/player_count
+            probability_demon = 1/player_count
 
-        probability_info_correct = odds_sober + \
-            (1-odds_sober)/(len(TROUBLE_BREWING) - 1)
-        probability_info_incorrect = (1-odds_sober)/(len(TROUBLE_BREWING) - 1)
+            probability_info_correct = odds_sober + \
+                (1-odds_sober)/(len(TROUBLE_BREWING) - 1)
+            probability_info_incorrect = (1-odds_sober)/(len(TROUBLE_BREWING) - 1)
 
-        probability_info = (
-            ((probability_demon) *
-             probability_info_correct) +
-            ((1-probability_demon) *
-             probability_info_incorrect)
-        )
+            probability_info = (
+                ((probability_demon) *
+                probability_info_correct) +
+                ((1-probability_demon) *
+                probability_info_incorrect)
+            )
 
-        bayes_score = (
-            probability_info_correct*probability_demon / probability_info
-        )
+            bayes_score = (
+                probability_info_correct*probability_demon / probability_info
+            )
 
-        assert abs(
-            is_demon_scores[1] - bayes_score
-        ) < ACCECPTABLE_ERROR
+            assert abs(
+                is_demon_scores[1] - bayes_score
+            ) < ACCECPTABLE_ERROR
+
+
+def test_chef_learns_number_tb():
+    for odds_sober in (0.0, 0.5, 0.8, 1.0):
+        for player_count in (7, 8, 9, 10, 11, 12):
+            game_info = GameInfo(player_count=player_count,
+                                 script=TROUBLE_BREWING)
+            learned_info: list[Info] = []
+            learned_info += info_builder.generate_start_of_game_info(
+                player_id=0,
+                odds_sober=1.0,
+                is_good=True,
+                role=Role.CHEF,
+            )
+            learned_info += info_builder.generate_chef_number(
+                source=-1,
+                day=0,
+                odds_sober=odds_sober,
+                number=1
+            )
+
+            (
+                is_demon_scores,
+                is_minion_scores,
+                is_outsider_scores,
+                is_townsfolk_scores
+            ) = search_world_scores(game_info, learned_info)
+
+            _check_sums(
+                is_demon_scores,
+                is_minion_scores,
+                is_outsider_scores,
+                is_townsfolk_scores,
+                game_info
+            )
+
+            total = 0
+            evil_count = game_info.demon_count_base + game_info.minion_count_base
+            combos = combinations(
+                range(1, player_count),
+                evil_count
+            )
+
+            neighbors: dict[int, int] = defaultdict(int)
+
+            for combo in combos:
+                pairs = combinations(combo, 2)
+                neighbor_count = sum(
+                    abs(pair[0] % player_count - pair[1] % player_count) == 1 for pair in pairs)
+                neighbors[neighbor_count] += 1
+                total += 1
+
+            assert sum(neighbors.values()) == total
+            probability_chef_one = neighbors[1]/total
+
+            probability_info_correct = odds_sober + \
+                (1-odds_sober)/(evil_count)
+
+            probability_info_incorrect = (
+                1-odds_sober)/(evil_count)
+
+            probability_info = (
+                ((probability_chef_one) *
+                 probability_info_correct) +
+                ((1-probability_chef_one) *
+                 probability_info_incorrect)
+            )
+
+            bayes_score = (
+                probability_info_correct*probability_chef_one / probability_info
+            )
+
+            print(f"odds_sober: {odds_sober}\nplayer_count: {player_count}\nbayes_score: {bayes_score}\n")
+    assert False
+            # assert abs(
+            #     is_demon_scores[1] - bayes_score
+            # ) < ACCECPTABLE_ERROR
 
 
 def test_learning_demon_snv():
