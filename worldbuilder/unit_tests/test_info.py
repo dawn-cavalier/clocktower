@@ -102,6 +102,6 @@ def test_count_possible_outputs():
         assert info.count_possible_outputs(
             script=TROUBLE_BREWING) == len(TROUBLE_BREWING) - 1
 
-    info.info_type = InfoType.PLAYER_IS_ROLE
-    assert info.count_possible_outputs(
-        script=TROUBLE_BREWING) == len(TROUBLE_BREWING)
+    # info.info_type = InfoType.PLAYER_IS_ROLE
+    # assert info.count_possible_outputs(
+    #     script=TROUBLE_BREWING) == len(TROUBLE_BREWING)

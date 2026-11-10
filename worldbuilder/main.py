@@ -46,14 +46,21 @@ def main() -> None:
         player_id=0,
         odds_sober=1.0,
         is_good=True,
-        role=Role.CHEF
+        role=Role.RAVENKEEPER
     )
-    learned_info += info_builder.generate_chef_number(
-        day=0,
+    learned_info += info_builder.generate_ravenkeeper_ping(
         source=0,
-        odds_sober=1.0,
-        number=2
+        target=1,
+        day=1,
+        odds_sober=0.8,
+        seen_role=Role.BARON
     )
+    # learned_info += info_builder.generate_chef_number(
+    #     day=0,
+    #     source=0,
+    #     odds_sober=1.0,
+    #     number=2
+    # )
 
     (
         demon_scores,

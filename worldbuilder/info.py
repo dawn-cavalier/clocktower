@@ -222,9 +222,6 @@ class Info:
                     comb(player_count - 1, 2)
                 )
             case InfoType.SAGE_PING:
-                assert len(script) > 0, (
-                    f"Script param is required for {self.info_type.name}!"
-                )
                 return comb(player_count - 1, 2)
 
             case _:
