@@ -142,53 +142,55 @@ def test_learning_baron_tb():
 
 
 def test_ravenkeeper_learning_demon_tb():
-    odds_sober = 0.9
-    for player_count in range(7, 16):
-        game_info = GameInfo(player_count=player_count, script=TROUBLE_BREWING)
-        learned_info: list[Info] = []
-        learned_info += info_builder.generate_ravenkeeper_ping(
-            source=0,
-            day=0,
-            odds_sober=odds_sober,
-            seen_role=Role.IMP,
-            target=1
-        )
+    for odds_sober in (0.0, 0.5, 0.8, 1.0):
+        for player_count in (7, 8, 9, 10, 11, 12):
+            game_info = GameInfo(player_count=player_count,
+                                 script=TROUBLE_BREWING)
+            learned_info: list[Info] = []
+            learned_info += info_builder.generate_ravenkeeper_ping(
+                source=-1,
+                day=0,
+                odds_sober=odds_sober,
+                seen_role=Role.IMP,
+                target=1
+            )
 
-        (
-            is_demon_scores,
-            is_minion_scores,
-            is_outsider_scores,
-            is_townsfolk_scores
-        ) = search_world_scores(game_info, learned_info)
+            (
+                is_demon_scores,
+                is_minion_scores,
+                is_outsider_scores,
+                is_townsfolk_scores
+            ) = search_world_scores(game_info, learned_info)
 
-        _check_sums(
-            is_demon_scores,
-            is_minion_scores,
-            is_outsider_scores,
-            is_townsfolk_scores,
-            game_info
-        )
+            _check_sums(
+                is_demon_scores,
+                is_minion_scores,
+                is_outsider_scores,
+                is_townsfolk_scores,
+                game_info
+            )
 
-        probability_demon = 1/player_count
+            probability_demon = 1/player_count
 
-        probability_info_correct = odds_sober + \
-            (1-odds_sober)/(len(TROUBLE_BREWING) - 1)
-        probability_info_incorrect = (1-odds_sober)/(len(TROUBLE_BREWING) - 1)
+            probability_info_correct = odds_sober + \
+                (1-odds_sober)/(len(TROUBLE_BREWING) - 1)
+            probability_info_incorrect = (
+                1-odds_sober)/(len(TROUBLE_BREWING) - 1)
 
-        probability_info = (
-            ((probability_demon) *
-             probability_info_correct) +
-            ((1-probability_demon) *
-             probability_info_incorrect)
-        )
+            probability_info = (
+                ((probability_demon) *
+                 probability_info_correct) +
+                ((1-probability_demon) *
+                 probability_info_incorrect)
+            )
 
-        bayes_score = (
-            probability_info_correct*probability_demon / probability_info
-        )
+            bayes_score = (
+                probability_info_correct*probability_demon / probability_info
+            )
 
-        assert abs(
-            is_demon_scores[1] - bayes_score
-        ) < ACCECPTABLE_ERROR
+            assert abs(
+                is_demon_scores[1] - bayes_score
+            ) < ACCECPTABLE_ERROR
 
 
 def test_learning_demon_snv():
