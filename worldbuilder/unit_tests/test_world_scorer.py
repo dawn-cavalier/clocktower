@@ -197,132 +197,133 @@ def test_ravenkeeper_learning_demon_tb():
 
 
 def test_chef_learning_numbers_tb():
-    player_count = 7
-    chef_number = 1
-    game_info = GameInfo(
-        player_count=player_count,
-        script=TROUBLE_BREWING
-    )
-    learned_info: list[Info] = []
-    learned_info += info_builder.generate_start_of_game_info(
-        player_id=0,
-        odds_sober=1.0,
-        is_good=True,
-        role=Role.CHEF
-    )
-    learned_info += info_builder.generate_chef_number(
-        source=-1,
-        day=0,
-        odds_sober=0.0,
-        number=chef_number
-    )
-
-    (
-        drunk_demon_scores,
-        drunk_minion_scores,
-        drunk_outsider_scores,
-        drunk_townsfolk_scores
-    ) = search_world_scores(game_info, learned_info)
-
-    learned_info: list[Info] = []
-    learned_info += info_builder.generate_start_of_game_info(
-        player_id=0,
-        odds_sober=1.0,
-        is_good=True,
-        role=Role.CHEF
-    )
-    learned_info += info_builder.generate_chef_number(
-        source=-1,
-        day=0,
-        odds_sober=1.0,
-        number=chef_number
-    )
-
-    (
-        sober_demon_scores,
-        sober_minion_scores,
-        sober_outsider_scores,
-        sober_townsfolk_scores
-    ) = search_world_scores(game_info, learned_info)
-
-    odds_sober = 0.8
-    learned_info: list[Info] = []
-    learned_info += info_builder.generate_start_of_game_info(
-        player_id=0,
-        odds_sober=1.0,
-        is_good=True,
-        role=Role.CHEF
-    )
-    learned_info += info_builder.generate_chef_number(
-        source=-1,
-        day=0,
-        odds_sober=odds_sober,
-        number=chef_number
-    )
-
-    (
-        is_demon_scores,
-        is_minion_scores,
-        is_outsider_scores,
-        is_townsfolk_scores
-    ) = search_world_scores(game_info, learned_info)
-
-    total = 0
-    evil_count = game_info.demon_count_base + game_info.minion_count_base
-    combos = combinations(
-        range(1, player_count),
-        evil_count
-    )
-
-    neighbors: dict[int, int] = defaultdict(int)
-    player_presence: dict[int, int] = defaultdict(int)
-    for combo in combos:
-        pairs = combinations(combo, 2)
-        neighbor_count = sum(
-            abs(pair[0] - pair[1]) % (player_count) == 1 for pair in pairs
-        )
-
-        neighbors[neighbor_count] += 1
-        if neighbor_count == 1:
-            for player in combo:
-                player_presence[player] += 1
-
-        total += 1
-
-    assert sum(neighbors.values()) == total
-    assert len(neighbors.keys()) == evil_count
-
-    probability_of_sober_chef_number = (
-        neighbors[chef_number] / sum(neighbors.values())
-    )
-
-    probability_of_drunk_chef_number = (
-        1 / len(neighbors.keys())
-    )
-
-    probability_of_chef_number = (
-        probability_of_sober_chef_number * odds_sober +
-        probability_of_drunk_chef_number * (1 - odds_sober)
-    )
-
-    probability_of_infomation = (
-        probability_of_sober_chef_number * odds_sober /
-        probability_of_chef_number
-    )
-
-    for sober_scores, drunk_scores, score in [
-        (sober_demon_scores, drunk_demon_scores, is_demon_scores),
-        (sober_minion_scores, drunk_minion_scores, is_minion_scores),
-        (sober_outsider_scores, drunk_outsider_scores, is_outsider_scores),
-        (sober_townsfolk_scores, drunk_townsfolk_scores, is_townsfolk_scores),
-    ]:
-        _check_chef_info_tb(
+    for player_count in (9, 10,):
+        game_info = GameInfo(
             player_count=player_count,
-            probability_of_infomation=probability_of_infomation,
-            sober_scores=sober_scores,
-            drunk_scores=drunk_scores,
-            scores_to_check=score
+            script=TROUBLE_BREWING
         )
+        for chef_number in range(game_info.minion_count_base + game_info.demon_count_base):
+            learned_info: list[Info] = []
+            learned_info += info_builder.generate_start_of_game_info(
+                player_id=0,
+                odds_sober=1.0,
+                is_good=True,
+                role=Role.CHEF
+            )
+            learned_info += info_builder.generate_chef_number(
+                source=-1,
+                day=0,
+                odds_sober=0.0,
+                number=chef_number
+            )
+
+            (
+                drunk_demon_scores,
+                drunk_minion_scores,
+                drunk_outsider_scores,
+                drunk_townsfolk_scores
+            ) = search_world_scores(game_info, learned_info)
+
+            learned_info: list[Info] = []
+            learned_info += info_builder.generate_start_of_game_info(
+                player_id=0,
+                odds_sober=1.0,
+                is_good=True,
+                role=Role.CHEF
+            )
+            learned_info += info_builder.generate_chef_number(
+                source=-1,
+                day=0,
+                odds_sober=1.0,
+                number=chef_number
+            )
+
+            (
+                sober_demon_scores,
+                sober_minion_scores,
+                sober_outsider_scores,
+                sober_townsfolk_scores
+            ) = search_world_scores(game_info, learned_info)
+
+            for odds_sober in (0.0, 0.5, 0.8, 1.0):
+                learned_info: list[Info] = []
+                learned_info += info_builder.generate_start_of_game_info(
+                    player_id=0,
+                    odds_sober=1.0,
+                    is_good=True,
+                    role=Role.CHEF
+                )
+                learned_info += info_builder.generate_chef_number(
+                    source=-1,
+                    day=0,
+                    odds_sober=odds_sober,
+                    number=chef_number
+                )
+
+                (
+                    is_demon_scores,
+                    is_minion_scores,
+                    is_outsider_scores,
+                    is_townsfolk_scores
+                ) = search_world_scores(game_info, learned_info)
+
+                total = 0
+                evil_count = game_info.demon_count_base + game_info.minion_count_base
+                combos = combinations(
+                    range(1, player_count),
+                    evil_count
+                )
+
+                neighbors: dict[int, int] = defaultdict(int)
+                player_presence: dict[int, int] = defaultdict(int)
+                for combo in combos:
+                    pairs = combinations(combo, 2)
+                    neighbor_count = sum(
+                        abs(pair[0] - pair[1]) % (player_count) == 1 for pair in pairs
+                    )
+
+                    neighbors[neighbor_count] += 1
+                    if neighbor_count == 1:
+                        for player in combo:
+                            player_presence[player] += 1
+
+                    total += 1
+
+                assert sum(neighbors.values()) == total
+                assert len(neighbors.keys()) == evil_count
+
+                probability_of_sober_chef_number = (
+                    neighbors[chef_number] / sum(neighbors.values())
+                )
+
+                probability_of_drunk_chef_number = (
+                    1 / len(neighbors.keys())
+                )
+
+                probability_of_chef_number = (
+                    probability_of_sober_chef_number * odds_sober +
+                    probability_of_drunk_chef_number * (1 - odds_sober)
+                )
+
+                probability_of_infomation_was_sober = (
+                    probability_of_sober_chef_number * odds_sober /
+                    probability_of_chef_number
+                )
+
+                for sober_scores, drunk_scores, score in [
+                    (sober_demon_scores, drunk_demon_scores, is_demon_scores),
+                    (sober_minion_scores, drunk_minion_scores, is_minion_scores),
+                    (sober_outsider_scores, drunk_outsider_scores, is_outsider_scores),
+                    (sober_townsfolk_scores,
+                     drunk_townsfolk_scores, is_townsfolk_scores),
+                ]:
+                    _check_chef_info_tb(
+                        player_count=player_count,
+                        probability_of_infomation=probability_of_infomation_was_sober,
+                        sober_scores=sober_scores,
+                        drunk_scores=drunk_scores,
+                        scores_to_check=score
+                    )
 
 
 def test_learning_demon_snv():
