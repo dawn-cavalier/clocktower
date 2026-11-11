@@ -1,9 +1,9 @@
 from itertools import combinations
 
-from worldbuilder.helper import is_demon, is_minion, is_outsider, is_townsfolk
+from helper import is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
-from worldbuilder.role_enum import Role
+from role_enum import Role
 
 
 TROUBLE_BREWING = {

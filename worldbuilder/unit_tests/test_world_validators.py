@@ -1,7 +1,7 @@
-from worldbuilder.game_info import GameInfo
+from game_info import GameInfo
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
-from worldbuilder.role_enum import Role
+from role_enum import Role
 from worldbuilder.world_scoring.world import World
 import worldbuilder.world_scoring.world_validators as world_validators
 

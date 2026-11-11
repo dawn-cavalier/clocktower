@@ -1,5 +1,5 @@
-from worldbuilder.game_info import GameInfo
-from worldbuilder.role_enum import Role
+from game_info import GameInfo
+from role_enum import Role
 
 
 TROUBLE_BREWING = {
@@ -305,7 +305,7 @@ def test_get_possible_outsider_mods_bmr_w_known_godfather():
 def test_get_possible_outsider_counts_tb():
     outsider_count_occurances: dict[int, float] = GameInfo(
         9, TROUBLE_BREWING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 2 in outsider_count_occurances
     assert abs(outsider_count_occurances[2] - 0.75) <= 1e-9
@@ -315,7 +315,7 @@ def test_get_possible_outsider_counts_tb():
 
     outsider_count_occurances: dict[int, float] = GameInfo(
         12, TROUBLE_BREWING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 2 in outsider_count_occurances
     assert abs(outsider_count_occurances[2] - 0.5) <= 1e-9
@@ -325,7 +325,7 @@ def test_get_possible_outsider_counts_tb():
 
     outsider_count_occurances: dict[int, float] = GameInfo(
         15, TROUBLE_BREWING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 2 in outsider_count_occurances
     assert abs(outsider_count_occurances[2] - 0.25) <= 1e-9
@@ -337,7 +337,7 @@ def test_get_possible_outsider_counts_tb():
 def test_get_possible_outsider_counts_snv():
     outsider_mods: dict[int, float] = GameInfo(
         7, SECTS_AND_VIOLETS
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 0 in outsider_mods
     assert abs(outsider_mods[0] - 0.75) <= 1e-9
@@ -347,7 +347,7 @@ def test_get_possible_outsider_counts_snv():
 
     outsider_mods: dict[int, float] = GameInfo(
         9, SECTS_AND_VIOLETS
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 1 in outsider_mods
     assert abs(outsider_mods[1] - 0.25) <= 1e-9
@@ -360,7 +360,7 @@ def test_get_possible_outsider_counts_snv():
 
     outsider_mods: dict[int, float] = GameInfo(
         10, SECTS_AND_VIOLETS
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 0 in outsider_mods
     assert abs(outsider_mods[0] - 0.75) <= 1e-9
@@ -370,7 +370,7 @@ def test_get_possible_outsider_counts_snv():
 
     outsider_mods: dict[int, float] = GameInfo(
         12, SECTS_AND_VIOLETS
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 1 in outsider_mods
     assert abs(outsider_mods[1] - 0.25) <= 1e-9
@@ -383,7 +383,7 @@ def test_get_possible_outsider_counts_snv():
 
     outsider_mods: dict[int, float] = GameInfo(
         13, SECTS_AND_VIOLETS
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 0 in outsider_mods
     assert abs(outsider_mods[0] - 0.75) <= 1e-9
@@ -393,7 +393,7 @@ def test_get_possible_outsider_counts_snv():
 
     outsider_mods: dict[int, float] = GameInfo(
         15, SECTS_AND_VIOLETS
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 1 in outsider_mods
     assert abs(outsider_mods[1] - 0.25) <= 1e-9
@@ -408,7 +408,7 @@ def test_get_possible_outsider_counts_snv():
 def test_get_possible_outsider_counts_bmr():
     outsider_mods: dict[int, float] = GameInfo(
         7, BAD_MOON_RISING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 0 in outsider_mods
     assert abs(outsider_mods[0] - 0.75) <= 1e-9
@@ -418,7 +418,7 @@ def test_get_possible_outsider_counts_bmr():
 
     outsider_mods: dict[int, float] = GameInfo(
         9, BAD_MOON_RISING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 1 in outsider_mods
     assert abs(outsider_mods[1] - 0.125) <= 1e-9
@@ -431,7 +431,7 @@ def test_get_possible_outsider_counts_bmr():
 
     outsider_mods: dict[int, float] = GameInfo(
         10, BAD_MOON_RISING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 0 in outsider_mods
     assert abs(outsider_mods[0] - 0.50) <= 1e-9
@@ -441,7 +441,7 @@ def test_get_possible_outsider_counts_bmr():
 
     outsider_mods: dict[int, float] = GameInfo(
         12, BAD_MOON_RISING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 1 in outsider_mods
     assert abs(outsider_mods[1] - 0.25) <= 1e-9
@@ -454,7 +454,7 @@ def test_get_possible_outsider_counts_bmr():
 
     outsider_mods: dict[int, float] = GameInfo(
         13, BAD_MOON_RISING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 0 in outsider_mods
     assert abs(outsider_mods[0] - 0.25) <= 1e-9
@@ -464,7 +464,7 @@ def test_get_possible_outsider_counts_bmr():
 
     outsider_mods: dict[int, float] = GameInfo(
         15, BAD_MOON_RISING
-    ).calculate_outsider_counts_occurances()
+    ).calculate_outsider_counts_odds()
 
     assert 1 in outsider_mods
     assert abs(outsider_mods[1] - 0.375) <= 1e-9

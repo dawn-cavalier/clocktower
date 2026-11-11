@@ -2,10 +2,9 @@ from dataclasses import dataclass
 from enum import Enum
 from math import comb
 
-from worldbuilder.game_info import GameInfo
-from worldbuilder.helper import is_demon, is_minion, is_outsider, is_townsfolk
+from helper import is_minion, is_outsider, is_townsfolk
 from worldbuilder.info_type import InfoType
-from worldbuilder.role_enum import Role
+from role_enum import Role
 
 
 class Param(Enum):

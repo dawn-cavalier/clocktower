@@ -1,8 +1,8 @@
 
 import cProfile  # type: ignore
 import tracemalloc  # type: ignore
-from worldbuilder.game_info import GameInfo
-from worldbuilder.role_enum import Role
+from game_info import GameInfo
+from role_enum import Role
 from worldbuilder.info import Info
 import worldbuilder.info_builder as info_builder  # type: ignore
 from worldbuilder.world_scoring.world_scorer import search_world_scores

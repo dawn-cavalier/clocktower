@@ -4,7 +4,7 @@ from itertools import combinations
 from math import exp, log
 from statistics import median
 
-from worldbuilder.game_info import GameInfo
+from game_info import GameInfo
 from worldbuilder.info import Info
 from worldbuilder.world_scoring.world import World
 from worldbuilder.world_scoring.world_validators import INFO_VALIDATORS
@@ -12,7 +12,7 @@ from worldbuilder.world_scoring.world_validators import INFO_VALIDATORS
 
 def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
     scores: dict[World, float] = {}
-    outsider_count_occurances = game_info.calculate_outsider_counts_occurances()
+    outsider_count_occurances = game_info.calculate_outsider_counts_odds()
     priors = _calculate_log_world_priors(
         outsider_count_occurances=outsider_count_occurances,
         outsider_count_base=game_info.outsider_count_base,
@@ -43,7 +43,7 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
 
 def _generate_worlds(game_info: GameInfo):
     player_ids = range(game_info.player_count)
-    outsider_counts = game_info.calculate_outsider_counts_occurances()
+    outsider_counts = game_info.calculate_outsider_counts_odds()
 
     for demons in combinations(
         player_ids,

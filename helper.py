@@ -1,4 +1,4 @@
-from worldbuilder.role_enum import Role
+from role_enum import Role
 
 _MODIFIER_DICT = {
     Role.VIGORMORTIS:   [-1],

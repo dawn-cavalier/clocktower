@@ -2,10 +2,10 @@ from collections import defaultdict
 from itertools import combinations
 
 from worldbuilder import info_builder
-from worldbuilder.game_info import GameInfo
-from worldbuilder.helper import is_minion
+from game_info import GameInfo
+from helper import is_minion
 from worldbuilder.info import Info
-from worldbuilder.role_enum import Role
+from role_enum import Role
 from worldbuilder.world_scoring.world_scorer import search_world_scores
 
 

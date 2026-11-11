@@ -1,6 +1,6 @@
 from worldbuilder.info import Info, InfoType
-from worldbuilder.role_enum import Role
-from worldbuilder.helper import is_minion, is_outsider, is_townsfolk
+from role_enum import Role
+from helper import is_minion, is_outsider, is_townsfolk
 
 
 def generate_start_of_game_info(player_id: int, odds_sober: float, is_good: bool, role: Role):

@@ -2,8 +2,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import combinations
 
-from worldbuilder.helper import get_outsider_mod, is_demon, is_minion
-from worldbuilder.role_enum import Role
+from helper import get_outsider_mod, is_demon, is_minion, is_outsider, is_townsfolk
+from role_enum import Role
 
 
 @dataclass
@@ -26,6 +26,18 @@ class GameInfo:
             self.minion_count_base,
             self.demon_count_base
         ) = self._get_player_type_counts(player_count)
+
+    def get_townsfolk_roles(self):
+        return [role for role in self.script if is_townsfolk(role)]
+
+    def get_outsider_roles(self):
+        return [role for role in self.script if is_outsider(role)]
+
+    def get_minion_roles(self):
+        return [role for role in self.script if is_minion(role)]
+
+    def get_demon_roles(self):
+        return [role for role in self.script if is_demon(role)]
 
     def calculate_outsider_counts(self, *, present_roles: list[Role] | None = None) -> list[int]:
         # TODO: Handle Townsfolk and Outsiders with modifiers.
@@ -111,7 +123,7 @@ class GameInfo:
 
         return [mod for mod in outsider_mods if mod >= 0]
 
-    def calculate_outsider_counts_occurances(self):
+    def calculate_outsider_counts_odds(self):
         # TODO: Handle Townsfolk and Outsiders with modifiers.
         possible_outsider_dict: defaultdict[int, float] = defaultdict(float)
         possible_outsider_dict[self.outsider_count_base] = 1
