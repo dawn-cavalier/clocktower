@@ -2,7 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import combinations
 
-from helper import get_outsider_mod, is_demon, is_minion, is_outsider, is_townsfolk
+from helper import get_outsider_modifiers, is_demon, is_minion, is_outsider, is_townsfolk
 from role_enum import Role
 
 
@@ -57,7 +57,7 @@ class GameInfo:
             outsider_mods = {
                 existing_mod + modifier
                 for existing_mod in outsider_mods
-                for modifier in get_outsider_mod(role)
+                for modifier in get_outsider_modifiers(role)
             }
 
         for role_type, count in (
@@ -65,7 +65,7 @@ class GameInfo:
             (is_minion, minion_count)
         ):
             available_modifiers = [
-                get_outsider_mod(role)
+                get_outsider_modifiers(role)
                 for role in self.script
                 if role_type(role) and
                 role not in present_roles
@@ -91,7 +91,7 @@ class GameInfo:
                 modifiers
                 for modifiers
                 in [
-                    get_outsider_mod(role)
+                    get_outsider_modifiers(role)
                     for role in self.script
                     if is_minion(role) or is_demon(role)
                 ]
@@ -129,7 +129,7 @@ class GameInfo:
         possible_outsider_dict[self.outsider_count_base] = 1
 
         demon_modifiers = [
-            get_outsider_mod(role)
+            get_outsider_modifiers(role)
             for role in self.script
             if is_demon(role)
         ]
@@ -143,7 +143,7 @@ class GameInfo:
         )
 
         minion_modifiers = [
-            get_outsider_mod(role)
+            get_outsider_modifiers(role)
             for role in self.script
             if is_minion(role)
         ]

@@ -26,7 +26,7 @@ def is_demon(role: Role) -> bool:
     return Role.AL_HADIKHIA <= role <= Role.ZOMBUUL
 
 
-def get_outsider_mod(role: Role) -> list[int]:
+def get_outsider_modifiers(role: Role) -> list[int]:
     # TODO: Review this for all outsider mods
     # TODO: How do we handle in game character changes?
     if role in (Role.KAZALI, Role.LORD_OF_TYPHON, Role.XAAN):
