@@ -5,7 +5,7 @@ from game_info import GameInfo
 from role_enum import Role
 from worldbuilder.info import Info
 import worldbuilder.info_builder as info_builder  # type: ignore
-from worldbuilder.world_scoring.world_scorer import search_world_scores, search_world_scores_old
+from worldbuilder.world_scoring.world_scorer import search_world_scores, search_world_scores
 
 
 def main() -> None:
@@ -38,7 +38,7 @@ def main() -> None:
         Role.IMP,
     }
 
-    game_info = GameInfo(player_count=7, script=script)
+    game_info = GameInfo(player_count=9, script=script)
     # Append only list!
     learned_info: list[Info] = []
 
@@ -59,7 +59,7 @@ def main() -> None:
         day=0,
         source=0,
         odds_sober=1.0,
-        number=2
+        number=0
     )
 
     (

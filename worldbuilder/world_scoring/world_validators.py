@@ -28,37 +28,49 @@ def _check_is_invalid_role(info: Info, world: World, game_info: GameInfo) -> boo
     target_player = info.target_players[0]
     seen_role = info.seen_roles[0]
 
-    demon_invalid = (
-        world.demons is not None and
-        is_demon(seen_role) and
-        target_player not in world.demons
-    )
-    if demon_invalid:
-        return True
+    if world.demons is not None:
+        demon_invalid = (
+            is_demon(seen_role) and
+            target_player not in world.demons
+        ) or (
+            not is_demon(seen_role) and
+            target_player in world.demons
+        )
+        if demon_invalid:
+            return True
 
-    minion_invalid = (
-        world.minions is not None and
-        is_minion(seen_role) and
-        target_player not in world.minions
-    )
-    if minion_invalid:
-        return True
+    if world.minions is not None:
+        minion_invalid = (
+            is_minion(seen_role) and
+            target_player not in world.minions
+        ) or (
+            not is_minion(seen_role) and
+            target_player in world.minions
+        )
+        if minion_invalid:
+            return True
 
-    outsider_invalid = (
-        world.outsiders is not None and
-        is_outsider(seen_role) and
-        target_player not in world.outsiders
-    )
-    if outsider_invalid:
-        return True
+    if world.outsiders is not None:
+        outsider_invalid = (
+            is_outsider(seen_role) and
+            target_player not in world.outsiders
+        ) or (
+            not is_outsider(seen_role) and
+            target_player in world.outsiders
+        )
+        if outsider_invalid:
+            return True
 
-    townsfolk_invalid = (
-        world.townsfolk is not None and
-        is_townsfolk(seen_role) and
-        target_player not in world.townsfolk
-    )
-    if townsfolk_invalid:
-        return True
+    if world.townsfolk is not None:
+        townsfolk_invalid = (
+            is_townsfolk(seen_role) and
+            target_player not in world.townsfolk
+        ) or (
+            not is_townsfolk(seen_role) and
+            target_player in world.townsfolk
+        )
+        if townsfolk_invalid:
+            return True
 
     if world.outsiders is None:
         return None

@@ -30,38 +30,6 @@ def search_world_scores(game_info: GameInfo, learned_info: list[Info]):
         townfolk_scores=townfolk_scores,
     )
 
-    print(evil_scores)
-    median_log_score = median(
-        score for score in scores.values() if score != -inf
-    )
-    scores = {
-        world: exp(score - median_log_score)
-        for world, score in scores.items()
-    }
-
-    return _calculate_probabilities(scores, player_count=game_info.player_count)
-
-
-def search_world_scores_old(game_info: GameInfo, learned_info: list[Info]):
-    scores: dict[World, float] = {}
-    outsider_count_occurances = game_info.calculate_outsider_counts_odds()
-    priors = _calculate_log_world_priors(
-        outsider_count_occurances=outsider_count_occurances,
-        outsider_count_base=game_info.outsider_count_base,
-        townsfolk_count_base=game_info.townsfolk_count_base
-    )
-
-    for world in _generate_worlds(game_info):
-        score = priors[len(world.outsiders)]
-
-        for info in learned_info:
-            assert info.info_type in INFO_VALIDATORS, (
-                f"Unhandled InfoType: {info.info_type.name}"
-            )
-            score += _calculate_log_likelihood(world, info, game_info)
-
-        scores[world] = score
-
     median_log_score = median(
         score for score in scores.values() if score != -inf
     )
@@ -103,7 +71,6 @@ def _get_evil_scores(game_info: GameInfo, learned_info: list[Info]):
                     f"Unhandled InfoType: {info.info_type.name}"
                 )
             score += _calculate_log_likelihood(world, info, game_info)
-            print(score)
 
         evil_team_scores[world] = score
 
@@ -196,6 +163,9 @@ def _build_scores(
 ):
     scores: dict[World, float] = {}
     for evil_world, evil_score in evil_scores.items():
+        if evil_score is -inf:
+            continue
+
         demons = evil_world.demons
         minions = evil_world.minions
         if demons is None:
@@ -204,6 +174,8 @@ def _build_scores(
             raise ValueError("Evil World missing minions!")
 
         for outsider_world, outsider_score in outsider_scores.items():
+            if outsider_score is -inf:
+                continue
             outsiders = outsider_world.outsiders
             if outsiders is None:
                 raise ValueError("Outsider World missing outsiders!")
@@ -212,6 +184,8 @@ def _build_scores(
                 continue
 
             for townsfolk_world, townfolk_score in townfolk_scores.items():
+                if townfolk_score is -inf:
+                    continue
                 townfolk = townsfolk_world.townsfolk
                 if townfolk is None:
                     raise ValueError("Townfolk World missing townfolk!")
@@ -226,6 +200,7 @@ def _build_scores(
                     townsfolk=townfolk
                 )] = evil_score + outsider_score + townfolk_score
 
+    print(len(scores))
     return scores
 
 

@@ -6,7 +6,7 @@ from game_info import GameInfo
 from helper import is_minion
 from worldbuilder.info import Info
 from role_enum import Role
-from worldbuilder.world_scoring.world_scorer import search_world_scores_old
+from worldbuilder.world_scoring.world_scorer import search_world_scores
 
 
 TROUBLE_BREWING = {
@@ -128,7 +128,7 @@ def test_learning_baron_tb():
             is_minion_scores,
             is_outsider_scores,
             is_townsfolk_scores
-        ) = search_world_scores_old(game_info, learned_info)
+        ) = search_world_scores(game_info, learned_info)
 
         _check_sums(
             is_demon_scores,
@@ -163,7 +163,7 @@ def test_ravenkeeper_learning_demon_tb():
                 is_minion_scores,
                 is_outsider_scores,
                 is_townsfolk_scores
-            ) = search_world_scores_old(game_info, learned_info)
+            ) = search_world_scores(game_info, learned_info)
 
             _check_sums(
                 is_demon_scores,
@@ -222,7 +222,7 @@ def test_chef_learning_numbers_tb():
                 drunk_minion_scores,
                 drunk_outsider_scores,
                 drunk_townsfolk_scores
-            ) = search_world_scores_old(game_info, learned_info)
+            ) = search_world_scores(game_info, learned_info)
 
             learned_info: list[Info] = []
             learned_info += info_builder.generate_start_of_game_info(
@@ -243,7 +243,7 @@ def test_chef_learning_numbers_tb():
                 sober_minion_scores,
                 sober_outsider_scores,
                 sober_townsfolk_scores
-            ) = search_world_scores_old(game_info, learned_info)
+            ) = search_world_scores(game_info, learned_info)
 
             for odds_sober in (0.0, 0.5, 0.8, 1.0):
                 learned_info: list[Info] = []
@@ -265,7 +265,7 @@ def test_chef_learning_numbers_tb():
                     is_minion_scores,
                     is_outsider_scores,
                     is_townsfolk_scores
-                ) = search_world_scores_old(game_info, learned_info)
+                ) = search_world_scores(game_info, learned_info)
 
                 total = 0
                 evil_count = game_info.demon_count_base + game_info.minion_count_base
@@ -342,7 +342,7 @@ def test_learning_demon_snv():
             is_minion_scores,
             is_outsider_scores,
             is_townsfolk_scores
-        ) = search_world_scores_old(game_info, learned_info)
+        ) = search_world_scores(game_info, learned_info)
 
         _check_sums(
             is_demon_scores,
@@ -371,7 +371,7 @@ def test_learning_demon_snv():
             is_minion_scores,
             is_outsider_scores,
             is_townsfolk_scores
-        ) = search_world_scores_old(game_info, learned_info)
+        ) = search_world_scores(game_info, learned_info)
 
         _check_sums(
             is_demon_scores,
@@ -410,7 +410,7 @@ def _check_world_scores_tb(player_count: int):
         is_minion_scores,
         is_outsider_scores,
         is_townsfolk_scores
-    ) = search_world_scores_old(game_info, learned_info)
+    ) = search_world_scores(game_info, learned_info)
 
     _check_sums(
         is_demon_scores,
@@ -466,7 +466,7 @@ def _check_world_scores_snv(player_count: int):
         is_minion_scores,
         is_outsider_scores,
         is_townsfolk_scores
-    ) = search_world_scores_old(game_info, learned_info)
+    ) = search_world_scores(game_info, learned_info)
     _check_sums(
         is_demon_scores,
         is_minion_scores,
@@ -522,7 +522,7 @@ def _check_world_scores_bmr(player_count: int):
         is_minion_scores,
         is_outsider_scores,
         is_townsfolk_scores
-    ) = search_world_scores_old(game_info, learned_info)
+    ) = search_world_scores(game_info, learned_info)
     _check_sums(
         is_demon_scores,
         is_minion_scores,
