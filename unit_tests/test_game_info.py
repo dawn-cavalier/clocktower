@@ -154,7 +154,7 @@ def test_init():
     is_invalid = False
     try:
         game_info = GameInfo(-1, TROUBLE_BREWING)
-    except ValueError:
+    except NotImplementedError:
         is_invalid = True
 
     assert is_invalid

@@ -8,6 +8,28 @@ from role_enum import Role
 
 @dataclass
 class GameInfo:
+    PLAYER_TYPE_COUNTS = {
+        7:  (5, 0, 1, 1),
+        8:  (5, 1, 1, 1),
+        9:  (5, 2, 1, 1),
+        10: (7, 0, 2, 1),
+        11: (7, 1, 2, 1),
+        12: (7, 2, 2, 1),
+        13: (9, 0, 3, 1),
+        14: (9, 1, 3, 1),
+        15: (9, 2, 3, 1),
+    }
+
+    NOT_IMPLEMENTED_ROLES = {
+        Role.SUMMONER,
+        Role.XAAN,
+        Role.LIL_MONSTA,
+        Role.LORD_OF_TYPHON,
+        Role.LEGION,
+        Role.KAZALI,
+        Role.ATHEIST,
+    }
+
     player_count: int
 
     demon_count_base: int
@@ -26,6 +48,8 @@ class GameInfo:
             self.minion_count_base,
             self.demon_count_base
         ) = self._get_player_type_counts(player_count)
+
+        self._check_script_valid()
 
     def get_townsfolk_roles(self):
         return [role for role in self.script if is_townsfolk(role)]
@@ -265,44 +289,43 @@ class GameInfo:
         return new_dict
 
     def _get_player_type_counts(self, player_count: int):
-        match player_count:
-            case 7:
-                townsfolk_count_base = 5
-                outsider_count_base = 0
-                minion_count_base = 1
-            case 8:
-                townsfolk_count_base = 5
-                outsider_count_base = 1
-                minion_count_base = 1
-            case 9:
-                townsfolk_count_base = 5
-                outsider_count_base = 2
-                minion_count_base = 1
-            case 10:
-                townsfolk_count_base = 7
-                outsider_count_base = 0
-                minion_count_base = 2
-            case 11:
-                townsfolk_count_base = 7
-                outsider_count_base = 1
-                minion_count_base = 2
-            case 12:
-                townsfolk_count_base = 7
-                outsider_count_base = 2
-                minion_count_base = 2
-            case 13:
-                townsfolk_count_base = 9
-                outsider_count_base = 0
-                minion_count_base = 3
-            case 14:
-                townsfolk_count_base = 9
-                outsider_count_base = 1
-                minion_count_base = 3
-            case 15:
-                townsfolk_count_base = 9
-                outsider_count_base = 2
-                minion_count_base = 3
-            case _:
-                raise ValueError(f"Player Count {player_count} is invalid.")
+        if player_count not in self.PLAYER_TYPE_COUNTS:
+            raise NotImplementedError(
+                f"Player Count {player_count} is not implemented.")
 
-        return (townsfolk_count_base, outsider_count_base, minion_count_base, 1)
+        return self.PLAYER_TYPE_COUNTS[player_count]
+
+    def _check_script_valid(self):
+        townsfolk = [role for role in self.script if is_townsfolk(role)]
+        outsiders = [role for role in self.script if is_outsider(role)]
+        minions = [role for role in self.script if is_minion(role)]
+        demons = [role for role in self.script if is_demon(role)]
+
+        (
+            townsfolk_count,
+            outsider_count,
+            minion_count,
+            demon_count
+        ) = self._get_player_type_counts(max(self.PLAYER_TYPE_COUNTS))
+
+        if len(demons) < demon_count:
+            raise ValueError("Script doesn't have enough demons!")
+
+        if len(minions) < minion_count:
+            raise ValueError("Script doesn't have enough minions!")
+
+        needed_outsiders = max(
+            self.calculate_outsider_counts()
+        ) - self.outsider_count_base + outsider_count
+        if len(outsiders) < needed_outsiders:
+            raise ValueError("Script doesn't have enough outsiders!")
+
+        if len(townsfolk) < townsfolk_count:
+            raise ValueError("Script doesn't have enough outsiders!")
+
+        not_implemented_roles = self.NOT_IMPLEMENTED_ROLES & self.script
+
+        if not_implemented_roles:
+            raise NotImplementedError(
+                f"Roles: {not_implemented_roles} are not implemented."
+            )
