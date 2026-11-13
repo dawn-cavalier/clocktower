@@ -10,6 +10,7 @@ _MODIFIER_DICT = {
     Role.HUNTSMAN:      [0, 1],
 }
 
+
 def is_townsfolk(role: Role) -> bool:
     return Role.ACROBAT <= role <= Role.WASHERWOMAN
 
@@ -37,3 +38,19 @@ def get_outsider_modifiers(role: Role) -> list[int]:
         return [0]
 
     return _MODIFIER_DICT[role]
+
+
+def get_bag_outsider_modification(bag: list[Role]):
+    outsider_mods = []
+
+    for role in bag:
+        if len(outsider_mods) == 0:
+            outsider_mods = [0]
+
+        outsider_mods = [
+            existing_mod + modifier
+            for existing_mod in outsider_mods
+            for modifier in get_outsider_modifiers(role)
+        ]
+
+    return outsider_mods

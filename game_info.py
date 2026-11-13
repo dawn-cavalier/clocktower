@@ -52,16 +52,16 @@ class GameInfo:
         self._check_script_valid()
 
     def get_townsfolk_roles(self):
-        return [role for role in self.script if is_townsfolk(role)]
+        return {role for role in self.script if is_townsfolk(role)}
 
     def get_outsider_roles(self):
-        return [role for role in self.script if is_outsider(role)]
+        return {role for role in self.script if is_outsider(role)}
 
     def get_minion_roles(self):
-        return [role for role in self.script if is_minion(role)]
+        return {role for role in self.script if is_minion(role)}
 
     def get_demon_roles(self):
-        return [role for role in self.script if is_demon(role)]
+        return {role for role in self.script if is_demon(role)}
 
     def calculate_outsider_counts(self, *, present_roles: list[Role] | None = None) -> list[int]:
         # TODO: Handle Townsfolk and Outsiders with modifiers.
