@@ -1,15 +1,15 @@
 from game_info import GameInfo
-from helper import get_outsider_modifiers, is_demon, is_minion, is_outsider, is_townsfolk
+from helper import is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
 from worldbuilder.world_scoring.world import World
 
 
-def _check_nothing(info: Info, world: World, game_info: GameInfo):
+def _check_nothing(info: Info, world: World, game_info: GameInfo) -> bool | None:
     return False
 
 
-def _check_is_invalid_role(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_role(info: Info, world: World, game_info: GameInfo) -> bool | None:
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -28,23 +28,49 @@ def _check_is_invalid_role(info: Info, world: World, game_info: GameInfo):
     target_player = info.target_players[0]
     seen_role = info.seen_roles[0]
 
-    is_invalid = (
-        (is_demon(seen_role) and target_player not in world.demons) or
-        (is_minion(seen_role) and target_player not in world.minions) or
-        (is_outsider(seen_role) and target_player not in world.outsiders) or
-        (is_townsfolk(seen_role) and target_player not in world.townsfolk)
+    demon_invalid = (
+        world.demons is not None and
+        is_demon(seen_role) and
+        target_player not in world.demons
     )
-
-    if is_invalid:
+    if demon_invalid:
         return True
+
+    minion_invalid = (
+        world.minions is not None and
+        is_minion(seen_role) and
+        target_player not in world.minions
+    )
+    if minion_invalid:
+        return True
+
+    outsider_invalid = (
+        world.outsiders is not None and
+        is_outsider(seen_role) and
+        target_player not in world.outsiders
+    )
+    if outsider_invalid:
+        return True
+
+    townsfolk_invalid = (
+        world.townsfolk is not None and
+        is_townsfolk(seen_role) and
+        target_player not in world.townsfolk
+    )
+    if townsfolk_invalid:
+        return True
+
+    if world.outsiders is None:
+        return None
 
     possible_outsider_counts = game_info.calculate_outsider_counts(
         present_roles=[seen_role]
     )
+
     return len(world.outsiders) not in possible_outsider_counts
 
 
-def _check_is_invalid_alignment(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_alignment(info: Info, world: World, game_info: GameInfo) -> bool | None:
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -65,7 +91,7 @@ def _check_is_invalid_alignment(info: Info, world: World, game_info: GameInfo):
     )
 
 
-def _check_is_invalid_ping(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_ping(info: Info, world: World, game_info: GameInfo) -> bool | None:
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -80,6 +106,9 @@ def _check_is_invalid_ping(info: Info, world: World, game_info: GameInfo):
         f"{info.info_type.name} received " +
         f"{len(info.seen_roles)} roles when 1 was expected!"
     )
+
+    if world.demons is None or world.minions is None:
+        return None
 
     seen_role = info.seen_roles[0]
     target_players = set(info.target_players)
@@ -115,18 +144,18 @@ def _check_is_invalid_ping(info: Info, world: World, game_info: GameInfo):
     return False
 
 
-def _check_is_invalid_chef_number(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_chef_number(info: Info, world: World, game_info: GameInfo) -> bool | None:
     number = info.number
     assert number is not None, (
         f"{info.info_type.name} was expected!"
     )
 
+    if world.demons is None or world.minions is None:
+        return None
+
     pair_count = 0
     # TODO: Handle alignment changes.
-    evil_player_count = (
-        game_info.demon_count_base +
-        game_info.minion_count_base
-    )
+    evil_player_count = max(game_info.get_evil_counts())
     evil_team_sorted = sorted(world.get_evil_team())
 
     for current in range(evil_player_count):
@@ -142,7 +171,7 @@ def _check_is_invalid_chef_number(info: Info, world: World, game_info: GameInfo)
     return number != pair_count
 
 
-def _check_is_invalid_empath_number(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_empath_number(info: Info, world: World, game_info: GameInfo) -> bool | None:
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
     )
@@ -165,7 +194,7 @@ def _check_is_invalid_empath_number(info: Info, world: World, game_info: GameInf
     return evil_neighbors != number
 
 
-def _check_is_invalid_fortune_teller_ping(info: Info, world: World, game_info: GameInfo):
+def _check_is_invalid_fortune_teller_ping(info: Info, world: World, game_info: GameInfo) -> bool | None:
 
     assert info.target_players is not None, (
         f"{info.info_type.name} has no target players!"
@@ -177,6 +206,9 @@ def _check_is_invalid_fortune_teller_ping(info: Info, world: World, game_info: G
     assert info.is_yes is not None, (
         f"{info.info_type.name} is expected to have a yes/no!"
     )
+    if world.demons is None:
+        return None
+
     is_yes = info.is_yes
     target_players = info.target_players
     demons = world.demons

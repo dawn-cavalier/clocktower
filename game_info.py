@@ -1,3 +1,4 @@
+# TODO: Cache all function calls as this class is immutable
 from collections import defaultdict
 from dataclasses import dataclass
 from itertools import combinations
@@ -62,6 +63,9 @@ class GameInfo:
 
     def get_demon_roles(self):
         return {role for role in self.script if is_demon(role)}
+
+    def get_evil_counts(self):
+        return [self.demon_count_base + self.minion_count_base]
 
     def calculate_outsider_counts(self, *, present_roles: list[Role] | None = None) -> list[int]:
         # TODO: Handle Townsfolk and Outsiders with modifiers.
@@ -233,6 +237,16 @@ class GameInfo:
             possible_outsider_dict[mod] = value/total
 
         return possible_outsider_dict
+
+    def calculate_townsfolk_counts(self, *, present_roles: list[Role] | None = None) -> list[int]:
+        outsider_counts = self.calculate_outsider_counts(
+            present_roles=present_roles
+        )
+        return [
+            self.townsfolk_count_base + self.outsider_count_base - outsider_count
+            for outsider_count
+            in outsider_counts
+        ]
 
     def _process_outsider_mods_combos(
         self,

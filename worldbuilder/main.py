@@ -5,7 +5,7 @@ from game_info import GameInfo
 from role_enum import Role
 from worldbuilder.info import Info
 import worldbuilder.info_builder as info_builder  # type: ignore
-from worldbuilder.world_scoring.world_scorer import search_world_scores
+from worldbuilder.world_scoring.world_scorer import search_world_scores, search_world_scores_old
 
 
 def main() -> None:
@@ -38,7 +38,7 @@ def main() -> None:
         Role.IMP,
     }
 
-    game_info = GameInfo(player_count=10, script=script)
+    game_info = GameInfo(player_count=7, script=script)
     # Append only list!
     learned_info: list[Info] = []
 
@@ -46,7 +46,7 @@ def main() -> None:
         player_id=0,
         odds_sober=1.0,
         is_good=True,
-        role=Role.RAVENKEEPER
+        role=Role.CHEF
     )
     # learned_info += info_builder.generate_ravenkeeper_ping(
     #     source=0,
