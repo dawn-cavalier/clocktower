@@ -1,6 +1,8 @@
+from terminal_io.user_input import ask_for_game_info
+
+
 def main():
-    pass
-    # game_info = ask_for_game_info()
+    game_info = ask_for_game_info()
     # storyteller = ask_for_storyteller()
 
     # players = generate_players(game_info)
