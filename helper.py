@@ -1,4 +1,4 @@
-from role_enum import Role
+from globals.enums.role_enum import Role
 
 _MODIFIER_DICT = {
     Role.VIGORMORTIS:   [-1],

@@ -1,6 +1,3 @@
-from game_info import GameInfo
-
-
 def main():
     pass
     # game_info = ask_for_game_info()

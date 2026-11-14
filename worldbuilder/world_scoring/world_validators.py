@@ -1,4 +1,4 @@
-from game_info import GameInfo
+from globals.data.game_info import GameInfo
 from helper import get_outsider_modifiers, is_demon, is_minion, is_outsider, is_townsfolk
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType

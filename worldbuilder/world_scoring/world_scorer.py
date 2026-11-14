@@ -4,7 +4,7 @@ from itertools import combinations
 from math import exp, log
 from statistics import median
 
-from game_info import GameInfo
+from globals.data.game_info import GameInfo
 from worldbuilder.info import Info
 from worldbuilder.world_scoring.world import World
 from worldbuilder.world_scoring.world_validators import INFO_VALIDATORS

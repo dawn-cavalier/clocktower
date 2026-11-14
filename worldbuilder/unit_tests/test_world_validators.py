@@ -1,8 +1,9 @@
-from game_info import GameInfo
+from globals.data.game_info import GameInfo
+from globals.enums.role_enum import Role
 from worldbuilder.info import Info
 from worldbuilder.info_type import InfoType
-from role_enum import Role
 from worldbuilder.world_scoring.world import World
+
 import worldbuilder.world_scoring.world_validators as world_validators
 
 TROUBLE_BREWING = {

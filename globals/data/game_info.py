@@ -2,8 +2,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import combinations
 
+from globals.enums.role_enum import Role
 from helper import get_outsider_modifiers, is_demon, is_minion, is_outsider, is_townsfolk
-from role_enum import Role
 
 
 @dataclass

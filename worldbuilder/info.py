@@ -4,7 +4,7 @@ from math import comb
 
 from helper import is_minion, is_outsider, is_townsfolk
 from worldbuilder.info_type import InfoType
-from role_enum import Role
+from globals.enums.role_enum import Role
 
 
 class Param(Enum):

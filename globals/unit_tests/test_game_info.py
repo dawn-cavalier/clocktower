@@ -1,5 +1,5 @@
-from game_info import GameInfo
-from role_enum import Role
+from globals.data.game_info import GameInfo
+from globals.enums.role_enum import Role
 
 
 TROUBLE_BREWING = {
