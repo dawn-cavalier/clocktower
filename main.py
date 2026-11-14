@@ -3,7 +3,7 @@ from terminal_io.user_input import ask_for_game_info
 
 def main():
     game_info = ask_for_game_info()
-    # storyteller = ask_for_storyteller()
+    storyteller = ask_for_storyteller()
 
     # players = generate_players(game_info)
     # grimoire = storyteller.generate_grimoire(game_info)
