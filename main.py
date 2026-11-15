@@ -1,6 +1,6 @@
 import random as r
 
-from terminal_io.user_input import ask_for_game_info
+from terminal_io.user_input import ask_for_game_info, ask_for_storyteller
 
 def main():
     r.seed(0)
