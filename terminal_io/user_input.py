@@ -1,3 +1,6 @@
+from typing import Any
+import builtins
+
 from globals.data.game_info import GameInfo
 from globals.enums.role_enum import Role
 from storyteller.base_storyteller import Storyteller
@@ -21,15 +24,16 @@ def ask_for_game_info() -> GameInfo:
 
 
 def _ask_for_player_count() -> int:
-    valid = False
-    x = -1
-    while not valid:
-        user_input = input("How many players: ")
-        if user_input.isdigit():
-            x = int(user_input)
-            if 7 <= x <= 15:
-                valid = True
-
+    # TODO: Remove magic numbers!
+    # 7 = min player count, 15 = max player count
+    x = _ask_for_input(
+        message="How many players: ",
+        expected_input_type=int,
+        valid_input=list(range(7, 16)),
+        retry=True,
+        error_message="Invalid Player Count!"
+    )
+    assert isinstance(x, int), f"Input value {x} is not an int!"
     return x
 
 
@@ -64,3 +68,43 @@ def _ask_for_script() -> set[Role]:
         Role.IMP,
     }
     return TROUBLE_BREWING
+
+
+def _ask_for_input(
+    message: str,
+    expected_input_type: type,
+    valid_input: list[Any] | None = None,
+    retry: bool = True,
+    error_message: str | None = None,
+):
+    is_restricted = valid_input is not None
+
+    while True:
+        user_input = input(message)
+        converted_input = _convert_str_to_type(
+            user_input,
+            expected_input_type
+        )
+
+        is_correct_type = isinstance(converted_input, expected_input_type)
+        is_valid = not is_restricted or converted_input in valid_input
+        if not retry or (is_correct_type and is_valid):
+            return converted_input
+
+        if error_message:
+            print(error_message)
+
+
+def _convert_str_to_type(
+    str_to_convert: str,
+    target_type: type
+) -> Any | None:
+    match target_type:
+        case builtins.str:
+            return str_to_convert
+        case builtins.int:
+            if not str_to_convert.isdecimal():
+                return None
+            return int(str_to_convert)
+        case _:
+            raise NotImplementedError(f"Type {target_type} not handled!")
