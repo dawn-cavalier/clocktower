@@ -21,6 +21,13 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\globals\game_info.h" />
+    <ClInclude Include="src\globals\role.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ClocktowerCPP.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
