@@ -40,10 +40,9 @@ namespace test_game_info
 				BasePlayerCount::seven
 			};
 
-			int length = sizeof(game_info.script) / sizeof(game_info.script[0]);
-			auto pointer = std::find(game_info.script, game_info.script + length, Role::end);
+			auto pointer = std::find(game_info.script.begin(), game_info.script.end(), Role::end);
 
-			int index = pointer - game_info.script;
+			int index = std::distance(game_info.script.begin(), pointer);
 
 			Assert::AreEqual(index, 22);
 		}
@@ -104,5 +103,40 @@ namespace test_game_info
 			Assert::AreEqual(static_cast<int>(get_outsider_count(player_count)), 2);
 			Assert::AreEqual(static_cast<int>(get_townfolk_count(player_count)), 9);
 		}
+
+		TEST_METHOD(GetRolesFromScript)
+		{
+			GameInfo game_info{
+				{
+					Role::washerwoman,
+					Role::librarian,
+					Role::investigator,
+					Role::chef,
+					Role::empath,
+					Role::fortune_teller,
+					Role::undertaker,
+					Role::monk,
+					Role::ravenkeeper,
+					Role::virgin,
+					Role::slayer,
+					Role::soldier,
+					Role::mayor,
+					Role::butler,
+					Role::drunk,
+					Role::recluse,
+					Role::saint,
+					Role::poisoner,
+					Role::spy,
+					Role::scarlet_woman,
+					Role::baron,
+					Role::imp,
+					Role::end,
+				},
+				BasePlayerCount::seven
+			};
+
+			Assert::IsTrue(false);
+		}
+
 	};
 }

@@ -25,3 +25,16 @@ uint8_t get_demon_count(BasePlayerCount player_count)
 {
     return 1;
 }
+
+std::vector<Role> get_townsfolk_from_script(std::array<Role, 31> script)
+{
+    std::vector<Role> townfolk{};
+    //for (Role role : script)
+    //{
+    //    if (is_townsfolk(role))
+    //    {
+    //        townfolk.push_back(role);
+    //    }
+    //}
+    return townfolk;
+}

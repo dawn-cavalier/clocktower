@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+#include <vector>
+#include <array>
 
 #include "role.h"
 
@@ -18,7 +20,7 @@ enum class BasePlayerCount : uint8_t
 
 struct GameInfo
 {
-	Role script[31];
+	std::array<Role, 31> script;
 	BasePlayerCount base_player_count;
 };
 
@@ -26,3 +28,5 @@ uint8_t get_townfolk_count(BasePlayerCount player_count);
 uint8_t get_outsider_count(BasePlayerCount player_count);
 uint8_t get_minion_count(BasePlayerCount player_count);
 uint8_t get_demon_count(BasePlayerCount player_count);
+
+std::vector<Role> get_townsfolk_from_script(std::array<Role, 31> script);
