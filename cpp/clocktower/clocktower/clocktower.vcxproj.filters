@@ -27,6 +27,9 @@
     <ClCompile Include="src\globals\game_info.cpp">
       <Filter>Source Files\globals</Filter>
     </ClCompile>
+    <ClCompile Include="src\globals\role.cpp">
+      <Filter>Source Files\globals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\globals\game_info.h">
