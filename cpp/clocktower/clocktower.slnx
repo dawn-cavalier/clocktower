@@ -3,6 +3,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="clocktower/clocktower.vcxproj" />
+  <Project Path="clocktower/clocktower.vcxproj" Id="22e5e95c-49d8-4ad9-a081-c05cb627b07a" />
   <Project Path="clocktower_unit_test/clocktower_unit_test.vcxproj" />
 </Solution>

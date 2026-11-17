@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+
 #include "role.h"
 
 enum class BasePlayerCount : uint8_t
@@ -17,7 +18,7 @@ enum class BasePlayerCount : uint8_t
 
 struct GameInfo
 {
-	Role* script;
+	Role script[31];
 	BasePlayerCount base_player_count;
 };
 

@@ -3,6 +3,7 @@
 
 enum class Role: uint8_t
 {
+    none,
     // Townsfolk
     acrobat,
     alchemist,
@@ -148,4 +149,6 @@ enum class Role: uint8_t
     vortox,
     yaggababble,
     zombuul,
+
+    end = 0xFF
 };
