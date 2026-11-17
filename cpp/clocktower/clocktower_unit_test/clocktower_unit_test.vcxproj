@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
-    <ProjectGuid>{30EDC85B-B189-315B-86FD-3C2387A8B70D}</ProjectGuid>
+    <ProjectGuid>{2828E9E7-E9DE-11F1-9072-AC5352124D42}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>ClocktowerUnitTest</RootNamespace>
+    <RootNamespace>clocktowerunittest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectSubType>NativeUnitTestProject</ProjectSubType>
   </PropertyGroup>
@@ -168,7 +168,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ClocktowerUnitTest.cpp" />
+    <ClCompile Include="test_game_info.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -178,6 +178,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\clocktower\clocktower.vcxproj">
+      <Project>{22e5e95c-49d8-4ad9-a081-c05cb627b07a}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

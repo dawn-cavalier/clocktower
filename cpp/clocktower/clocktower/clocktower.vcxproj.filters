@@ -13,18 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\globals">
+      <UniqueIdentifier>{6e11d036-90bb-4b41-ae70-bcd34f76c677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\globals">
+      <UniqueIdentifier>{0f103ed1-c8a2-40e5-a494-0d9172121b98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ClocktowerUnitTest.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\globals\game_info.cpp">
+      <Filter>Source Files\globals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\globals\game_info.h">
+      <Filter>Header Files\globals</Filter>
+    </ClInclude>
+    <ClInclude Include="src\globals\role.h">
+      <Filter>Header Files\globals</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

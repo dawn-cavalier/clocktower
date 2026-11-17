@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="clocktower/clocktower.vcxproj" />
+  <Project Path="clocktower_unit_test/clocktower_unit_test.vcxproj" />
+</Solution>

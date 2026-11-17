@@ -3,7 +3,6 @@
 
 enum class Role: uint8_t
 {
-    none = -1,
     // Townsfolk
     acrobat,
     alchemist,
