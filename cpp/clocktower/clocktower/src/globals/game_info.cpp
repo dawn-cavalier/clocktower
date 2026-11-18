@@ -1,6 +1,6 @@
 #include "game_info.h"
 
-uint8_t get_townfolk_count(BasePlayerCount player_count)
+uint8_t get_base_townfolk_count(BasePlayerCount player_count)
 {
     uint8_t minion_count = static_cast<uint8_t>(player_count) & 0b1100;
     minion_count = minion_count >> 2;
@@ -8,33 +8,20 @@ uint8_t get_townfolk_count(BasePlayerCount player_count)
     return townsfolk_count;
 }
 
-uint8_t get_outsider_count(BasePlayerCount player_count)
+uint8_t get_base_outsider_count(BasePlayerCount player_count)
 {
     uint8_t outsider_count = static_cast<uint8_t>(player_count) & 0b0011;
     return outsider_count;
 }
 
-uint8_t get_minion_count(BasePlayerCount player_count)
+uint8_t get_base_minion_count(BasePlayerCount player_count)
 {
     uint8_t minion_count = static_cast<uint8_t>(player_count) & 0b1100;
     minion_count = minion_count >> 2;
     return minion_count;
 }
 
-uint8_t get_demon_count(BasePlayerCount player_count)
+uint8_t get_base_demon_count(BasePlayerCount player_count)
 {
     return 1;
-}
-
-std::vector<Role> get_townsfolk_from_script(std::array<Role, 31> script)
-{
-    std::vector<Role> townfolk{};
-    //for (Role role : script)
-    //{
-    //    if (is_townsfolk(role))
-    //    {
-    //        townfolk.push_back(role);
-    //    }
-    //}
-    return townfolk;
 }

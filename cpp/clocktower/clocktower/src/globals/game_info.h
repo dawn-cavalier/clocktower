@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <vector>
 #include <array>
 
 #include "role.h"
@@ -24,9 +23,8 @@ struct GameInfo
 	BasePlayerCount base_player_count;
 };
 
-uint8_t get_townfolk_count(BasePlayerCount player_count);
-uint8_t get_outsider_count(BasePlayerCount player_count);
-uint8_t get_minion_count(BasePlayerCount player_count);
-uint8_t get_demon_count(BasePlayerCount player_count);
+uint8_t get_base_townfolk_count(BasePlayerCount player_count);
+uint8_t get_base_outsider_count(BasePlayerCount player_count);
+uint8_t get_base_minion_count(BasePlayerCount player_count);
+uint8_t get_base_demon_count(BasePlayerCount player_count);
 
-std::vector<Role> get_townsfolk_from_script(std::array<Role, 31> script);
