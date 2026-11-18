@@ -153,9 +153,9 @@ enum class Role : uint8_t
 	end = 0xFF
 };
 
-inline bool is_townsfolk(Role role);
-inline bool is_outsider(Role role);
-inline bool is_minion(Role role);
-inline bool is_demon(Role role);
+bool is_townsfolk(Role role);
+bool is_outsider(Role role);
+bool is_minion(Role role);
+bool is_demon(Role role);
 
 
