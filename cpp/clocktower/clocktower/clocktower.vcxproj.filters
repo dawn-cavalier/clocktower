@@ -19,6 +19,12 @@
     <Filter Include="Header Files\globals">
       <UniqueIdentifier>{0f103ed1-c8a2-40e5-a494-0d9172121b98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\worldbuilder">
+      <UniqueIdentifier>{e37b5a16-9d36-4419-ae15-b458508b978f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\worldbuilder">
+      <UniqueIdentifier>{be27d273-462c-4f42-8d4b-81e872ab4420}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -30,6 +36,9 @@
     <ClCompile Include="src\globals\role.cpp">
       <Filter>Source Files\globals</Filter>
     </ClCompile>
+    <ClCompile Include="src\worldbuilder\info.cpp">
+      <Filter>Source Files\worldbuilder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\globals\game_info.h">
@@ -37,6 +46,9 @@
     </ClInclude>
     <ClInclude Include="src\globals\role.h">
       <Filter>Header Files\globals</Filter>
+    </ClInclude>
+    <ClInclude Include="src\worldbuilder\info.h">
+      <Filter>Header Files\worldbuilder</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

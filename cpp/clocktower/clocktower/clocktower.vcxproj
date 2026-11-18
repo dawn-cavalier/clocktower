@@ -145,10 +145,12 @@
     <ClCompile Include="src\globals\game_info.cpp" />
     <ClCompile Include="src\globals\role.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\worldbuilder\info.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\globals\game_info.h" />
     <ClInclude Include="src\globals\role.h" />
+    <ClInclude Include="src\worldbuilder\info.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,7 +17,7 @@ enum class BasePlayerCount : uint8_t
 	fifthteen	= 0b1110,
 };
 
-struct GameInfo
+typedef struct GameInfo
 {
 	std::array<Role, 31> script;
 	BasePlayerCount base_player_count;
