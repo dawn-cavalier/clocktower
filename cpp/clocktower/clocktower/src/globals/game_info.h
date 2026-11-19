@@ -5,6 +5,7 @@
 #include "role.h"
 
 /* TODO: This could be smaller! */
+/* Invariant: Script Ends with Role::end */
 typedef struct {
 	std::vector<Role> script;
 	uint8_t
